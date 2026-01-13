@@ -1,15 +1,13 @@
-import './globals.css';
-import { Inter } from 'next/font/google';
-import BuilderRegistryClient from '@/components/builder-registry-client';
-
-const inter = Inter({ subsets: ['latin'] });
+import React from "react";
+import { BuilderContextProvider } from "../components/builder-registry-client";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en">
       <body>
-        <BuilderRegistryClient />
-        {children}
+        <BuilderContextProvider>
+          {children}
+        </BuilderContextProvider>
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 "use client";
+import BuilderContextProvider from "../components/builder-registry-client";
 
 import { Builder } from "@builder.io/react";
 import { useEffect } from "react";
