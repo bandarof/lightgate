@@ -1,6 +1,9 @@
 import { builder } from "@/lib/builder";
 import { notFound } from "next/navigation";
 
+// Mark as dynamic to prevent static generation issues
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
   params: { page: string[] };
 }
