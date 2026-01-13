@@ -9,8 +9,8 @@ const apiKey =
   // 3. Hardcoded for development
   '2fcfe1b955134aacad7b3c67770584fe';
 
-// Only initialize once
-if (apiKey && !builder.isInitialized) {
+// Initialize Builder.io
+if (apiKey) {
   console.log('Initializing Builder.io with API key');
   builder.init(apiKey);
 }
