@@ -1,50 +1,40 @@
+import { builder } from "@/lib/builder";
+import { notFound } from "next/navigation";
+
 interface PageProps {
   params: { page: string[] };
 }
 
 export default async function Page({ params }: PageProps) {
   const urlPath = "/" + (params.page?.join("/") || "");
+  const apiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
   
-  // Check if we should use Builder.io
-  const useBuilder = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
-  
-  if (!useBuilder) {
+  if (!apiKey) {
     return (
       <div className="p-8">
         <h1 className="text-2xl font-bold">Page: {urlPath}</h1>
-        <p className="mt-4">Builder.io not configured (no API key).</p>
+        <p className="mt-4 text-red-600">Builder.io API key not configured.</p>
       </div>
     );
   }
   
   try {
-    // Try to use Builder.io
-    const { builder } = await import('@builder.io/sdk');
-    const { BuilderComponent } = await import('@builder.io/react');
-    
-    // Initialize builder
-    builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
-    
     const content = await builder
       .get("page", { userAttributes: { urlPath } })
       .toPromise();
 
-    if (content) {
-      return <BuilderComponent model="page" content={content} />;
+    if (!content) {
+      notFound();
     }
-    
-    return (
-      <div className="p-8">
-        <h1 className="text-2xl font-bold">Page: {urlPath}</h1>
-        <p className="mt-4">No Builder.io content found for this page.</p>
-      </div>
-    );
+
+    const { BuilderComponent } = await import('@builder.io/react');
+    return <BuilderComponent model="page" content={content} />;
   } catch (error) {
     console.error("Builder.io error:", error);
     return (
       <div className="p-8">
         <h1 className="text-2xl font-bold">Page: {urlPath}</h1>
-        <p className="mt-4">Error loading Builder.io content.</p>
+        <p className="mt-4 text-yellow-600">Error loading Builder.io content.</p>
       </div>
     );
   }
