@@ -1,14 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Output for Cloudflare Pages - export static site
-  output: 'export',
-  distDir: '.next',
+  // Use standalone for Node.js runtime on Cloudflare Pages
+  output: 'standalone',
   env: {
     NEXT_PUBLIC_BUILDER_API_KEY: process.env.NEXT_PUBLIC_BUILDER_API_KEY,
   },
-  // Disable static optimization that causes prerendering issues
-  typescript: {
-    tsconfigPath: './tsconfig.json'
+  // Skip static optimization for client components
+  experimental: {
+    isrMemoryCacheSize: 0
   }
 };
 
