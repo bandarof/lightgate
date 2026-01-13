@@ -10,9 +10,6 @@ export const metadata: Metadata = {
   title: "Lightgate Media - Digital Marketing Agency",
   description: "Drive your business growth with our comprehensive digital marketing solutions including SEO, PPC, social media marketing, content strategy, and web design.",
   keywords: "digital marketing, SEO, PPC, social media marketing, content marketing, web design",
-  icons: {
-    icon: '/favicon.ico',
-  },
   openGraph: {
     title: "Lightgate Media - Digital Marketing Agency",
     description: "Drive your business growth with our comprehensive digital marketing solutions",
