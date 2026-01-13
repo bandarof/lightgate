@@ -1,11 +1,14 @@
 import dynamic from "next/dynamic";
-import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
 const Header = dynamic(() => import("@/components/Header"), {
   ssr: false,
+});
+
+const Footer = dynamic(() => import("@/components/Footer"), {
+  ssr: true,
 });
 
 const inter = Inter({ subsets: ["latin"] });
