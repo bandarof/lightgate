@@ -1,6 +1,9 @@
-import { builder } from "@builder.io/react";
+// Simple builder export
+import { builder } from '@builder.io/sdk';
 
-// For Builder v9.x, you do NOT call builder.init() here
-// Only register components in client
+// Initialize with API key if available
+if (process.env.NEXT_PUBLIC_BUILDER_API_KEY) {
+  builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY);
+}
 
 export { builder };
