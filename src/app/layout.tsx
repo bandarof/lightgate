@@ -26,7 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <HeaderClient />
+        <Suspense fallback={<div className="h-16 bg-white shadow-md" />}>
+          <HeaderClient />
+        </Suspense>
         <main className="min-h-screen">
           {children}
         </main>
