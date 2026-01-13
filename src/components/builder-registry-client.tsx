@@ -1,27 +1,19 @@
 "use client";
-import React, { createContext, useContext, ReactNode, useState } from "react";
 
-interface BuilderContextType {
-  someValue: string;
-  setSomeValue: (val: string) => void;
-}
+import { Builder } from "@builder.io/react";
+import { useEffect } from "react";
 
-const BuilderContext = createContext<BuilderContextType | undefined>(undefined);
-
-export default function BuilderContextProvider({ children }: { children: ReactNode }) {
-  const [someValue, setSomeValue] = useState("default");
-
-  return (
-    <BuilderContext.Provider value={{ someValue, setSomeValue }}>
-      {children}
-    </BuilderContext.Provider>
-  );
-}
-
-export function useBuilderContext() {
-  const context = useContext(BuilderContext);
-  if (!context) {
-    throw new Error("useBuilderContext must be used within a BuilderContextProvider");
-  }
-  return context;
+export default function BuilderRegistryClient() {
+  useEffect(() => {
+    Builder.registerComponent(
+      ({ text }: { text: string }) => (
+        <h1 className="text-4xl font-bold">{text}</h1>
+      ),
+      {
+        name: "Heading",
+        inputs: [{ name: "text", type: "string" }],
+      }
+    );
+  }, []);
+  return null;
 }
