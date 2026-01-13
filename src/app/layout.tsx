@@ -1,4 +1,3 @@
-import BuilderInitializer from "@/components/BuilderInitializer";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
@@ -29,7 +28,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <BuilderInitializer />
         <Header />
         <main className="min-h-screen">
           {children}
