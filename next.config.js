@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  distDir: 'dist',
+  output: 'standalone',
+  staticPageGenerationTimeout: 0,
 };
 
 module.exports = nextConfig;
