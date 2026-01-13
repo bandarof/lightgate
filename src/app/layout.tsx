@@ -1,4 +1,3 @@
-import BuilderInitializer from "@/components/BuilderInitializer";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
@@ -11,6 +10,9 @@ export const metadata: Metadata = {
   title: "Lightgate Media - Digital Marketing Agency",
   description: "Drive your business growth with our comprehensive digital marketing solutions including SEO, PPC, social media marketing, content strategy, and web design.",
   keywords: "digital marketing, SEO, PPC, social media marketing, content marketing, web design",
+  icons: {
+    icon: '/favicon.ico',
+  },
   openGraph: {
     title: "Lightgate Media - Digital Marketing Agency",
     description: "Drive your business growth with our comprehensive digital marketing solutions",
@@ -26,7 +28,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <BuilderInitializer />
         <Header />
         <main className="min-h-screen">
           {children}
