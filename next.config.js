@@ -5,7 +5,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  skipTrailingSlashRedirect: true,
 };
 
 module.exports = nextConfig;
