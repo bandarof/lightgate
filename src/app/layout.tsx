@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import HeaderClient from "@/components/HeaderClient";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
+        <HeaderClient />
         <main className="min-h-screen">
           {children}
         </main>

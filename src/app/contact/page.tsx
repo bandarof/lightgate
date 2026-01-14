@@ -3,8 +3,6 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
-
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
