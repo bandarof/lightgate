@@ -1,69 +1,7 @@
-"use client";
-
-import { useState, FormEvent } from "react";
 import Link from "next/link";
+import ContactForm from "@/components/ContactForm";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    service: "",
-    message: "",
-  });
-
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // Simulate form submission (in production, this would send to a backend API)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSubmitted(true);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
-        service: "",
-        message: "",
-      });
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setSubmitted(false), 5000);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const services = [
-    "SEO",
-    "PPC Advertising",
-    "Social Media Marketing",
-    "Content Marketing",
-    "Web Design & Development",
-    "Analytics & Reporting",
-    "Other",
-  ];
-
   const contactInfo = [
     {
       icon: "📧",
