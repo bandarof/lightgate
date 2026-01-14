@@ -1,13 +1,6 @@
 name = "lightgate"
 
-# Cloudflare Pages configuration
-[env.production]
-name = "lightgate"
-
 [build]
 command = "npm run build"
 cwd = "./"
 dir = "out"
-
-[build.upload]
-format = "service-worker"
