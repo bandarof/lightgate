@@ -1,0 +1,6 @@
+name = "lightgate"
+
+[build]
+command = "npm run build"
+cwd = "./"
+dir = "out"
