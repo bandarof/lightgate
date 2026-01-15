@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // NO output: 'export' for next-on-pages
+  output: 'export', // This is the key line for static export
   images: {
-    unoptimized: true,
+    unoptimized: true, // Required for static export
   },
+  // Optional: Helps with routing, especially on static hosts
+  trailingSlash: true,
 };
 
 module.exports = nextConfig;
