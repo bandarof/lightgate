@@ -6,3 +6,15 @@
 .section-number{font-size:7.5rem;color:#eaeaea}
 .section-title{font-size:2.6rem;letter-spacing:.28em}
 .editorial{max-width:780px;line-height:2}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
+.hero {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+}
