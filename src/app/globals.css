@@ -18,3 +18,24 @@
   display: flex;
   align-items: center;
 }
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: white;
+  z-index: 50;
+}
+
+.nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 96px;
+}
+
+nav a {
+  margin-left: 3rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
