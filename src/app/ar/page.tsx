@@ -1,0 +1,1 @@
+export default function Arabic(){return(<main dir='rtl'><section className='section'><span className='section-number'>٠١</span><h1 className='section-title'>قريباً</h1><p className='editorial'>نسخة عربية</p></section></main>)}

@@ -1,0 +1,1 @@
+export default function Investors(){return(<main><section className='section'><span className='section-number'>01</span><h1 className='section-title'>A Global Cultural Platform</h1><p className='editorial'>Built for impact.</p></section></main>)}

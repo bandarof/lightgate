@@ -2,40 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --black: #0b0b0b;
-  --gray: #6b6b6b;
-  --light: #eaeaea;
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  background: #ffffff;
-  color: var(--black);
-  font-family: ui-sans-serif, system-ui, -apple-system;
-}
-
-.section { padding: 10rem 0; }
-.section-number {
-  font-size: 7rem;
-  font-weight: 300;
-  color: var(--light);
-}
-.section-title {
-  font-size: 2.5rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-}
-.editorial {
-  max-width: 760px;
-  font-size: 1.1rem;
-  line-height: 2;
-  color: #333;
-}
-.divider {
-  height: 1px;
-  background: var(--light);
-  margin: 4rem 0;
-}
+.section{padding:12rem 0}
+.section-number{font-size:7.5rem;color:#eaeaea}
+.section-title{font-size:2.6rem;letter-spacing:.28em}
+.editorial{max-width:780px;line-height:2}
