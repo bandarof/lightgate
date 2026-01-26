@@ -3,6 +3,8 @@ export default function Contact() {
     <main>
 
       <section className="hero">
+        <img src="/contact.jpg" className="hero-bg" />
+
         <div className="container">
           <span className="index">01</span>
           <h1>Contact</h1>

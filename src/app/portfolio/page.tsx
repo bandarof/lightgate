@@ -3,6 +3,8 @@ export default function Portfolio() {
     <main>
 
       <section className="hero">
+        <img src="/portfolio.jpg" className="hero-bg" />
+
         <div className="container">
           <span className="index">01</span>
           <h1>Selected Work</h1>

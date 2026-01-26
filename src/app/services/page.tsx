@@ -3,6 +3,8 @@ export default function Services() {
     <main>
 
       <section className="hero">
+        <img src="/services.jpg" className="hero-bg" />
+
         <div className="container">
           <span className="index">01</span>
           <h1>Services</h1>
