@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import LanguageToggle from "./LanguageToggle";
 
 export default function HeaderClient() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,7 +27,7 @@ export default function HeaderClient() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-8 items-center">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -36,6 +37,7 @@ export default function HeaderClient() {
                 {item.label}
               </Link>
             ))}
+            <LanguageToggle />
           </nav>
 
           {/* CTA Button */}
@@ -90,7 +92,11 @@ export default function HeaderClient() {
             </Link>
           </nav>
         )}
+<div className="px-4 pt-2">
+  <LanguageToggle />
+</div>
+
       </div>
-    </header>
+    </heade>
   );
 }
