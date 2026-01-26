@@ -39,3 +39,41 @@ nav a {
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
+/* SECTIONS */
+
+section {
+  padding: 140px 0;
+}
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.index {
+  display: block;
+  font-size: 8rem;
+  opacity: 0.06;
+  margin-bottom: 2rem;
+}
+
+.manifesto {
+  background: #fafafa;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4rem;
+}
+
+h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
