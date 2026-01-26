@@ -1,21 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function LanguageToggle() {
-  const [lang, setLang] = useState("en");
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const isArabic = pathname.startsWith("/ar");
+
+  const toggleLanguage = () => {
+    if (isArabic) {
+      router.push("/");
+      document.documentElement.dir = "ltr";
+      document.documentElement.lang = "en";
+    } else {
+      router.push("/ar");
+      document.documentElement.dir = "rtl";
+      document.documentElement.lang = "ar";
+    }
+  };
 
   return (
     <button
-      onClick={() => {
-        const next = lang === "en" ? "ar" : "en";
-        setLang(next);
-        document.documentElement.lang = next;
-        document.documentElement.dir = next === "ar" ? "rtl" : "ltr";
-      }}
-      className="lang-toggle"
+      onClick={toggleLanguage}
+      className="px-3 py-1 border rounded-md text-sm hover:bg-gray-100"
     >
-      {lang === "en" ? "AR" : "EN"}
+      {isArabic ? "EN" : "AR"}
     </button>
   );
 }
