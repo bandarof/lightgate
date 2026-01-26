@@ -5,7 +5,7 @@ import Link from "next/link";
 import LanguageToggle from "./LanguageToggle";
 
 export default function HeaderClient() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const navItems = [
     { href: "/", label: "Home" },
@@ -16,45 +16,45 @@ export default function HeaderClient() {
   ];
 
   return (
-    <header className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <header className="sticky top-0 z-50 bg-white border-b">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Lightgate
-            </span>
-          </Link>
+        {/* LOGO */}
+        <Link href="/" className="text-2xl font-bold text-blue-600">
+          Lightgate
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8 items-center">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
-              >
-                {item.label}
-              </Link>
-            ))}
+        {/* DESKTOP NAV */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-gray-700 hover:text-blue-600 font-medium"
+            >
+              {item.label}
+            </Link>
+          ))}
 
-            <LanguageToggle />
-          </nav>
+          <LanguageToggle />
 
-          {/* CTA */}
           <Link
             href="/contact"
-            className="hidden md:inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md"
           >
             Get Started
           </Link>
+        </nav>
 
-          {/* Mobile Hamburger */}
+        {/* MOBILE RIGHT SIDE */}
+        <div className="md:hidden flex items-center gap-3">
+
+          <LanguageToggle />
+
           <button
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
+            onClick={() => setOpen(!open)}
+            className="p-2 rounded-md border"
+            aria-label="Toggle Menu"
           >
             <svg
               className="w-6 h-6"
@@ -72,38 +72,33 @@ export default function HeaderClient() {
           </button>
 
         </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <nav className="md:hidden pb-4 space-y-2">
-
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-
-            <Link
-              href="/contact"
-              className="block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors font-medium mt-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Get Started
-            </Link>
-
-            <div className="px-4 pt-4">
-              <LanguageToggle />
-            </div>
-
-          </nav>
-        )}
-
       </div>
+
+      {/* MOBILE MENU */}
+      {open && (
+        <div className="md:hidden bg-white border-t px-4 py-4 space-y-3">
+
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="block text-gray-700"
+              onClick={() => setOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+
+          <Link
+            href="/contact"
+            className="block bg-blue-600 text-white text-center py-2 rounded-md"
+            onClick={() => setOpen(false)}
+          >
+            Get Started
+          </Link>
+
+        </div>
+      )}
     </header>
   );
 }
