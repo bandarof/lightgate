@@ -83,6 +83,7 @@ export default function HeaderClient() {
                 {item.label}
               </Link>
             ))}
+
             <Link
               href="/contact"
               className="block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors font-medium mt-2"
@@ -90,13 +91,11 @@ export default function HeaderClient() {
             >
               Get Started
             </Link>
+
+            {/* Language Toggle */}
+            <div className="px-4 pt-4">
+              <LanguageToggle />
+            </div>
           </nav>
         )}
-<div className="px-4 pt-2">
-  <LanguageToggle />
-</div>
 
-      </div>
-    </header>
-  );
-}
