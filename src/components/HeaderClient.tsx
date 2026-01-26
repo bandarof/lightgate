@@ -97,6 +97,6 @@ export default function HeaderClient() {
 </div>
 
       </div>
-    </heade>
+    </header>
   );
 }
