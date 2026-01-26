@@ -1,7 +1,20 @@
-export default function ImageSection({ src }: { src: string }) {
+import Image from "next/image";
+
+type Props = {
+  src: string;
+};
+
+export default function ImageSection({ src }: Props) {
   return (
-    <section className="image-section">
-      <img src={src} />
-    </section>
+    <div className="w-full relative">
+      <Image
+        src={src}
+        alt=""
+        width={1600}
+        height={900}
+        className="w-full h-auto object-cover"
+        priority
+      />
+    </div>
   );
 }
