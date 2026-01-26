@@ -19,6 +19,7 @@ export default function HeaderClient() {
     <header className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
@@ -37,10 +38,11 @@ export default function HeaderClient() {
                 {item.label}
               </Link>
             ))}
+
             <LanguageToggle />
           </nav>
 
-          {/* CTA Button */}
+          {/* CTA */}
           <Link
             href="/contact"
             className="hidden md:inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
@@ -48,7 +50,7 @@ export default function HeaderClient() {
             Get Started
           </Link>
 
-          {/* Mobile menu button */}
+          {/* Mobile Hamburger */}
           <button
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -68,11 +70,13 @@ export default function HeaderClient() {
               />
             </svg>
           </button>
+
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Menu */}
         {isMenuOpen && (
           <nav className="md:hidden pb-4 space-y-2">
+
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -92,10 +96,14 @@ export default function HeaderClient() {
               Get Started
             </Link>
 
-            {/* Language Toggle */}
             <div className="px-4 pt-4">
               <LanguageToggle />
             </div>
+
           </nav>
         )}
 
+      </div>
+    </header>
+  );
+}
