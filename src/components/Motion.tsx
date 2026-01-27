@@ -30,7 +30,7 @@ export function useCounters() {
       const update = () => {
         const target = Number(counter.dataset.target);
         const current = Number(counter.innerText.replace(/\D/g, ""));
-        const increment = target / 600;
+        const increment = target / 200;
 
         if (current < target) {
           counter.innerText = Math.ceil(current + increment).toString();
