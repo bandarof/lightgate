@@ -1,32 +1,27 @@
-import Hero from "@/components/Hero";
+import { FadeUp } from "@/components/Motion";
 
 export default function Portfolio() {
   return (
     <main>
 
-      <Hero
-        title="Portfolio"
-        subtitle="Selected cultural initiatives and platforms."
-        image="/portfolio.jpg"
-      />
+      <section className="hero min-h-screen flex items-center">
+        <img src="/portfolio.jpg" className="hero-bg" />
 
-      <section className="py-32">
+        <FadeUp>
+          <div className="container">
+            <h1 className="text-6xl font-bold">
+              Selected <span className="text-orange-500">Work</span>
+            </h1>
+          </div>
+        </FadeUp>
+      </section>
+
+      <section>
         <div className="container grid-3">
 
-          <div>
-            <h3>Lightgate Fest</h3>
-            <p>Cultural festival and platform.</p>
-          </div>
-
-          <div>
-            <h3>Public Art Programs</h3>
-            <p>City-scale cultural installations.</p>
-          </div>
-
-          <div>
-            <h3>Digital Archives</h3>
-            <p>Preserving and activating cultural memory.</p>
-          </div>
+          <FadeUp><div>Flagship Festival Concepts</div></FadeUp>
+          <FadeUp><div>Immersive Experiences</div></FadeUp>
+          <FadeUp><div>Large Scale Cultural Activations</div></FadeUp>
 
         </div>
       </section>
@@ -34,3 +29,4 @@ export default function Portfolio() {
     </main>
   );
 }
+

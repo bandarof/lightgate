@@ -1,25 +1,17 @@
-import Hero from "@/components/Hero";
+import { FadeUp } from "@/components/Motion";
 
-export default function ArabicContact() {
+export default function ContactAr() {
   return (
     <main dir="rtl">
 
-      <Hero
-        title="تواصل"
-        subtitle="لنبنِ شيئاً ذا معنى."
-        image="/contact.jpg"
-      />
+      <section className="hero min-h-screen flex items-center">
+        <img src="/contact.jpg" className="hero-bg" />
 
-      <section className="py-32">
-        <div className="container space-y-6">
-
-          <p>الرياض | جدة، السعودية</p>
-          <p>+966-569169169 | +966-591015666</p>
-          <p>Lightgate.fest</p>
-          <p>lightgate.fest@gmail.com</p>
-          <p>www.Lightgate.media</p>
-
-        </div>
+        <FadeUp>
+          <div className="container text-right">
+            <h1 className="text-6xl font-bold">تواصل معنا</h1>
+          </div>
+        </FadeUp>
       </section>
 
     </main>

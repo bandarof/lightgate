@@ -1,41 +1,47 @@
-import Hero from "@/components/Hero";
+import { FadeUp } from "@/components/Motion";
 
 export default function Services() {
   return (
     <main>
 
-      <Hero
-        title="Services"
-        subtitle="We build cultural systems from concept to operation."
-        image="/services.jpg"
-      />
+      <section className="hero min-h-screen flex items-center">
+        <img src="/services.jpg" className="hero-bg" />
 
-      <section className="py-32">
+        <FadeUp>
+          <div className="container">
+            <h1 className="text-6xl font-bold">
+              Our <span className="text-orange-500">Services</span>
+            </h1>
+            <p className="mt-6">
+              Cultural systems from concept to operation.
+            </p>
+          </div>
+        </FadeUp>
+      </section>
+
+      <section>
         <div className="container grid-3">
 
-          <div>
-            <h3>Platform Development</h3>
-            <p>
-              Custom digital platforms for cultural institutions,
-              creative networks, and public engagement.
-            </p>
-          </div>
+          <FadeUp>
+            <div>
+              <h3>Platform Development</h3>
+              <p>Custom digital platforms and cultural ecosystems.</p>
+            </div>
+          </FadeUp>
 
-          <div>
-            <h3>Brand & Identity Systems</h3>
-            <p>
-              Visual identity, language systems,
-              and narrative architecture.
-            </p>
-          </div>
+          <FadeUp>
+            <div>
+              <h3>Brand & Identity</h3>
+              <p>Visual systems, language, and narrative architecture.</p>
+            </div>
+          </FadeUp>
 
-          <div>
-            <h3>Cultural Strategy</h3>
-            <p>
-              Long-term planning for cities,
-              museums, festivals, and foundations.
-            </p>
-          </div>
+          <FadeUp>
+            <div>
+              <h3>Cultural Strategy</h3>
+              <p>Long-term planning for institutions and cities.</p>
+            </div>
+          </FadeUp>
 
         </div>
       </section>

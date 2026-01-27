@@ -4,22 +4,32 @@ import { usePathname, useRouter } from "next/navigation";
 
 export default function LanguageToggle() {
   const router = useRouter();
-  const path = usePathname();
-  const isArabic = path.startsWith("/ar");
+  const pathname = usePathname();
+  const isArabic = pathname.startsWith("/ar");
 
-  function toggle() {
+  const toggle = () => {
     if (isArabic) {
-      router.push(path.replace("/ar", "") || "/");
+      router.push(pathname.replace("/ar", "") || "/");
     } else {
-      router.push("/ar" + path);
+      router.push("/ar" + pathname);
     }
-  }
+  };
 
   return (
     <button
       onClick={toggle}
-      className="w-10 text-center font-medium"
+      className="
+        px-3 py-1.5
+        rounded-full
+        border
+        text-sm
+        font-medium
+        flex items-center gap-2
+        hover:bg-orange-500 hover:text-white
+        transition
+      "
     >
+      <span className="text-lg">🌐</span>
       {isArabic ? "EN" : "AR"}
     </button>
   );

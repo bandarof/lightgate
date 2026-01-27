@@ -1,25 +1,33 @@
-import Hero from "@/components/Hero";
+import { FadeUp } from "@/components/Motion";
 
 export default function Contact() {
   return (
     <main>
 
-      <Hero
-        title="Contact"
-        subtitle="Let’s build something meaningful."
-        image="/contact.jpg"
-      />
+      <section className="hero min-h-screen flex items-center">
+        <img src="/contact.jpg" className="hero-bg" />
 
-      <section className="py-32">
-        <div className="container space-y-6">
+        <FadeUp>
+          <div className="container">
+            <h1 className="text-6xl font-bold">
+              Get <span className="text-orange-500">In Touch</span>
+            </h1>
+          </div>
+        </FadeUp>
+      </section>
 
-          <p>Riyadh | Jeddah, KSA</p>
-          <p>+966-569169169 | +966-591015666</p>
-          <p>Lightgate.fest</p>
-          <p>lightgate.fest@gmail.com</p>
-          <p>www.Lightgate.media</p>
+      <section>
+        <FadeUp>
+          <div className="container max-w-xl space-y-6 text-lg">
 
-        </div>
+            <p>Riyadh | Jeddah, KSA</p>
+            <p>+966-569169169 | +966-591015666</p>
+            <p>Lightgate.fest</p>
+            <p>lightgate.fest@gmail.com</p>
+            <p>www.Lightgate.media</p>
+
+          </div>
+        </FadeUp>
       </section>
 
     </main>

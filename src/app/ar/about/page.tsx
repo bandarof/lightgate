@@ -1,29 +1,19 @@
-import Hero from "@/components/Hero";
+import { FadeUp } from "@/components/Motion";
 
-export default function ArabicAbout() {
+export default function AboutAr() {
   return (
     <main dir="rtl">
 
-      <Hero
-        title="من نحن"
-        subtitle="منصة ثقافية عالمية تشكل المستقبل."
-        image="/about.jpg"
-      />
+      <section className="hero min-h-screen flex items-center">
+        <img src="/about.jpg" className="hero-bg" />
 
-      <section className="py-32">
-        <div className="container">
-
-          <p>
-            لايتجيت منصة ثقافية تعمل
-            عبر الحدود واللغات والوسائط.
-          </p>
-
-          <p>
-            نصمم أنظمة وتجارب ومؤسسات
-            تشكل الثقافة على نطاق واسع.
-          </p>
-
-        </div>
+        <FadeUp>
+          <div className="container text-right">
+            <h1 className="text-6xl font-bold">
+              من نحن
+            </h1>
+          </div>
+        </FadeUp>
       </section>
 
     </main>
