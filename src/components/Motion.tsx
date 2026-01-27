@@ -22,18 +22,19 @@ export function FadeUp({ children }: { children: React.ReactNode }) {
 
 export function useCounters() {
   useEffect(() => {
-    const counters = document.querySelectorAll(".counter");
+    const counters =
+      document.querySelectorAll<HTMLElement>(".counter");
 
-    counters.forEach((el) => {
-      const counter = el as HTMLElement;
+    counters.forEach((counter) => {
+      const target = Number(counter.dataset.target);
+      let current = 0;
 
       const update = () => {
-        const target = Number(counter.dataset.target);
-        const current = Number(counter.innerText.replace(/\D/g, ""));
         const increment = target / 200;
 
         if (current < target) {
-          counter.innerText = Math.ceil(current + increment).toString();
+          current += increment;
+          counter.innerText = Math.ceil(current).toString();
           requestAnimationFrame(update);
         } else {
           counter.innerText = target.toString();
