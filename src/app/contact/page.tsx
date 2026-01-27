@@ -10,9 +10,15 @@ export default function Contact() {
         image="/contact.jpg"
       />
 
-      <section className="py-24">
-        <div className="container max-w-xl mx-auto text-center">
-          <p>Email: contact@lightgate.io</p>
+      <section className="py-32">
+        <div className="container space-y-6">
+
+          <p>Riyadh | Jeddah, KSA</p>
+          <p>+966-569169169 | +966-591015666</p>
+          <p>Lightgate.fest</p>
+          <p>lightgate.fest@gmail.com</p>
+          <p>www.Lightgate.media</p>
+
         </div>
       </section>
 

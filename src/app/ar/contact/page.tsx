@@ -1,25 +1,23 @@
-export default function ContactArabic() {
+import Hero from "@/components/Hero";
+
+export default function ArabicContact() {
   return (
-    <main dir="rtl" className="text-right">
+    <main dir="rtl">
 
-      <section className="hero">
-        <div className="container">
-          <span className="index">٠١</span>
-          <h1>تواصل معنا</h1>
-          <p>ابدأ حواراً. ابنِ مستقبلاً ثقافياً.</p>
-        </div>
-      </section>
+      <Hero
+        title="تواصل"
+        subtitle="لنبنِ شيئاً ذا معنى."
+        image="/contact.jpg"
+      />
 
-      <section>
-        <div className="container">
+      <section className="py-32">
+        <div className="container space-y-6">
 
-          <p>البريد الإلكتروني</p>
-          <h3>hello@lightgate.xyz</h3>
-
-          <br />
-
-          <p>الشراكات</p>
-          <h3>partners@lightgate.xyz</h3>
+          <p>الرياض | جدة، السعودية</p>
+          <p>+966-569169169 | +966-591015666</p>
+          <p>Lightgate.fest</p>
+          <p>lightgate.fest@gmail.com</p>
+          <p>www.Lightgate.media</p>
 
         </div>
       </section>

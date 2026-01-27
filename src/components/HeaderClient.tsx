@@ -21,50 +21,59 @@ export default function HeaderClient() {
   const link = (p: string) => (isArabic ? `/ar${p}` : p);
 
   const nav = [
-    { href: "/", label: t.home },
-    { href: "/services", label: t.services },
-    { href: "/portfolio", label: t.portfolio },
-    { href: "/about", label: t.about },
-    { href: "/contact", label: t.contact },
+    { href: link("/"), label: t.home },
+    { href: link("/services"), label: t.services },
+    { href: link("/portfolio"), label: t.portfolio },
+    { href: link("/about"), label: t.about },
+    { href: link("/contact"), label: t.contact },
   ];
 
   return (
-    <header
-      className="sticky top-0 z-50 bg-white border-b"
-      dir={isArabic ? "rtl" : "ltr"}
-    >
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-
-        <Link href={link("/")} className="text-xl font-bold">
-          Lightgate
+    <header className="sticky top-0 z-50 bg-white border-b">
+      <div
+        className={`max-w-7xl mx-auto px-6 h-16 flex items-center ${
+          isArabic ? "flex-row-reverse" : "flex-row"
+        } justify-between`}
+      >
+        {/* LOGO */}
+        <Link href={link("/")}>
+          <img src="/logo.png" className="h-8" />
         </Link>
 
-        {/* Desktop */}
-        <nav className="hidden md:flex items-center gap-8">
+        {/* DESKTOP */}
+        <nav
+          className={`hidden md:flex items-center gap-10 ${
+            isArabic ? "flex-row-reverse" : ""
+          }`}
+        >
           {nav.map((n) => (
-            <Link key={n.href} href={link(n.href)}>
+            <Link key={n.href} href={n.href}>
               {n.label}
             </Link>
           ))}
+
           <LanguageToggle />
         </nav>
 
-        {/* Mobile */}
-        <div className="md:hidden flex items-center gap-3">
+        {/* MOBILE */}
+        <div className="md:hidden flex items-center gap-4">
           <LanguageToggle />
           <button onClick={() => setOpen(!open)}>☰</button>
         </div>
-
       </div>
 
       {open && (
-        <div className="md:hidden px-4 py-4 space-y-3 border-t">
+        <div
+          className={`md:hidden border-t px-6 py-6 space-y-4 ${
+            isArabic ? "text-right" : ""
+          }`}
+        >
           {nav.map((n) => (
             <Link
               key={n.href}
-              href={link(n.href)}
-              onClick={() => setOpen(false)}
+              href={n.href}
               className="block"
+              onClick={() => setOpen(false)}
             >
               {n.label}
             </Link>
