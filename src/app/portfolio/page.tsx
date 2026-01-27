@@ -1,29 +1,34 @@
 import Hero from "@/components/Hero";
-import { FadeUp } from "@/components/Motion";
 
 export default function Portfolio() {
   return (
     <main>
 
       <Hero
-        title="Selected Work"
-        subtitle="A snapshot of systems, platforms, and initiatives."
+        title="Portfolio"
+        subtitle="Selected cultural initiatives and platforms."
         image="/portfolio.jpg"
       />
 
-      <section className="py-24">
-        <FadeUp>
-          <div className="container grid md:grid-cols-3 gap-10">
+      <section className="py-32">
+        <div className="container grid-3">
 
-            {["Cultural Network", "Digital Archive", "City Platform"].map((p) => (
-              <div key={p} className="border p-6 rounded-lg">
-                <h3 className="text-xl font-semibold mb-2">{p}</h3>
-                <p>Strategic design and platform architecture.</p>
-              </div>
-            ))}
-
+          <div>
+            <h3>Lightgate Fest</h3>
+            <p>Cultural festival and platform.</p>
           </div>
-        </FadeUp>
+
+          <div>
+            <h3>Public Art Programs</h3>
+            <p>City-scale cultural installations.</p>
+          </div>
+
+          <div>
+            <h3>Digital Archives</h3>
+            <p>Preserving and activating cultural memory.</p>
+          </div>
+
+        </div>
       </section>
 
     </main>

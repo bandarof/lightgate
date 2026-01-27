@@ -8,19 +8,18 @@ export default function LanguageToggle() {
 
   const isArabic = pathname.startsWith("/ar");
 
-  function toggleLang() {
+  function toggle() {
     if (isArabic) {
-      const newPath = pathname.replace("/ar", "") || "/";
-      router.push(newPath);
+      router.push(pathname.replace("/ar", "") || "/");
     } else {
-      router.push(`/ar${pathname}`);
+      router.push("/ar" + pathname);
     }
   }
 
   return (
     <button
-      onClick={toggleLang}
-      className="px-3 py-1 border rounded-md text-sm"
+      onClick={toggle}
+      className="px-3 py-1 border rounded-md text-sm font-medium"
     >
       {isArabic ? "EN" : "AR"}
     </button>

@@ -8,12 +8,7 @@ import LanguageToggle from "./LanguageToggle";
 export default function HeaderClient() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-
   const isArabic = pathname.startsWith("/ar");
-
-  /* ---------------------------------- */
-  /* TRANSLATIONS */
-  /* ---------------------------------- */
 
   const t = {
     home: isArabic ? "الرئيسية" : "Home",
@@ -21,114 +16,59 @@ export default function HeaderClient() {
     portfolio: isArabic ? "الأعمال" : "Portfolio",
     about: isArabic ? "من نحن" : "About",
     contact: isArabic ? "تواصل" : "Contact",
-    cta: isArabic ? "ابدأ الآن" : "Get Started",
   };
 
-  /* ---------------------------------- */
-  /* ROUTE HELPER */
-  /* ---------------------------------- */
+  const link = (p: string) => (isArabic ? `/ar${p}` : p);
 
-  const link = (path: string) => {
-    if (isArabic) {
-      return path === "/" ? "/ar" : `/ar${path}`;
-    }
-    return path;
-  };
-
-  const navItems = [
-    { href: link("/"), label: t.home },
-    { href: link("/services"), label: t.services },
-    { href: link("/portfolio"), label: t.portfolio },
-    { href: link("/about"), label: t.about },
-    { href: link("/contact"), label: t.contact },
+  const nav = [
+    { href: "/", label: t.home },
+    { href: "/services", label: t.services },
+    { href: "/portfolio", label: t.portfolio },
+    { href: "/about", label: t.about },
+    { href: "/contact", label: t.contact },
   ];
-
-  /* ---------------------------------- */
 
   return (
     <header
       className="sticky top-0 z-50 bg-white border-b"
       dir={isArabic ? "rtl" : "ltr"}
     >
-      <div
-        className={`max-w-7xl mx-auto px-4 h-16 flex items-center justify-between
-        ${isArabic ? "flex-row-reverse" : ""}`}
-      >
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
-        {/* LOGO */}
-        <Link
-          href={link("/")}
-          className="text-2xl font-bold text-blue-600"
-        >
+        <Link href={link("/")} className="text-xl font-bold">
           Lightgate
         </Link>
 
-        {/* DESKTOP NAV */}
-        <nav
-          className={`hidden md:flex items-center gap-8
-          ${isArabic ? "flex-row-reverse" : ""}`}
-        >
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-gray-700 hover:text-blue-600 font-medium"
-            >
-              {item.label}
+        {/* Desktop */}
+        <nav className="hidden md:flex items-center gap-8">
+          {nav.map((n) => (
+            <Link key={n.href} href={link(n.href)}>
+              {n.label}
             </Link>
           ))}
-
           <LanguageToggle />
-
-          <Link
-            href={link("/contact")}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md"
-          >
-            {t.cta}
-          </Link>
         </nav>
 
-        {/* MOBILE RIGHT */}
-        <div
-          className={`md:hidden flex items-center gap-3
-          ${isArabic ? "flex-row-reverse" : ""}`}
-        >
+        {/* Mobile */}
+        <div className="md:hidden flex items-center gap-3">
           <LanguageToggle />
-
-          <button
-            onClick={() => setOpen(!open)}
-            className="p-2 border rounded-md"
-            aria-label="Menu"
-          >
-            ☰
-          </button>
+          <button onClick={() => setOpen(!open)}>☰</button>
         </div>
+
       </div>
 
-      {/* MOBILE MENU */}
       {open && (
-        <div
-          className="md:hidden bg-white border-t px-4 py-4 space-y-3"
-          dir={isArabic ? "rtl" : "ltr"}
-        >
-          {navItems.map((item) => (
+        <div className="md:hidden px-4 py-4 space-y-3 border-t">
+          {nav.map((n) => (
             <Link
-              key={item.href}
-              href={item.href}
+              key={n.href}
+              href={link(n.href)}
               onClick={() => setOpen(false)}
-              className="block text-gray-700"
+              className="block"
             >
-              {item.label}
+              {n.label}
             </Link>
           ))}
-
-          <Link
-            href={link("/contact")}
-            onClick={() => setOpen(false)}
-            className="block bg-blue-600 text-white text-center py-2 rounded-md"
-          >
-            {t.cta}
-          </Link>
         </div>
       )}
     </header>
