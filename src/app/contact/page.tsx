@@ -1,31 +1,18 @@
+import Hero from "@/components/Hero";
+
 export default function Contact() {
   return (
     <main>
 
-      <section className="hero">
-        <img src="/contact.jpg" className="hero-bg" />
+      <Hero
+        title="Contact"
+        subtitle="Let’s build something meaningful."
+        image="/contact.jpg"
+      />
 
-        <div className="container">
-          <span className="index">01</span>
-          <h1>Contact</h1>
-          <p>
-            Start a conversation.
-            Build something meaningful.
-          </p>
-        </div>
-      </section>
-
-      <section>
-        <div className="container">
-
-          <p>Email</p>
-          <h3>hello@lightgate.xyz</h3>
-
-          <br />
-
-          <p>Partnerships</p>
-          <h3>partners@lightgate.xyz</h3>
-
+      <section className="py-24">
+        <div className="container max-w-xl mx-auto text-center">
+          <p>Email: contact@lightgate.io</p>
         </div>
       </section>
 

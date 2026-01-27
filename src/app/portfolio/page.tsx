@@ -1,45 +1,29 @@
+import Hero from "@/components/Hero";
+import { FadeUp } from "@/components/Motion";
+
 export default function Portfolio() {
   return (
     <main>
 
-      <section className="hero">
-        <img src="/portfolio.jpg" className="hero-bg" />
+      <Hero
+        title="Selected Work"
+        subtitle="A snapshot of systems, platforms, and initiatives."
+        image="/portfolio.jpg"
+      />
 
-        <div className="container">
-          <span className="index">01</span>
-          <h1>Selected Work</h1>
-          <p>
-            A growing collection of cultural systems,
-            platforms, and initiatives.
-          </p>
-        </div>
-      </section>
+      <section className="py-24">
+        <FadeUp>
+          <div className="container grid md:grid-cols-3 gap-10">
 
-      <section>
-        <div className="container grid-3">
+            {["Cultural Network", "Digital Archive", "City Platform"].map((p) => (
+              <div key={p} className="border p-6 rounded-lg">
+                <h3 className="text-xl font-semibold mb-2">{p}</h3>
+                <p>Strategic design and platform architecture.</p>
+              </div>
+            ))}
 
-          <div>
-            <h3>Global Culture Index</h3>
-            <p>
-              Data platform mapping cultural ecosystems worldwide.
-            </p>
           </div>
-
-          <div>
-            <h3>Lightgate Labs</h3>
-            <p>
-              Experimental studio for emerging cultural technologies.
-            </p>
-          </div>
-
-          <div>
-            <h3>City Cultural Network</h3>
-            <p>
-              Infrastructure connecting institutions across cities.
-            </p>
-          </div>
-
-        </div>
+        </FadeUp>
       </section>
 
     </main>

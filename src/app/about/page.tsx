@@ -1,54 +1,99 @@
+import Hero from "@/components/Hero";
 import { FadeUp } from "@/components/Motion";
-import ImageSection from "@/components/ImageSection";
 
 export default function About() {
   return (
     <main>
 
       {/* HERO */}
-      <section className="hero">
-        <img src="/about.jpg" className="hero-bg" />
+      <Hero
+        title="About Lightgate"
+        subtitle="Designing cultural infrastructure for a connected world."
+        image="/about.jpg"
+      />
 
-        <img src="/global.jpg" className="hero-bg" />
+      {/* INTRO */}
+      <section className="py-24">
         <FadeUp>
-          <div className="container">
-            <span className="index">01</span>
-            <h1>About Lightgate</h1>
-            <p>
-              Lightgate is a cultural infrastructure company
-              building the foundations of future creative economies.
+          <div className="container max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl font-bold mb-6">
+              Who We Are
+            </h2>
+
+            <p className="text-xl opacity-80">
+              Lightgate is a global cultural platform and studio.
+              We operate at the intersection of culture, technology,
+              and institutional design.
             </p>
           </div>
         </FadeUp>
       </section>
 
-      <ImageSection src="/culture.jpg" />
-
-      {/* WHO WE ARE */}
-      <section className="manifesto">
+      {/* MISSION */}
+      <section className="py-24 bg-gray-50">
         <FadeUp>
-          <div className="container">
-            <h2>Who We Are</h2>
-            <p>
-              We design platforms, institutions, and experiences
-              that empower creators and communities.
-              Our work sits at the intersection of culture,
-              technology, and global exchange.
-            </p>
+          <div className="container max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
+
+            <div>
+              <h3 className="text-3xl font-bold mb-4">Our Mission</h3>
+              <p>
+                To build systems that allow culture to scale,
+                endure, and evolve.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-3xl font-bold mb-4">Our Belief</h3>
+              <p>
+                Culture is infrastructure.
+                It shapes how societies imagine themselves.
+              </p>
+            </div>
+
           </div>
         </FadeUp>
       </section>
 
-      {/* WHAT WE BELIEVE */}
-      <section>
+      {/* VALUES */}
+      <section className="py-24">
         <FadeUp>
-          <div className="container">
-            <h2>What We Believe</h2>
-            <p>
-              Culture is not decoration.  
-              Culture is power.  
-              Culture is infrastructure.
-            </p>
+          <div className="container max-w-4xl mx-auto text-center">
+
+            <h2 className="text-4xl font-bold mb-12">
+              Core Principles
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-10">
+
+              <div>
+                <h4 className="text-xl font-semibold mb-2">
+                  Long-Term Thinking
+                </h4>
+                <p>
+                  We design for decades, not quarters.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-xl font-semibold mb-2">
+                  Cultural Integrity
+                </h4>
+                <p>
+                  We respect context, history, and people.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-xl font-semibold mb-2">
+                  Systemic Design
+                </h4>
+                <p>
+                  Everything we build fits into a larger whole.
+                </p>
+              </div>
+
+            </div>
+
           </div>
         </FadeUp>
       </section>
@@ -56,4 +101,3 @@ export default function About() {
     </main>
   );
 }
-

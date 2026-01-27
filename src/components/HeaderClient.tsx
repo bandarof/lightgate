@@ -11,6 +11,10 @@ export default function HeaderClient() {
 
   const isArabic = pathname.startsWith("/ar");
 
+  /* ---------------------------------- */
+  /* TRANSLATIONS */
+  /* ---------------------------------- */
+
   const t = {
     home: isArabic ? "الرئيسية" : "Home",
     services: isArabic ? "الخدمات" : "Services",
@@ -20,8 +24,16 @@ export default function HeaderClient() {
     cta: isArabic ? "ابدأ الآن" : "Get Started",
   };
 
-  const link = (path: string) =>
-    isArabic ? `/ar${path}` : path;
+  /* ---------------------------------- */
+  /* ROUTE HELPER */
+  /* ---------------------------------- */
+
+  const link = (path: string) => {
+    if (isArabic) {
+      return path === "/" ? "/ar" : `/ar${path}`;
+    }
+    return path;
+  };
 
   const navItems = [
     { href: link("/"), label: t.home },
@@ -31,19 +43,37 @@ export default function HeaderClient() {
     { href: link("/contact"), label: t.contact },
   ];
 
+  /* ---------------------------------- */
+
   return (
-    <header className="sticky top-0 z-50 bg-white border-b">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header
+      className="sticky top-0 z-50 bg-white border-b"
+      dir={isArabic ? "rtl" : "ltr"}
+    >
+      <div
+        className={`max-w-7xl mx-auto px-4 h-16 flex items-center justify-between
+        ${isArabic ? "flex-row-reverse" : ""}`}
+      >
 
         {/* LOGO */}
-        <Link href={link("/")} className="text-2xl font-bold text-blue-600">
+        <Link
+          href={link("/")}
+          className="text-2xl font-bold text-blue-600"
+        >
           Lightgate
         </Link>
 
-        {/* DESKTOP */}
-        <nav className="hidden md:flex items-center gap-8">
+        {/* DESKTOP NAV */}
+        <nav
+          className={`hidden md:flex items-center gap-8
+          ${isArabic ? "flex-row-reverse" : ""}`}
+        >
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-gray-700 hover:text-blue-600 font-medium"
+            >
               {item.label}
             </Link>
           ))}
@@ -52,19 +82,23 @@ export default function HeaderClient() {
 
           <Link
             href={link("/contact")}
-            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md"
           >
             {t.cta}
           </Link>
         </nav>
 
-        {/* MOBILE */}
-        <div className="md:hidden flex items-center gap-3">
+        {/* MOBILE RIGHT */}
+        <div
+          className={`md:hidden flex items-center gap-3
+          ${isArabic ? "flex-row-reverse" : ""}`}
+        >
           <LanguageToggle />
 
           <button
             onClick={() => setOpen(!open)}
             className="p-2 border rounded-md"
+            aria-label="Menu"
           >
             ☰
           </button>
@@ -73,13 +107,16 @@ export default function HeaderClient() {
 
       {/* MOBILE MENU */}
       {open && (
-        <div className="md:hidden bg-white border-t px-4 py-4 space-y-3">
+        <div
+          className="md:hidden bg-white border-t px-4 py-4 space-y-3"
+          dir={isArabic ? "rtl" : "ltr"}
+        >
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="block"
+              className="block text-gray-700"
             >
               {item.label}
             </Link>
@@ -87,8 +124,8 @@ export default function HeaderClient() {
 
           <Link
             href={link("/contact")}
-            className="block bg-blue-600 text-white text-center py-2 rounded-md"
             onClick={() => setOpen(false)}
+            className="block bg-blue-600 text-white text-center py-2 rounded-md"
           >
             {t.cta}
           </Link>

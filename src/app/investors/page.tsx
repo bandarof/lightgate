@@ -1,24 +1,18 @@
+import Hero from "@/components/Hero";
+
 export default function Investors() {
   return (
     <main>
 
-      <section className="hero">
-        <div className="container">
-          <span className="index">01</span>
-          <h1>Investors</h1>
-          <p>
-            Building long-term cultural infrastructure.
-          </p>
-        </div>
-      </section>
+      <Hero
+        title="Investors"
+        subtitle="Backing long-term cultural infrastructure."
+        image="/investors.jpg"
+      />
 
-      <section>
-        <div className="container">
-          <p>
-            Lightgate develops scalable platforms
-            at the intersection of culture, technology,
-            and global markets.
-          </p>
+      <section className="py-24">
+        <div className="container max-w-3xl mx-auto text-center">
+          <p>Private briefings available upon request.</p>
         </div>
       </section>
 
