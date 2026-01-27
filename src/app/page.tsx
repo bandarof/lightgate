@@ -1,32 +1,48 @@
-import { FadeUp } from "@/components/Motion";
+"use client";
+
+import { FadeUp, useCounters } from "@/components/Motion";
+import Image from "next/image";
 
 export default function Home() {
+  useCounters();
+
   return (
     <main>
 
       {/* ================= HERO ================= */}
-      <section className="hero">
-        <img src="/home.jpg" className="hero-bg" />
+      <section
+        className="relative min-h-[90vh] flex items-center bg-cover bg-center"
+        style={{ backgroundImage: "url(/home.jpg)" }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
 
-        <FadeUp>
-          <div className="container">
-            <span className="index">01</span>
-            <h1>Illuminating the World Through Culture</h1>
-            <p>Lightgate is a global cultural platform.</p>
-          </div>
-        </FadeUp>
+        <div className="relative z-10 container mx-auto px-6 text-white">
+          <FadeUp>
+            <span className="text-sm tracking-widest opacity-70">01</span>
+
+            <h1 className="mt-4 text-5xl md:text-7xl font-bold leading-tight">
+              Illuminating the World <br /> Through Culture
+            </h1>
+
+            <p className="mt-6 max-w-xl text-lg opacity-90">
+              Lightgate is a global cultural platform.
+            </p>
+          </FadeUp>
+        </div>
       </section>
 
-      {/* ========== INTRO TEXT BLOCK ========== */}
-      <section className="py-32">
-        <div className="container max-w-4xl">
+      {/* ================= ABOUT TEXT ================= */}
+      <section className="py-28 bg-white">
+        <div className="container mx-auto px-6 text-center max-w-4xl">
 
           <FadeUp>
-            <p className="text-2xl leading-relaxed">
+            <p className="text-2xl md:text-3xl leading-relaxed font-light">
               Lightgate is not just another event maker,
               it's a global phenomenon that will redefine
               entertainment.
-              <br /><br />
+            </p>
+
+            <p className="mt-10 text-xl leading-relaxed text-gray-600">
               We are building a truly unique festive event
               experience that blends groundbreaking
               technology, unparalleled scale, and a never-
@@ -37,66 +53,100 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ========== CULTURE IMAGE + STATS ========== */}
-      <section className="relative h-[90vh] flex items-center justify-center text-white">
+      {/* ================= SEPARATOR ================= */}
+      <div className="w-full h-px bg-gray-200" />
 
-        <img
+      {/* ================= NUMBERS SECTION ================= */}
+      <section className="relative py-32">
+
+        {/* Background Image */}
+        <Image
           src="/culture.jpg"
-          className="absolute inset-0 w-full h-full object-cover"
+          alt="Culture"
+          fill
+          className="object-cover"
+          priority
         />
 
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/70" />
 
-        <div className="relative z-10 max-w-6xl w-full px-6">
+        <div className="relative z-10 container mx-auto px-6 text-white">
 
           <FadeUp>
-            <h2 className="text-5xl mb-6">WE ARE IN NUMBERS</h2>
-            <p className="mb-16 opacity-80">
-              The number statement of our achievements and journey
-            </p>
+            <div className="text-center mb-20">
+              <span className="tracking-widest opacity-70">
+                WE ARE IN NUMBERS
+              </span>
+
+              <h2 className="mt-4 text-4xl md:text-5xl font-bold">
+                The number statement of <br />
+                our achievements and journey
+              </h2>
+            </div>
           </FadeUp>
 
-          <div className="grid md:grid-cols-3 gap-12 text-center">
+          {/* STATS GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 text-center">
 
             <FadeUp>
               <div>
-                <span className="text-6xl font-bold counter" data-target="2000000">2M+</span>
-                <p className="mt-2">In-revenue</p>
+                <div
+                  className="counter text-5xl font-bold"
+                  data-target="2000000"
+                >
+                  0
+                </div>
+                <p className="mt-3 opacity-80">In-revenue</p>
               </div>
             </FadeUp>
 
             <FadeUp>
               <div>
-                <span className="text-6xl font-bold counter" data-target="15">15+</span>
-                <p className="mt-2">projects handled every year</p>
-              </div>
-            </FadeUp>
-
-            <FadeUp>
-              <div>
-                <span className="text-6xl font-bold counter" data-target="26">26Y+</span>
-                <p className="mt-2">
-                  experience in the events & media
-                  production industry
+                <div
+                  className="counter text-5xl font-bold"
+                  data-target="15"
+                >
+                  0
+                </div>
+                <p className="mt-3 opacity-80">
+                  projects handled every year
                 </p>
               </div>
             </FadeUp>
 
             <FadeUp>
               <div>
-                <span className="text-6xl font-bold counter" data-target="6">6+</span>
-                <p className="mt-2">
-                  collaborations with national and
-                  international Events and Media experts.
+                <div
+                  className="counter text-5xl font-bold"
+                  data-target="26"
+                >
+                  0
+                </div>
+                <p className="mt-3 opacity-80">
+                  years experience in events & media production
+                </p>
+              </div>
+            </FadeUp>
+
+            <FadeUp>
+              <div>
+                <div
+                  className="counter text-5xl font-bold"
+                  data-target="6"
+                >
+                  0
+                </div>
+                <p className="mt-3 opacity-80">
+                  collaborations with national & international experts
                 </p>
               </div>
             </FadeUp>
 
           </div>
-
         </div>
       </section>
 
     </main>
   );
 }
+
