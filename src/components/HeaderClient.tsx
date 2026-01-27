@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import LanguageToggle from "./LanguageToggle";
 
@@ -16,11 +17,12 @@ export default function HeaderClient() {
     services: isArabic ? "الخدمات" : "Services",
     portfolio: isArabic ? "الأعمال" : "Portfolio",
     contact: isArabic ? "تواصل" : "Contact",
+    cta: isArabic ? "ابدأ الآن" : "Get Started",
   };
 
   const link = (p: string) => (isArabic ? `/ar${p}` : p);
 
-  const nav = [
+  const navItems = [
     { href: link("/"), label: t.home },
     { href: link("/about"), label: t.about },
     { href: link("/services"), label: t.services },
@@ -32,67 +34,63 @@ export default function HeaderClient() {
     <header className="sticky top-0 z-50 bg-white border-b">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
-        {/* LEFT: LOGO */}
-        <Link href={link("/")}>
-          <img
+        {/* LOGO */}
+        <Link href={link("/")} className="flex items-center">
+          <Image
             src="/logo.png"
             alt="Lightgate"
-            className="h-12"   // BIGGER LOGO
+            width={180}
+            height={50}
+            priority
           />
         </Link>
 
-        {/* CENTER: DESKTOP NAV */}
-        <nav
-          className={`hidden md:flex items-center gap-10 ${
-            isArabic ? "text-right" : ""
-          }`}
-          dir={isArabic ? "rtl" : "ltr"}
-        >
-          {nav.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="hover:text-blue-600 transition"
-            >
-              {n.label}
+        {/* DESKTOP */}
+        <nav className={`hidden md:flex items-center gap-10 ${isArabic ? "flex-row-reverse" : ""}`}>
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              {item.label}
             </Link>
           ))}
+
+          <LanguageToggle />
+
+          <Link
+            href={link("/contact")}
+            className="px-5 py-2 bg-orange-500 text-white rounded-md"
+          >
+            {t.cta}
+          </Link>
         </nav>
 
-        {/* RIGHT: TOGGLE + HAMBURGER */}
-        <div className="flex items-center gap-4">
-
+        {/* MOBILE */}
+        <div className="md:hidden flex items-center gap-3">
           <LanguageToggle />
 
           <button
             onClick={() => setOpen(!open)}
-            className="md:hidden text-xl"
-            aria-label="Menu"
+            className="p-2 border rounded-md"
           >
             ☰
           </button>
-
         </div>
       </div>
 
-      {/* MOBILE MENU */}
       {open && (
-        <div
-          className={`md:hidden px-6 py-6 space-y-4 border-t ${
-            isArabic ? "text-right" : ""
-          }`}
-          dir={isArabic ? "rtl" : "ltr"}
-        >
-          {nav.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="block"
-              onClick={() => setOpen(false)}
-            >
-              {n.label}
+        <div className="md:hidden bg-white border-t px-6 py-4 space-y-3">
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="block">
+              {item.label}
             </Link>
           ))}
+
+          <Link
+            href={link("/contact")}
+            className="block bg-orange-500 text-white text-center py-2 rounded-md"
+            onClick={() => setOpen(false)}
+          >
+            {t.cta}
+          </Link>
         </div>
       )}
     </header>
