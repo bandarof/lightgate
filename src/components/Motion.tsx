@@ -1,29 +1,47 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ReactNode, useEffect } from "react";
 
-export const FadeUp = ({ children }: { children: React.ReactNode }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    viewport={{ once: true }}
-  >
-    {children}
-  </motion.div>
-);
-if (typeof window !== "undefined") {
-  const counters = document.querySelectorAll(".counter");
-  counters.forEach((counter) => {
-    const update = () => {
-      const target = +counter.getAttribute("data-target")!;
-      const current = +counter.innerText.replace(/\D/g, "");
-      const inc = target / 200;
-      if (current < target) {
-        counter.innerText = Math.ceil(current + inc).toString();
-        setTimeout(update, 10);
-      }
-    };
-    update();
-  });
+export function FadeUp({ children }: { children: ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      viewport={{ once: true }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* =============================
+   Animated Counters
+============================= */
+
+export function useCounters() {
+  useEffect(() => {
+    const counters =
+      document.querySelectorAll<HTMLElement>(".counter");
+
+    counters.forEach((counter) => {
+      const target = Number(counter.dataset.target);
+      let current = 0;
+
+      const update = () => {
+        const increment = target / 200;
+
+        if (current < target) {
+          current += increment;
+          counter.innerText = Math.ceil(current).toString();
+          requestAnimationFrame(update);
+        } else {
+          counter.innerText = target.toString();
+        }
+      };
+
+      update();
+    });
+  }, []);
 }
