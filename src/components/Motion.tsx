@@ -22,22 +22,33 @@ export function FadeUp({ children }: { children: React.ReactNode }) {
 
 export function useCounters() {
   useEffect(() => {
-    const counters =
-      document.querySelectorAll<HTMLElement>(".counter");
+    const counters = document.querySelectorAll(".counter");
 
-    counters.forEach((counter) => {
-      const target = Number(counter.dataset.target);
-      let current = 0;
+    counters.forEach((el) => {
+      const counter = el as HTMLElement;
 
       const update = () => {
+        const target = Number(counter.dataset.target);
+        const current = Number(counter.innerText.replace(/\D/g, ""));
         const increment = target / 200;
 
         if (current < target) {
-          current += increment;
-          counter.innerText = Math.ceil(current).toString();
+          counter.innerText = Math.ceil(current + increment).toString();
           requestAnimationFrame(update);
         } else {
           counter.innerText = target.toString();
+
+          /* -------- FORMAT AFTER FINISH -------- */
+          if (target >= 1000000) {
+            const millions = target / 1000000;
+            counter.innerText =
+              (millions % 1 === 0
+                ? millions.toString()
+                : millions.toFixed(1)) + "M+";
+          } else if (counter.dataset.suffix) {
+            counter.innerText =
+              target.toString() + counter.dataset.suffix;
+          }
         }
       };
 
