@@ -23,45 +23,43 @@ export function FadeUp({ children }: { children: React.ReactNode }) {
 export function useCounters() {
   useEffect(() => {
     const counters = document.querySelectorAll(".counter");
-    const DURATION = 1800; // ms — all end together
 
-    counters.forEach((el) => {
-      const counter = el as HTMLElement;
+    const startCounter = (counter: HTMLElement) => {
       const target = Number(counter.dataset.target);
       const suffix = counter.dataset.suffix || "";
+      let current = 0;
+      const increment = target / 200;
 
-      let start = 0;
-      let startTime: number | null = null;
-
-      const update = (timestamp: number) => {
-        if (!startTime) startTime = timestamp;
-
-        const progress = Math.min(
-          (timestamp - startTime) / DURATION,
-          1
-        );
-
-        const value = Math.floor(progress * target);
-        counter.innerText = value.toString();
-
-        if (progress < 1) {
+      const update = () => {
+        if (current < target) {
+          current += increment;
+          counter.innerText = Math.ceil(current).toString();
           requestAnimationFrame(update);
         } else {
-          /* ===== FORMAT AFTER FINISH ===== */
+          counter.innerText = target.toString();
 
-          if (target >= 1000000) {
-            const millions = target / 1000000;
-            counter.innerText =
-              (millions % 1 === 0
-                ? millions.toString()
-                : millions.toFixed(1)) + "M+";
-          } else {
-            counter.innerText = target.toString() + suffix;
+          // Format AFTER finish
+          if (suffix) {
+            counter.innerText = target + suffix;
           }
         }
       };
 
-      requestAnimationFrame(update);
-    });
+      update();
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            startCounter(entry.target as HTMLElement);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+
+    counters.forEach((counter) => observer.observe(counter));
   }, []);
 }

@@ -234,6 +234,9 @@ export default function Home() {
         </div>
 
       </section>
+
+      <div className="w-full h-px bg-gray-200 my-32" />
+
       {/* ================= SERVICES SNAPSHOT ================= */}
       <section className="py-32 bg-white">
         <div className="container mx-auto px-6">

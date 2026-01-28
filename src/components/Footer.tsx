@@ -1,118 +1,105 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+  const isArabic = pathname.startsWith("/ar");
+
+  const t = {
+    tagline: isArabic
+      ? "نصمم تجارب ثقافية تعيد تعريف الترفيه على نطاق عالمي."
+      : "We design cultural experiences that redefine entertainment globally.",
+
+    home: isArabic ? "الرئيسية" : "Home",
+    about: isArabic ? "من نحن" : "About",
+    services: isArabic ? "الخدمات" : "Services",
+    portfolio: isArabic ? "الأعمال" : "Portfolio",
+    contact: isArabic ? "تواصل" : "Contact",
+
+    follow: isArabic ? "تابعنا" : "Follow Us",
+    rights: isArabic
+      ? "جميع الحقوق محفوظة"
+      : "All rights reserved",
+  };
+
+  const link = (path: string) =>
+    isArabic ? `/ar${path}` : path;
 
   return (
-    <footer className="bg-gray-900 text-white mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Company Info */}
+    <footer className="bg-black text-white pt-32 pb-12">
+      <div className="container mx-auto px-6">
+
+        {/* TOP */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-24">
+
+          {/* BRAND */}
           <div>
-            <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-              Lightgate
-            </h3>
-            <p className="text-gray-400 text-sm">
-              Your trusted digital marketing partner driving growth and success.
+            <Image
+              src="/logo.png"
+              alt="Lightgate"
+              width={120}
+              height={40}
+              className="mb-6"
+            />
+
+            <p className="text-gray-400 leading-relaxed max-w-sm">
+              {t.tagline}
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* NAV */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/" className="text-gray-400 hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="text-gray-400 hover:text-white transition-colors">
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/portfolio" className="text-gray-400 hover:text-white transition-colors">
-                  Portfolio
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
-                  About Us
-                </Link>
-              </li>
+            <h4 className="text-lg font-semibold mb-6">
+              {isArabic ? "الروابط" : "Links"}
+            </h4>
+
+            <ul className="space-y-3 text-gray-400">
+              <li><Link href={link("/")}>{t.home}</Link></li>
+              <li><Link href={link("/about")}>{t.about}</Link></li>
+              <li><Link href={link("/services")}>{t.services}</Link></li>
+              <li><Link href={link("/portfolio")}>{t.portfolio}</Link></li>
+              <li><Link href={link("/contact")}>{t.contact}</Link></li>
             </ul>
           </div>
 
-          {/* Services */}
+          {/* CONTACT */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Services</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="/services#seo" className="text-gray-400 hover:text-white transition-colors">
-                  SEO
-                </a>
-              </li>
-              <li>
-                <a href="/services#ppc" className="text-gray-400 hover:text-white transition-colors">
-                  PPC Advertising
-                </a>
-              </li>
-              <li>
-                <a href="/services#social" className="text-gray-400 hover:text-white transition-colors">
-                  Social Media
-                </a>
-              </li>
-              <li>
-                <a href="/services#content" className="text-gray-400 hover:text-white transition-colors">
-                  Content Marketing
-                </a>
-              </li>
-            </ul>
-          </div>
+            <h4 className="text-lg font-semibold mb-6">
+              {isArabic ? "تواصل معنا" : "Contact"}
+            </h4>
 
-          {/* Contact Info */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Contact</h4>
-            <ul className="space-y-2 text-gray-400 text-sm">
-              <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
-                  Get in Touch
-                </Link>
-              </li>
-              <li>
-                <a href="mailto:hello@lightgate.media" className="hover:text-white transition-colors">
-                  hello@lightgate.media
-                </a>
-              </li>
-              <li>
-                <a href="tel:+1234567890" className="hover:text-white transition-colors">
-                  +1 (234) 567-890
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © {currentYear} Lightgate Media. All rights reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                Twitter
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                LinkedIn
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                Facebook
-              </a>
+            <div className="space-y-3 text-gray-400">
+              <p>Riyadh | Jeddah, KSA</p>
+              <p>+966-569169169</p>
+              <p>+966-591015666</p>
+              <p>lightgate.fest@gmail.com</p>
+              <p>www.Lightgate.media</p>
             </div>
           </div>
+
         </div>
+
+        {/* DIVIDER */}
+        <div className="w-full h-px bg-white/10 mb-10" />
+
+        {/* BOTTOM */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-gray-500">
+
+          <p>
+            © {new Date().getFullYear()} Lightgate. {t.rights}
+          </p>
+
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-orange-500">Instagram</a>
+            <a href="#" className="hover:text-orange-500">X</a>
+            <a href="#" className="hover:text-orange-500">LinkedIn</a>
+          </div>
+
+        </div>
+
       </div>
     </footer>
   );
