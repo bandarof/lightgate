@@ -22,11 +22,13 @@ export function FadeUp({ children }: { children: React.ReactNode }) {
 
 export function useCounters() {
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const counters = document.querySelectorAll(".counter");
 
     const DURATION = 2000; // ms
     const FPS = 60;
-    const STEPS = (DURATION / 1000) * FPS; // ~120 frames
+    const STEPS = (DURATION / 1000) * FPS;
 
     counters.forEach((el) => {
       const counter = el as HTMLElement;
@@ -42,10 +44,9 @@ export function useCounters() {
           counter.innerText = Math.floor(current).toString();
           requestAnimationFrame(update);
         } else {
-          // Finish value
           counter.innerText = target.toString();
 
-          /* ===== Format AFTER finish ===== */
+          /* ===== FORMAT AFTER FINISH ===== */
 
           if (target >= 1000000) {
             const millions = target / 1000000;
