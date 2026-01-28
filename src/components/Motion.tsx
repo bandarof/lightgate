@@ -23,36 +23,45 @@ export function FadeUp({ children }: { children: React.ReactNode }) {
 export function useCounters() {
   useEffect(() => {
     const counters = document.querySelectorAll(".counter");
+    const DURATION = 1800; // ms — all end together
 
     counters.forEach((el) => {
       const counter = el as HTMLElement;
+      const target = Number(counter.dataset.target);
+      const suffix = counter.dataset.suffix || "";
 
-      const update = () => {
-        const target = Number(counter.dataset.target);
-        const current = Number(counter.innerText.replace(/\D/g, ""));
-        const increment = target / 200;
+      let start = 0;
+      let startTime: number | null = null;
 
-        if (current < target) {
-          counter.innerText = Math.ceil(current + increment).toString();
+      const update = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+
+        const progress = Math.min(
+          (timestamp - startTime) / DURATION,
+          1
+        );
+
+        const value = Math.floor(progress * target);
+        counter.innerText = value.toString();
+
+        if (progress < 1) {
           requestAnimationFrame(update);
         } else {
-          counter.innerText = target.toString();
+          /* ===== FORMAT AFTER FINISH ===== */
 
-          /* -------- FORMAT AFTER FINISH -------- */
           if (target >= 1000000) {
             const millions = target / 1000000;
             counter.innerText =
               (millions % 1 === 0
                 ? millions.toString()
                 : millions.toFixed(1)) + "M+";
-          } else if (counter.dataset.suffix) {
-            counter.innerText =
-              target.toString() + counter.dataset.suffix;
+          } else {
+            counter.innerText = target.toString() + suffix;
           }
         }
       };
 
-      update();
+      requestAnimationFrame(update);
     });
   }, []);
 }
