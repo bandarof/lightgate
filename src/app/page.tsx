@@ -18,7 +18,6 @@ export default function Home() {
 
         <div className="relative z-10 container mx-auto px-6 text-white">
           <FadeUp>
-
             <h1 className="mt-4 text-5xl md:text-7xl font-bold leading-tight">
               Illuminating the World <br />
               Through{" "}
@@ -28,15 +27,13 @@ export default function Home() {
             <p className="mt-6 max-w-xl text-lg opacity-90">
               Lightgate is a global cultural platform.
             </p>
-
           </FadeUp>
         </div>
       </section>
 
-      {/* ================= INTRO TEXT ================= */}
+      {/* ================= INTRO ================= */}
       <section className="py-28 bg-white">
         <div className="container mx-auto px-6 text-center max-w-4xl">
-
           <FadeUp>
             <p className="text-2xl md:text-3xl leading-relaxed font-light">
               Lightgate is not just another event maker,
@@ -52,7 +49,6 @@ export default function Home() {
               festive event concept.
             </p>
           </FadeUp>
-
         </div>
       </section>
 
@@ -76,7 +72,6 @@ export default function Home() {
 
           <FadeUp>
             <div className="text-center mb-20">
-
               <span className="tracking-widest opacity-70">
                 WE ARE IN
               </span>
@@ -88,11 +83,9 @@ export default function Home() {
               <p className="mt-4 opacity-80">
                 The number statement of our achievements and journey
               </p>
-
             </div>
           </FadeUp>
 
-          {/* STATS GRID */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 text-center">
 
             <FadeUp>
@@ -100,6 +93,7 @@ export default function Home() {
                 <span
                   className="counter text-5xl font-bold text-orange-500"
                   data-target="2000000"
+                  data-format="million"
                 >
                   0
                 </span>
@@ -116,9 +110,7 @@ export default function Home() {
                 >
                   0
                 </span>
-                <p className="mt-3 opacity-80">
-                  Projects handled every year
-                </p>
+                <p className="mt-3 opacity-80">Projects handled yearly</p>
               </div>
             </FadeUp>
 
@@ -131,9 +123,7 @@ export default function Home() {
                 >
                   0
                 </span>
-                <p className="mt-3 opacity-80">
-                  Experience in events & media production
-                </p>
+                <p className="mt-3 opacity-80">Years experience</p>
               </div>
             </FadeUp>
 
@@ -146,9 +136,7 @@ export default function Home() {
                 >
                   0
                 </span>
-                <p className="mt-3 opacity-80">
-                  National & international collaborations
-                </p>
+                <p className="mt-3 opacity-80">Global collaborations</p>
               </div>
             </FadeUp>
 
@@ -156,96 +144,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= FLAGSHIP EXPERIENCES ================= */}
+      {/* ================= SERVICES SNAPSHOT ================= */}
       <section className="py-32 bg-white">
-
         <div className="container mx-auto px-6">
 
           <FadeUp>
             <div className="text-center mb-20">
-
               <h2 className="text-4xl md:text-5xl font-bold">
-                Flagship{" "}
-                <span className="text-orange-500">Experiences</span>
+                Our <span className="text-orange-500">Services</span>
               </h2>
-
-              <p className="mt-4 text-gray-600 max-w-xl mx-auto">
-                Monumental experiences engineered to shape culture,
-                scale globally, and redefine entertainment.
+              <p className="mt-4 text-gray-600">
+                End-to-end solutions for world-class events
               </p>
-
             </div>
           </FadeUp>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
 
-            {/* CARD 1 */}
-            <FadeUp>
-              <div className="group relative h-[450px] overflow-hidden rounded-2xl">
-
-                <Image
-                  src="/experience-1.jpg"
-                  alt="Immersive Festivals"
-                  fill
-                  className="object-cover group-hover:scale-110 transition duration-700"
-                />
-
-                <div className="absolute inset-0 bg-black/50" />
-
-                <div className="absolute bottom-8 left-8 text-white">
-                  <h3 className="text-2xl font-bold">Immersive Festivals</h3>
-                  <p className="mt-2 opacity-80">Mega Scale Cultural Events</p>
+            {[
+              "Event Production",
+              "Creative Direction",
+              "Stage & Set Design",
+              "Media & Broadcasting",
+              "Experiential Marketing",
+              "Technical Operations",
+            ].map((service) => (
+              <FadeUp key={service}>
+                <div className="p-10 border rounded-xl hover:shadow-xl transition">
+                  <h3 className="text-xl font-semibold mb-3">
+                    {service}
+                  </h3>
+                  <div className="w-10 h-1 bg-orange-500 mb-6" />
+                  <p className="text-gray-600">
+                    High-impact execution built for scale, precision, and unforgettable experiences.
+                  </p>
                 </div>
-
-              </div>
-            </FadeUp>
-
-            {/* CARD 2 */}
-            <FadeUp>
-              <div className="group relative h-[450px] overflow-hidden rounded-2xl">
-
-                <Image
-                  src="/experience-2.jpg"
-                  alt="Tech Installations"
-                  fill
-                  className="object-cover group-hover:scale-110 transition duration-700"
-                />
-
-                <div className="absolute inset-0 bg-black/50" />
-
-                <div className="absolute bottom-8 left-8 text-white">
-                  <h3 className="text-2xl font-bold">Tech Installations</h3>
-                  <p className="mt-2 opacity-80">Future Driven Experiences</p>
-                </div>
-
-              </div>
-            </FadeUp>
-
-            {/* CARD 3 */}
-            <FadeUp>
-              <div className="group relative h-[450px] overflow-hidden rounded-2xl">
-
-                <Image
-                  src="/experience-3.jpg"
-                  alt="Cultural Showcases"
-                  fill
-                  className="object-cover group-hover:scale-110 transition duration-700"
-                />
-
-                <div className="absolute inset-0 bg-black/50" />
-
-                <div className="absolute bottom-8 left-8 text-white">
-                  <h3 className="text-2xl font-bold">Cultural Showcases</h3>
-                  <p className="mt-2 opacity-80">Global Creative Platforms</p>
-                </div>
-
-              </div>
-            </FadeUp>
+              </FadeUp>
+            ))}
 
           </div>
 
         </div>
-
       </section>
 
     </main>
