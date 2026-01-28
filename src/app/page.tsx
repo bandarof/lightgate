@@ -33,7 +33,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= ABOUT TEXT ================= */}
+      {/* ================= INTRO TEXT ================= */}
       <section className="py-28 bg-white">
         <div className="container mx-auto px-6 text-center max-w-4xl">
 
@@ -56,10 +56,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= SEPARATOR ================= */}
+      {/* ================= DIVIDER ================= */}
       <div className="w-full h-px bg-gray-200" />
 
-      {/* ================= NUMBERS SECTION ================= */}
+      {/* ================= NUMBERS ================= */}
       <section className="relative py-32">
 
         <Image
@@ -82,7 +82,7 @@ export default function Home() {
               </span>
 
               <h2 className="mt-4 text-4xl md:text-5xl font-bold">
-                <span className="text-orange-500">Numbers</span>
+                <span className="text-orange-500">NUMBERS</span>
               </h2>
 
               <p className="mt-4 opacity-80">
@@ -92,47 +92,63 @@ export default function Home() {
             </div>
           </FadeUp>
 
-          {/* STATS */}
+          {/* STATS GRID */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 text-center">
 
             <FadeUp>
               <div>
-                <div className="counter text-5xl font-bold text-orange-500" data-target="2000000">
+                <span
+                  className="counter text-5xl font-bold text-orange-500"
+                  data-target="2"
+                  data-suffix="M+"
+                >
                   0
-                </div>
-                <p className="mt-3 opacity-80">In-revenue</p>
+                </span>
+                <p className="mt-3 opacity-80">In revenue</p>
               </div>
             </FadeUp>
 
             <FadeUp>
               <div>
-                <div className="counter text-5xl font-bold text-orange-500" data-target="15">
+                <span
+                  className="counter text-5xl font-bold text-orange-500"
+                  data-target="15"
+                  data-suffix="+"
+                >
                   0
-                </div>
+                </span>
                 <p className="mt-3 opacity-80">
-                  projects handled every year
+                  Projects handled every year
                 </p>
               </div>
             </FadeUp>
 
             <FadeUp>
               <div>
-                <div className="counter text-5xl font-bold text-orange-500" data-target="26">
+                <span
+                  className="counter text-5xl font-bold text-orange-500"
+                  data-target="26"
+                  data-suffix="Y+"
+                >
                   0
-                </div>
+                </span>
                 <p className="mt-3 opacity-80">
-                  years experience in events & media production
+                  Experience in events & media production
                 </p>
               </div>
             </FadeUp>
 
             <FadeUp>
               <div>
-                <div className="counter text-5xl font-bold text-orange-500" data-target="6">
+                <span
+                  className="counter text-5xl font-bold text-orange-500"
+                  data-target="6"
+                  data-suffix="+"
+                >
                   0
-                </div>
+                </span>
                 <p className="mt-3 opacity-80">
-                  collaborations with national & international experts
+                  National & international collaborations
                 </p>
               </div>
             </FadeUp>
