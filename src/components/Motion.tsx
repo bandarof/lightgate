@@ -24,42 +24,34 @@ export function useCounters() {
   useEffect(() => {
     const counters = document.querySelectorAll(".counter");
 
-    const startCounter = (counter: HTMLElement) => {
-      const target = Number(counter.dataset.target);
-      const suffix = counter.dataset.suffix || "";
-      let current = 0;
-      const increment = target / 200;
+    counters.forEach((el) => {
+      const counter = el as HTMLElement;
 
       const update = () => {
+        const target = Number(counter.dataset.target);
+        const current = Number(counter.innerText.replace(/\D/g, ""));
+        const increment = target / 200;
+
         if (current < target) {
-          current += increment;
-          counter.innerText = Math.ceil(current).toString();
+          counter.innerText = Math.ceil(current + increment).toString();
           requestAnimationFrame(update);
         } else {
           counter.innerText = target.toString();
 
-          // Format AFTER finish
-          if (suffix) {
-            counter.innerText = target + suffix;
+          /* ===== FINAL FORMAT AFTER FINISH ===== */
+
+          if (counter.dataset.suffix) {
+            if (counter.dataset.suffix === "M+") {
+              counter.innerText = "2M+";
+            } else {
+              counter.innerText =
+                target.toString() + counter.dataset.suffix;
+            }
           }
         }
       };
 
       update();
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            startCounter(entry.target as HTMLElement);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.4 }
-    );
-
-    counters.forEach((counter) => observer.observe(counter));
+    });
   }, []);
 }
