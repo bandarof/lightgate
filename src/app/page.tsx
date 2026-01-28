@@ -18,7 +18,6 @@ export default function Home() {
 
         <div className="relative z-10 container mx-auto px-6 text-white">
           <FadeUp>
-
             <h1 className="mt-4 text-5xl md:text-7xl font-bold leading-tight">
               Illuminating the World <br />
               Through{" "}
@@ -28,7 +27,6 @@ export default function Home() {
             <p className="mt-6 max-w-xl text-lg opacity-90">
               Lightgate is a global cultural platform.
             </p>
-
           </FadeUp>
         </div>
       </section>
@@ -36,7 +34,6 @@ export default function Home() {
       {/* ================= INTRO TEXT ================= */}
       <section className="py-28 bg-white">
         <div className="container mx-auto px-6 text-center max-w-4xl">
-
           <FadeUp>
             <p className="text-2xl md:text-3xl leading-relaxed font-light">
               Lightgate is not just another event maker,
@@ -52,7 +49,6 @@ export default function Home() {
               festive event concept.
             </p>
           </FadeUp>
-
         </div>
       </section>
 
@@ -76,7 +72,6 @@ export default function Home() {
 
           <FadeUp>
             <div className="text-center mb-20">
-
               <span className="tracking-widest opacity-70">
                 WE ARE IN
               </span>
@@ -88,19 +83,17 @@ export default function Home() {
               <p className="mt-4 opacity-80">
                 The number statement of our achievements and journey
               </p>
-
             </div>
           </FadeUp>
 
-          {/* STATS GRID */}
+          {/* ================= STATS GRID ================= */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 text-center">
 
             <FadeUp>
               <div>
                 <span
                   className="counter text-5xl font-bold text-orange-500"
-                  data-target="2"
-                  data-suffix="M+"
+                  data-target="2000000"
                 >
                   0
                 </span>
@@ -160,3 +153,4 @@ export default function Home() {
     </main>
   );
 }
+
