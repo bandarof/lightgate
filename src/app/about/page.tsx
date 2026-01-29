@@ -6,12 +6,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Users, Target, Eye } from "lucide-react";
 
-// Static hexagonal background for about section
-function StaticHexagonalBackground() {
+// Cool animated background for mission & vision section
+function MissionVisionBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !containerRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -19,35 +20,240 @@ function StaticHexagonalBackground() {
 
     // Set canvas dimensions
     const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      canvas.width = containerRef.current!.offsetWidth;
+      canvas.height = containerRef.current!.offsetHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Particle system
+    class Particle {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
+      opacity: number;
+      life: number;
+      maxLife: number;
+      waveOffset: number;
+      type: 'orb' | 'spark' | 'trail';
+
+      constructor(x: number, y: number, type: 'orb' | 'spark' | 'trail' = 'orb') {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.waveOffset = Math.random() * Math.PI * 2;
+        
+        if (type === 'orb') {
+          this.size = Math.random() * 20 + 10;
+          this.speedX = (Math.random() - 0.5) * 0.2;
+          this.speedY = (Math.random() - 0.5) * 0.2;
+          this.opacity = 0.1 + Math.random() * 0.2;
+          this.life = 1;
+          this.maxLife = 1;
+          this.color = `rgba(${255}, ${100 + Math.random() * 155}, ${50}, ${this.opacity})`;
+        } else if (type === 'spark') {
+          this.size = Math.random() * 3 + 1;
+          this.speedX = (Math.random() - 0.5) * 1.5;
+          this.speedY = (Math.random() - 0.5) * 1.5;
+          this.opacity = 0.8 + Math.random() * 0.2;
+          this.life = 0.5 + Math.random() * 0.5;
+          this.maxLife = this.life;
+          this.color = `rgba(${255}, ${200 + Math.random() * 55}, ${100}, ${this.opacity})`;
+        } else {
+          this.size = Math.random() * 2 + 1;
+          this.speedX = (Math.random() - 0.5) * 0.5;
+          this.speedY = (Math.random() - 0.5) * 0.5;
+          this.opacity = 0.3 + Math.random() * 0.3;
+          this.life = 2 + Math.random() * 3;
+          this.maxLife = this.life;
+          this.color = `rgba(${255}, ${150 + Math.random() * 105}, ${50}, ${this.opacity})`;
+        }
+      }
+
+      update(time: number) {
+        this.life -= 0.002;
+        
+        if (this.type === 'orb') {
+          // Orb floating motion with wave pattern
+          this.x += this.speedX + Math.sin(time + this.waveOffset) * 0.2;
+          this.y += this.speedY + Math.cos(time + this.waveOffset) * 0.2;
+          
+          // Pulsing effect
+          const pulse = Math.sin(time * 2 + this.waveOffset) * 0.3 + 0.7;
+          this.size = (Math.random() * 20 + 10) * pulse;
+        } else {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          
+          // Slow down over time
+          this.speedX *= 0.99;
+          this.speedY *= 0.99;
+        }
+
+        // Wrap around edges
+        if (this.x < -50) this.x = canvas.width + 50;
+        if (this.x > canvas.width + 50) this.x = -50;
+        if (this.y < -50) this.y = canvas.height + 50;
+        if (this.y > canvas.height + 50) this.y = -50;
+      }
+
+      draw(ctx: CanvasRenderingContext2D, time: number) {
+        if (this.life <= 0) return;
+
+        const currentOpacity = this.opacity * (this.life / this.maxLife);
+        
+        if (this.type === 'orb') {
+          // Orb with gradient
+          const gradient = ctx.createRadialGradient(
+            this.x, this.y, 0,
+            this.x, this.y, this.size
+          );
+          gradient.addColorStop(0, this.color.replace('0.3', currentOpacity.toString()));
+          gradient.addColorStop(0.5, this.color.replace('0.3', (currentOpacity * 0.5).toString()));
+          gradient.addColorStop(1, this.color.replace('0.3', '0'));
+          
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+
+          // Orb glow
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = this.color.replace('0.3', (currentOpacity * 0.2).toString());
+          ctx.fill();
+        } else {
+          // Spark/trail particle
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = this.color.replace(this.opacity.toString(), currentOpacity.toString());
+          ctx.fill();
+
+          // Trail effect
+          ctx.beginPath();
+          ctx.arc(this.x - this.speedX * 2, this.y - this.speedY * 2, this.size * 0.5, 0, Math.PI * 2);
+          ctx.fillStyle = this.color.replace(this.opacity.toString(), (currentOpacity * 0.5).toString());
+          ctx.fill();
+        }
+      }
+    }
+
+    // Create particles
+    const particles: Particle[] = [];
+    const particleCount = 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const type = i % 3 === 0 ? 'spark' : i % 3 === 1 ? 'trail' : 'orb';
+      particles.push(new Particle(x, y, type));
+    }
+
+    // Energy waves
+    class EnergyWave {
+      x: number;
+      y: number;
+      radius: number;
+      speed: number;
+      opacity: number;
+      thickness: number;
+      color: string;
+
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.radius = 0;
+        this.speed = 0.5 + Math.random() * 1;
+        this.opacity = 0.5;
+        this.thickness = 2 + Math.random() * 3;
+        this.color = `rgba(${255}, ${100 + Math.random() * 155}, ${50}, ${this.opacity})`;
+      }
+
+      update() {
+        this.radius += this.speed;
+        this.opacity -= 0.005;
+        return this.opacity > 0;
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = this.color.replace(this.opacity.toString(), this.opacity.toString());
+        ctx.lineWidth = this.thickness;
+        ctx.stroke();
+
+        // Inner glow
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = this.color.replace(this.opacity.toString(), (this.opacity * 0.3).toString());
+        ctx.lineWidth = this.thickness * 2;
+        ctx.stroke();
+      }
+    }
+
+    const energyWaves: EnergyWave[] = [];
+    
+    // Create initial energy waves at card positions
+    setTimeout(() => {
+      const leftCardX = canvas.width * 0.25;
+      const rightCardX = canvas.width * 0.75;
+      const cardY = canvas.height * 0.5;
       
-      // Clear and draw static pattern
+      for (let i = 0; i < 3; i++) {
+        energyWaves.push(new EnergyWave(leftCardX, cardY));
+        energyWaves.push(new EnergyWave(rightCardX, cardY));
+      }
+    }, 1000);
+
+    // Add new energy waves periodically
+    setInterval(() => {
+      if (energyWaves.length < 10) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        energyWaves.push(new EnergyWave(x, y));
+      }
+    }, 3000);
+
+    // Animation loop
+    let animationId: number;
+    let time = 0;
+    
+    const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw subtle gradient background
+      time += 0.01;
+
+      // Draw gradient background
       const gradient = ctx.createLinearGradient(
         0, 0, 
         canvas.width, canvas.height
       );
-      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.03)');
-      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.02)');
-      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.01)');
+      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
+      gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.015)');
+      gradient.addColorStop(0.6, 'rgba(255, 200, 0, 0.01)');
+      gradient.addColorStop(1, 'rgba(255, 115, 0, 0.02)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw hexagonal pattern
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.06)';
+      // Draw subtle geometric pattern
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.03)';
       ctx.lineWidth = 1;
       
-      const hexSize = 70;
-      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
-        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
+      // Hexagonal grid
+      const hexSize = 80;
+      for (let x = -hexSize; x < canvas.width + hexSize; x += hexSize * 1.5) {
+        for (let y = -hexSize; y < canvas.height + hexSize; y += hexSize * Math.sqrt(3)) {
+          // Animate hexagons
+          const pulse = Math.sin(time + x * 0.01 + y * 0.01) * 0.5 + 0.5;
+          
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const hexX = x + hexSize * Math.cos(angle);
-            const hexY = y + hexSize * Math.sin(angle);
+            const angle = (Math.PI / 3) * i + time * 0.1;
+            const hexX = x + hexSize * pulse * Math.cos(angle);
+            const hexY = y + hexSize * pulse * Math.sin(angle);
             if (i === 0) {
               ctx.moveTo(hexX, hexY);
             } else {
@@ -58,21 +264,155 @@ function StaticHexagonalBackground() {
           ctx.stroke();
         }
       }
+
+      // Update and draw energy waves
+      for (let i = energyWaves.length - 1; i >= 0; i--) {
+        if (!energyWaves[i].update()) {
+          energyWaves.splice(i, 1);
+        } else {
+          energyWaves[i].draw(ctx);
+        }
+      }
+
+      // Update and draw particles
+      particles.forEach((particle, i) => {
+        particle.update(time);
+        particle.draw(ctx, time);
+        
+        // Remove and replace dead particles
+        if (particle.life <= 0) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height;
+          const type = i % 3 === 0 ? 'spark' : i % 3 === 1 ? 'trail' : 'orb';
+          particles[i] = new Particle(x, y, type);
+        }
+
+        // Draw connections between nearby particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 150) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            const opacity = (1 - distance / 150) * 0.1 * particles[i].opacity * particles[j].opacity;
+            ctx.strokeStyle = `rgba(255, 115, 0, ${opacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      });
+
+      // Draw card connection line
+      const leftCardX = canvas.width * 0.25;
+      const rightCardX = canvas.width * 0.75;
+      const cardY = canvas.height * 0.5;
+      
+      ctx.beginPath();
+      ctx.moveTo(leftCardX, cardY);
+      ctx.bezierCurveTo(
+        canvas.width * 0.4, cardY - 50,
+        canvas.width * 0.6, cardY + 50,
+        rightCardX, cardY
+      );
+      ctx.strokeStyle = `rgba(255, 115, 0, ${0.05 + Math.sin(time) * 0.02})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw pulsing orbs at card positions
+      const pulseSize = 5 + Math.sin(time * 2) * 2;
+      [leftCardX, rightCardX].forEach((x, i) => {
+        const yOffset = Math.sin(time * 3 + i * Math.PI) * 20;
+        
+        // Main orb
+        ctx.beginPath();
+        ctx.arc(x, cardY + yOffset, pulseSize, 0, Math.PI * 2);
+        const pulseGradient = ctx.createRadialGradient(
+          x, cardY + yOffset, 0,
+          x, cardY + yOffset, pulseSize
+        );
+        pulseGradient.addColorStop(0, `rgba(255, 115, 0, ${0.8 + Math.sin(time * 4) * 0.2})`);
+        pulseGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
+        ctx.fillStyle = pulseGradient;
+        ctx.fill();
+
+        // Orb glow
+        ctx.beginPath();
+        ctx.arc(x, cardY + yOffset, pulseSize * 3, 0, Math.PI * 2);
+        const glowGradient = ctx.createRadialGradient(
+          x, cardY + yOffset, 0,
+          x, cardY + yOffset, pulseSize * 3
+        );
+        glowGradient.addColorStop(0, `rgba(255, 115, 0, ${0.3 + Math.sin(time * 4) * 0.1})`);
+        glowGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
+        ctx.fillStyle = glowGradient;
+        ctx.fill();
+      });
+
+      // Draw floating particles along connection line
+      for (let i = 0; i < 5; i++) {
+        const progress = (time * 0.1 + i * 0.2) % 1;
+        const t = progress * 2 - 1;
+        const x = leftCardX + (rightCardX - leftCardX) * progress;
+        const y = cardY + 50 * Math.sin(t * Math.PI);
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 200, 50, ${0.5 + Math.sin(time * 5 + i) * 0.3})`;
+        ctx.fill();
+      }
+
+      // Draw ambient light beams
+      for (let i = 0; i < 3; i++) {
+        const beamX = canvas.width * 0.5;
+        const beamY = canvas.height;
+        const angle = time * 0.5 + (i * Math.PI * 2) / 3;
+        const length = 300;
+        
+        ctx.beginPath();
+        ctx.moveTo(beamX, beamY);
+        ctx.lineTo(
+          beamX + Math.cos(angle) * length,
+          beamY + Math.sin(angle) * length
+        );
+        
+        const beamGradient = ctx.createLinearGradient(
+          beamX, beamY,
+          beamX + Math.cos(angle) * length,
+          beamY + Math.sin(angle) * length
+        );
+        beamGradient.addColorStop(0, `rgba(255, 115, 0, ${0.1})`);
+        beamGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
+        
+        ctx.strokeStyle = beamGradient;
+        ctx.lineWidth = 30;
+        ctx.stroke();
+        
+        ctx.strokeStyle = beamGradient;
+        ctx.lineWidth = 10;
+        ctx.stroke();
+      }
+
+      animationId = requestAnimationFrame(animate);
     };
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    animate();
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationId);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full opacity-40"
-    />
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+      />
+    </div>
   );
 }
 
@@ -400,8 +740,8 @@ export default function About() {
       {/* ================= MISSION & VISION ================= */}
       <section className="relative py-32 bg-white dark:bg-neutral-900 overflow-hidden">
         
-        {/* Hexagonal Background Pattern */}
-        <StaticHexagonalBackground />
+        {/* AMAZING Animated Background */}
+        <MissionVisionBackground />
 
         {/* Orange gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 via-transparent to-orange-500/5" />
@@ -416,24 +756,27 @@ export default function About() {
                               rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
                 
-                <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-10 
-                              border border-gray-200 dark:border-neutral-700
+                <div className="relative bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-2xl p-10 
+                              border border-gray-200/50 dark:border-neutral-700/50
                               group-hover:border-orange-500/50
-                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
+                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.25)]
                               transition-all duration-500 h-full">
                   
-                  {/* Icon */}
-                  <div className="w-20 h-20 rounded-2xl mb-8 
+                  {/* Animated Icon */}
+                  <div className="relative w-20 h-20 rounded-2xl mb-8 
                                 bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                 flex items-center justify-center
                                 group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500">
-                    <Target className="w-10 h-10 text-orange-500" />
+                                transition-all duration-500
+                                overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent animate-pulse" />
+                    <Target className="w-10 h-10 text-orange-500 relative z-10" />
                   </div>
 
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">01</span>
+                    <div className="relative w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 animate-pulse" />
+                      <span className="text-white font-bold text-lg relative z-10">01</span>
                     </div>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
                       Our <span className="text-orange-500">Mission</span>
@@ -454,6 +797,10 @@ export default function About() {
                   <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-orange-500/0 
                                 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)]
                                 transition-all duration-500" />
+                  
+                  {/* Floating particles effect */}
+                  <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-orange-500/20 animate-ping" />
+                  <div className="absolute -bottom-2 -left-2 w-3 h-3 rounded-full bg-orange-500/20 animate-ping delay-300" />
                 </div>
               </div>
             </FadeUp>
@@ -465,24 +812,27 @@ export default function About() {
                               rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
                 
-                <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-10 
-                              border border-gray-200 dark:border-neutral-700
+                <div className="relative bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-2xl p-10 
+                              border border-gray-200/50 dark:border-neutral-700/50
                               group-hover:border-orange-500/50
-                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
+                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.25)]
                               transition-all duration-500 h-full">
                   
-                  {/* Icon */}
-                  <div className="w-20 h-20 rounded-2xl mb-8 
+                  {/* Animated Icon */}
+                  <div className="relative w-20 h-20 rounded-2xl mb-8 
                                 bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                 flex items-center justify-center
                                 group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500">
-                    <Eye className="w-10 h-10 text-orange-500" />
+                                transition-all duration-500
+                                overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent animate-pulse" />
+                    <Eye className="w-10 h-10 text-orange-500 relative z-10" />
                   </div>
 
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">02</span>
+                    <div className="relative w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 animate-pulse" />
+                      <span className="text-white font-bold text-lg relative z-10">02</span>
                     </div>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
                       Our <span className="text-orange-500">Vision</span>
@@ -502,6 +852,10 @@ export default function About() {
                   <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-orange-500/0 
                                 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)]
                                 transition-all duration-500" />
+                  
+                  {/* Floating particles effect */}
+                  <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-orange-500/20 animate-ping" />
+                  <div className="absolute -bottom-2 -left-2 w-3 h-3 rounded-full bg-orange-500/20 animate-ping delay-300" />
                 </div>
               </div>
             </FadeUp>
