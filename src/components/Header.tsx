@@ -1,98 +1,42 @@
-// src/components/Header.tsx
+// src/components/LanguageToggle.tsx
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import ThemeToggle from "./ThemeToggle";
-import LanguageToggle from "./LanguageToggle";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function Header() {
+export default function LanguageToggle() {
+  const router = useRouter();
   const pathname = usePathname();
   const isArabic = pathname.startsWith("/ar");
-  
-  // Navigation items with translations - in correct order: Home, About, Services, Portfolio, Contact
-  const navItems = [
-    { 
-      key: "home", 
-      en: "Home", 
-      ar: "الرئيسية", 
-      href: "/",
-      arHref: "/ar"
-    },
-    { 
-      key: "about", 
-      en: "About", 
-      ar: "من نحن", 
-      href: "/about",
-      arHref: "/ar/about"
-    },
-    { 
-      key: "services", 
-      en: "Services", 
-      ar: "الخدمات", 
-      href: "/services",
-      arHref: "/ar/services"
-    },
-    { 
-      key: "portfolio", 
-      en: "Portfolio", 
-      ar: "الأعمال", 
-      href: "/portfolio",
-      arHref: "/ar/portfolio"
-    },
-    { 
-      key: "contact", 
-      en: "Contact", 
-      ar: "اتصل بنا", 
-      href: "/contact",
-      arHref: "/ar/contact"
-    },
-  ];
+
+  const toggle = () => {
+    if (isArabic) {
+      router.push(pathname.replace("/ar", "") || "/");
+    } else {
+      router.push("/ar" + pathname);
+    }
+  };
 
   return (
-    <header 
-      dir={isArabic ? "rtl" : "ltr"}
-      className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur border-b border-gray-200 dark:border-neutral-800"
+    <button
+      onClick={toggle}
+      className="
+        flex items-center justify-center
+        hover:opacity-80
+        transition-opacity
+        text-2xl
+      "
+      aria-label={isArabic ? "Switch to English" : "Switch to Arabic"}
+      title={isArabic ? "Switch to English" : "Switch to Arabic"}
     >
-      <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-
-        {/* LOGO */}
-        <Link href={isArabic ? "/ar" : "/"} className="flex items-center">
-          <Image
-            src="/logo.png"
-            alt="Lightgate"
-            width={120}
-            height={40}
-            priority
-            className="w-[120px] h-auto"
-          />
-        </Link>
-
-        {/* NAV - Centered using flex-grow */}
-        <div className="flex-1 flex justify-center">
-          <nav className="hidden md:flex items-center gap-10 text-sm font-medium">
-            {navItems.map((item) => (
-              <Link
-                key={item.key}
-                href={isArabic ? item.arHref : item.href}
-                className="text-gray-700 dark:text-gray-300
-                           hover:text-orange-500 dark:hover:text-orange-400
-                           transition-colors"
-              >
-                {isArabic ? item.ar : item.en}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="flex items-center gap-4">
-          <LanguageToggle />
-          <ThemeToggle />
-        </div>
-
-      </div>
-    </header>
+      {/* Show Saudi flag when English is selected (click to switch to Arabic) */}
+      {/* Show US flag when Arabic is selected (click to switch to English) */}
+      {isArabic ? (
+        // When in Arabic, show US flag (click to switch to English)
+        <span className="text-2xl">🇺🇸</span>
+      ) : (
+        // When in English, show Saudi flag (click to switch to Arabic)
+        <span className="text-2xl">🇸🇦</span>
+      )}
+    </button>
   );
 }
