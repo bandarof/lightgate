@@ -1,4 +1,3 @@
-cat > src/app/page.tsx << 'EOF'
 "use client";
 
 import { FadeUp, useCounters } from "@/components/Motion";
@@ -820,4 +819,60 @@ export default function Home() {
                     <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-orange-300 transition-colors">
                       {service}
                     </h3>
-                    <div className="w-10 h-1 bg-orange-500 mb
+                    <div className="w-10 h-1 bg-orange-500 mb-6 
+                                  group-hover:w-16 group-hover:bg-orange-400
+                                  transition-all duration-500" />
+                    <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
+                      High-impact execution built for scale, precision,
+                      and unforgettable experiences.
+                    </p>
+                  </div>
+
+                  {/* Corner accents */}
+                  <div className="absolute top-3 left-3 w-3 h-3 border-t border-l border-orange-500/0 
+                                group-hover:border-orange-500 group-hover:shadow-[0_0_8px_rgba(255,115,0,0.8)]
+                                transition-all duration-500" />
+                  <div className="absolute top-3 right-3 w-3 h-3 border-t border-r border-orange-500/0 
+                                group-hover:border-orange-500 group-hover:shadow-[0_0_8px_rgba(255,115,0,0.8)]
+                                transition-all duration-500" />
+                  <div className="absolute bottom-3 left-3 w-3 h-3 border-b border-l border-orange-500/0 
+                                group-hover:border-orange-500 group-hover:shadow-[0_0_8px_rgba(255,115,0,0.8)]
+                                transition-all duration-500" />
+                  <div className="absolute bottom-3 right-3 w-3 h-3 border-b border-r border-orange-500/0 
+                                group-hover:border-orange-500 group-hover:shadow-[0_0_8px_rgba(255,115,0,0.8)]
+                                transition-all duration-500" />
+
+                </div>
+              </FadeUp>
+            ))}
+
+          </div>
+
+          {/* View Services Button */}
+          <FadeUp>
+            <div className="text-center">
+              <Link
+                href="/services"
+                className="inline-flex items-center gap-3 px-8 py-4 
+                         rounded-full bg-transparent border-2 border-orange-500
+                         text-orange-500 font-medium text-lg
+                         hover:bg-orange-500 hover:text-white
+                         hover:shadow-[0_0_30px_rgba(255,115,0,0.5)]
+                         transform hover:-translate-y-1
+                         transition-all duration-300"
+              >
+                View All Services
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <p className="mt-4 text-gray-300">
+                Explore our complete range of professional event services
+              </p>
+            </div>
+          </FadeUp>
+
+        </div>
+      </section>
+
+    </main>
+  );
+}
