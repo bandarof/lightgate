@@ -1,3 +1,4 @@
+cat > src/app/page.tsx << 'EOF'
 "use client";
 
 import { FadeUp, useCounters } from "@/components/Motion";
@@ -162,6 +163,29 @@ function FlagshipBackground() {
         ctx.stroke();
       }
 
+      // Draw hexagonal pattern (similar to footer)
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.03)';
+      ctx.lineWidth = 0.5;
+      
+      const hexSize = 60;
+      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
+        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const hexX = x + hexSize * Math.cos(angle);
+            const hexY = y + hexSize * Math.sin(angle);
+            if (i === 0) {
+              ctx.moveTo(hexX, hexY);
+            } else {
+              ctx.lineTo(hexX, hexY);
+            }
+          }
+          ctx.closePath();
+          ctx.stroke();
+        }
+      }
+
       animationId = requestAnimationFrame(animate);
     };
 
@@ -177,6 +201,104 @@ function FlagshipBackground() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full opacity-40"
+    />
+  );
+}
+
+// Hexagonal background for intro section (without particles)
+function HexagonalBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas dimensions
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Draw static hexagonal pattern
+    const drawHexagons = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw subtle gradient background
+      const gradient = ctx.createLinearGradient(
+        0, 0, 
+        canvas.width, canvas.height
+      );
+      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
+      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.01)');
+      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.005)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw hexagonal pattern
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.03)';
+      ctx.lineWidth = 0.5;
+      
+      const hexSize = 80; // Slightly larger hexagons for intro
+      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
+        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const hexX = x + hexSize * Math.cos(angle);
+            const hexY = y + hexSize * Math.sin(angle);
+            if (i === 0) {
+              ctx.moveTo(hexX, hexY);
+            } else {
+              ctx.lineTo(hexX, hexY);
+            }
+          }
+          ctx.closePath();
+          ctx.stroke();
+        }
+      }
+
+      // Draw subtle connecting lines between hexagon centers
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.02)';
+      ctx.lineWidth = 0.3;
+      
+      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
+        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
+          // Connect to right neighbor
+          if (x + hexSize * 1.5 < canvas.width) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + hexSize * 1.5, y);
+            ctx.stroke();
+          }
+          
+          // Connect to bottom-right neighbor
+          if (x + hexSize * 0.75 < canvas.width && y + hexSize * Math.sqrt(3) / 2 < canvas.height) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + hexSize * 0.75, y + hexSize * Math.sqrt(3) / 2);
+            ctx.stroke();
+          }
+        }
+      }
+    };
+
+    drawHexagons();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full opacity-30"
     />
   );
 }
@@ -209,9 +331,15 @@ export default function Home() {
       </section>
 
       {/* ================= INTRO ================= */}
-      <section className="py-28 bg-white dark:bg-neutral-900">
-        <div className="container mx-auto px-6 text-center max-w-4xl">
+      <section className="relative py-28 bg-white dark:bg-neutral-900 overflow-hidden">
+        
+        {/* Hexagonal Background Pattern */}
+        <HexagonalBackground />
 
+        {/* Orange gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-500/5" />
+
+        <div className="relative z-10 container mx-auto px-6 text-center max-w-4xl">
           <FadeUp>
             <p className="text-2xl md:text-3xl font-light">
               Lightgate is not just another event maker, it's a global
@@ -224,7 +352,6 @@ export default function Home() {
               blending technology, scale, and a never-before-seen concept.
             </p>
           </FadeUp>
-
         </div>
       </section>
 
@@ -307,7 +434,7 @@ export default function Home() {
             
             {/* Step 1: Briefing & Brainstorming */}
             <FadeUp>
-              <div className="relative group">
+              <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
                               rounded-2xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
@@ -316,7 +443,7 @@ export default function Home() {
                               border border-gray-200 dark:border-neutral-700
                               group-hover:border-orange-500/50
                               group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                              transition-all duration-500 h-full">
+                              transition-all duration-500 h-full flex flex-col">
                   
                   {/* Step Number */}
                   <div className="absolute -top-4 -left-4 w-12 h-12 bg-orange-500 
@@ -332,7 +459,7 @@ export default function Home() {
                                 bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                 flex items-center justify-center
                                 group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500">
+                                transition-all duration-500 flex-shrink-0">
                     <div className="w-8 h-8 rounded-full bg-orange-500/30 
                                   flex items-center justify-center
                                   group-hover:bg-orange-500/40
@@ -344,11 +471,11 @@ export default function Home() {
                   <h3 className="text-xl font-bold text-center mb-4 
                                text-gray-800 dark:text-white
                                group-hover:text-orange-500
-                               transition-colors duration-500">
+                               transition-colors duration-500 flex-shrink-0">
                     Briefing & Brainstorming
                   </h3>
                   
-                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                  <p className="text-gray-600 dark:text-gray-400 text-center flex-grow">
                     We collaborate on a vision board to capture goals, design concepts, 
                     and key details, ensuring a unified plan before production begins.
                   </p>
@@ -362,9 +489,9 @@ export default function Home() {
               </div>
             </FadeUp>
 
-            {/* Step 2: Execution */}
-            <div>
-              <div className="relative group">
+            {/* Step 2: Execution - FIXED: Now has FadeUp */}
+            <FadeUp>
+              <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
                               rounded-2xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
@@ -373,7 +500,7 @@ export default function Home() {
                               border border-gray-200 dark:border-neutral-700
                               group-hover:border-orange-500/50
                               group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                              transition-all duration-500 h-full">
+                              transition-all duration-500 h-full flex flex-col">
                   
                   {/* Step Number */}
                   <div className="absolute -top-4 -left-4 w-12 h-12 bg-orange-500 
@@ -389,7 +516,7 @@ export default function Home() {
                                 bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                 flex items-center justify-center
                                 group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500">
+                                transition-all duration-500 flex-shrink-0">
                     <div className="w-10 h-2 bg-orange-500 rounded-full 
                                   group-hover:w-12 group-hover:bg-orange-400
                                   transition-all duration-500" />
@@ -398,11 +525,11 @@ export default function Home() {
                   <h3 className="text-xl font-bold text-center mb-4 
                                text-gray-800 dark:text-white
                                group-hover:text-orange-500
-                               transition-colors duration-500">
+                               transition-colors duration-500 flex-shrink-0">
                     Execution
                   </h3>
                   
-                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                  <p className="text-gray-600 dark:text-gray-400 text-center flex-grow">
                     We bring the approved design to life, crafting the product while 
                     making any needed tweaks in close collaboration with the client.
                   </p>
@@ -414,11 +541,11 @@ export default function Home() {
                                 transition-all duration-500" />
                 </div>
               </div>
-            </div>
+            </FadeUp>
 
-            {/* Step 3: Finalization */}
-            <div>
-              <div className="relative group">
+            {/* Step 3: Finalization - FIXED: Now has FadeUp */}
+            <FadeUp>
+              <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
                               rounded-2xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
@@ -427,7 +554,7 @@ export default function Home() {
                               border border-gray-200 dark:border-neutral-700
                               group-hover:border-orange-500/50
                               group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                              transition-all duration-500 h-full">
+                              transition-all duration-500 h-full flex flex-col">
                   
                   {/* Step Number */}
                   <div className="absolute -top-4 -left-4 w-12 h-12 bg-orange-500 
@@ -443,7 +570,7 @@ export default function Home() {
                                 bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                 flex items-center justify-center
                                 group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500">
+                                transition-all duration-500 flex-shrink-0">
                     <div className="w-8 h-8 border-2 border-orange-500 rounded-full 
                                   flex items-center justify-center
                                   group-hover:border-orange-400 group-hover:scale-110
@@ -457,11 +584,11 @@ export default function Home() {
                   <h3 className="text-xl font-bold text-center mb-4 
                                text-gray-800 dark:text-white
                                group-hover:text-orange-500
-                               transition-colors duration-500">
+                               transition-colors duration-500 flex-shrink-0">
                     Finalization
                   </h3>
                   
-                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                  <p className="text-gray-600 dark:text-gray-400 text-center flex-grow">
                     We conduct a quality review and final fitting, making last-minute 
                     adjustments so the piece meets our exacting standards.
                   </p>
@@ -473,11 +600,11 @@ export default function Home() {
                                 transition-all duration-500" />
                 </div>
               </div>
-            </div>
+            </FadeUp>
 
-            {/* Step 4: Delivery */}
-            <div>
-              <div className="relative group">
+            {/* Step 4: Delivery - FIXED: Now has FadeUp */}
+            <FadeUp>
+              <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
                               rounded-2xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
@@ -486,7 +613,7 @@ export default function Home() {
                               border border-gray-200 dark:border-neutral-700
                               group-hover:border-orange-500/50
                               group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                              transition-all duration-500 h-full">
+                              transition-all duration-500 h-full flex flex-col">
                   
                   {/* Step Number */}
                   <div className="absolute -top-4 -left-4 w-12 h-12 bg-orange-500 
@@ -502,7 +629,7 @@ export default function Home() {
                                 bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                 flex items-center justify-center
                                 group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500">
+                                transition-all duration-500 flex-shrink-0">
                     <div className="w-10 h-1.5 bg-orange-500 rounded-full rotate-45 
                                   group-hover:bg-orange-400 group-hover:rotate-90
                                   transition-all duration-500" />
@@ -514,17 +641,17 @@ export default function Home() {
                   <h3 className="text-xl font-bold text-center mb-4 
                                text-gray-800 dark:text-white
                                group-hover:text-orange-500
-                               transition-colors duration-500">
+                               transition-colors duration-500 flex-shrink-0">
                     Delivery
                   </h3>
                   
-                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                  <p className="text-gray-600 dark:text-gray-400 text-center flex-grow">
                     We hand over the finished product at least one week before the event, 
                     performing a final check to guarantee complete client satisfaction.
                   </p>
                 </div>
               </div>
-            </div>
+            </FadeUp>
 
           </div>
 
@@ -693,60 +820,4 @@ export default function Home() {
                     <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-orange-300 transition-colors">
                       {service}
                     </h3>
-                    <div className="w-10 h-1 bg-orange-500 mb-6 
-                                  group-hover:w-16 group-hover:bg-orange-400
-                                  transition-all duration-500" />
-                    <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
-                      High-impact execution built for scale, precision,
-                      and unforgettable experiences.
-                    </p>
-                  </div>
-
-                  {/* Corner accents */}
-                  <div className="absolute top-3 left-3 w-3 h-3 border-t border-l border-orange-500/0 
-                                group-hover:border-orange-500 group-hover:shadow-[0_0_8px_rgba(255,115,0,0.8)]
-                                transition-all duration-500" />
-                  <div className="absolute top-3 right-3 w-3 h-3 border-t border-r border-orange-500/0 
-                                group-hover:border-orange-500 group-hover:shadow-[0_0_8px_rgba(255,115,0,0.8)]
-                                transition-all duration-500" />
-                  <div className="absolute bottom-3 left-3 w-3 h-3 border-b border-l border-orange-500/0 
-                                group-hover:border-orange-500 group-hover:shadow-[0_0_8px_rgba(255,115,0,0.8)]
-                                transition-all duration-500" />
-                  <div className="absolute bottom-3 right-3 w-3 h-3 border-b border-r border-orange-500/0 
-                                group-hover:border-orange-500 group-hover:shadow-[0_0_8px_rgba(255,115,0,0.8)]
-                                transition-all duration-500" />
-
-                </div>
-              </FadeUp>
-            ))}
-
-          </div>
-
-          {/* View Services Button */}
-          <FadeUp>
-            <div className="text-center">
-              <Link
-                href="/services"
-                className="inline-flex items-center gap-3 px-8 py-4 
-                         rounded-full bg-transparent border-2 border-orange-500
-                         text-orange-500 font-medium text-lg
-                         hover:bg-orange-500 hover:text-white
-                         hover:shadow-[0_0_30px_rgba(255,115,0,0.5)]
-                         transform hover:-translate-y-1
-                         transition-all duration-300"
-              >
-                View All Services
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <p className="mt-4 text-gray-300">
-                Explore our complete range of professional event services
-              </p>
-            </div>
-          </FadeUp>
-
-        </div>
-      </section>
-
-    </main>
-  );
-}
+                    <div className="w-10 h-1 bg-orange-500 mb
