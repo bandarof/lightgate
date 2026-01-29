@@ -363,7 +363,7 @@ export default function Home() {
             </FadeUp>
 
             {/* Step 2: Execution */}
-            <FadeUp delay={0.1}>
+            <div>
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
                               rounded-2xl opacity-0 group-hover:opacity-100 
@@ -414,10 +414,10 @@ export default function Home() {
                                 transition-all duration-500" />
                 </div>
               </div>
-            </FadeUp>
+            </div>
 
             {/* Step 3: Finalization */}
-            <FadeUp delay={0.2}>
+            <div>
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
                               rounded-2xl opacity-0 group-hover:opacity-100 
@@ -473,10 +473,10 @@ export default function Home() {
                                 transition-all duration-500" />
                 </div>
               </div>
-            </FadeUp>
+            </div>
 
             {/* Step 4: Delivery */}
-            <FadeUp delay={0.3}>
+            <div>
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
                               rounded-2xl opacity-0 group-hover:opacity-100 
@@ -524,7 +524,7 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-            </FadeUp>
+            </div>
 
           </div>
 
