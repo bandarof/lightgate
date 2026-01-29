@@ -18,22 +18,18 @@ export default function HeaderClient() {
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const stored = localStorage.getItem("theme");
 
-    if (stored === "dark" || (!stored && systemDark)) {
-      document.documentElement.classList.add("dark");
-      setTheme("dark");
-    }
+    const active =
+      stored === "dark" || (!stored && systemDark) ? "dark" : "light";
+
+    document.documentElement.classList.toggle("dark", active === "dark");
+    setTheme(active);
   }, []);
 
   const toggleTheme = () => {
-    if (theme === "dark") {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-      setTheme("light");
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-      setTheme("dark");
-    }
+    const next = theme === "dark" ? "light" : "dark";
+    document.documentElement.classList.toggle("dark", next === "dark");
+    localStorage.setItem("theme", next);
+    setTheme(next);
   };
 
   /* ---------------- TRANSLATIONS ---------------- */
@@ -58,20 +54,26 @@ export default function HeaderClient() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-gray-200 dark:border-neutral-800">
+    <header
+      className="
+        sticky top-0 z-50
+        bg-white dark:bg-neutral-950
+        border-b border-gray-200 dark:border-neutral-800
+      "
+    >
       <div
-        className={`max-w-7xl mx-auto px-6 h-20 flex items-center justify-between ${
+        className={`max-w-7xl mx-auto px-6 h-24 flex items-center justify-between ${
           isArabic ? "flex-row-reverse" : ""
         }`}
       >
-
         {/* LOGO */}
-        <Link href={link("/")}>
+        <Link href={link("/")} className="flex items-center">
           <Image
             src="/logo.png"
             alt="Lightgate"
-            width={120}
-            height={40}
+            width={160}
+            height={50}
+            className="object-contain"
             priority
           />
         </Link>
@@ -86,7 +88,10 @@ export default function HeaderClient() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition font-medium"
+              className="
+                text-gray-900 dark:text-white
+                hover:text-orange-500 transition font-medium
+              "
             >
               {item.label}
             </Link>
@@ -97,7 +102,14 @@ export default function HeaderClient() {
           {/* THEME TOGGLE */}
           <button
             onClick={toggleTheme}
-            className="w-10 h-10 rounded-full border border-gray-300 dark:border-neutral-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-neutral-800 transition"
+            className="
+              w-11 h-11 rounded-full
+              border border-gray-300 dark:border-neutral-700
+              flex items-center justify-center
+              bg-gray-50 dark:bg-neutral-900
+              hover:bg-gray-100 dark:hover:bg-neutral-800
+              transition
+            "
             aria-label="Toggle Theme"
           >
             {theme === "dark" ? "☀️" : "🌙"}
@@ -105,13 +117,17 @@ export default function HeaderClient() {
 
           <Link
             href={link("/contact")}
-            className="px-5 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition"
+            className="
+              px-6 py-3 rounded-md
+              bg-orange-500 text-white
+              hover:bg-orange-600 transition
+            "
           >
             {t.cta}
           </Link>
         </nav>
 
-        {/* MOBILE RIGHT */}
+        {/* MOBILE */}
         <div
           className={`md:hidden flex items-center gap-3 ${
             isArabic ? "flex-row-reverse" : ""
@@ -121,14 +137,23 @@ export default function HeaderClient() {
 
           <button
             onClick={toggleTheme}
-            className="w-10 h-10 rounded-full border border-gray-300 dark:border-neutral-700 flex items-center justify-center"
+            className="
+              w-11 h-11 rounded-full
+              border border-gray-300 dark:border-neutral-700
+              flex items-center justify-center
+              bg-gray-50 dark:bg-neutral-900
+            "
           >
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
 
           <button
             onClick={() => setOpen(!open)}
-            className="p-2 rounded-md border border-gray-300 dark:border-neutral-700"
+            className="
+              p-3 rounded-md
+              border border-gray-300 dark:border-neutral-700
+              text-gray-900 dark:text-white
+            "
             aria-label="Menu"
           >
             ☰
@@ -139,15 +164,18 @@ export default function HeaderClient() {
       {/* MOBILE MENU */}
       {open && (
         <div
-          className={`md:hidden bg-white dark:bg-neutral-950 border-t border-gray-200 dark:border-neutral-800 px-6 py-6 space-y-4 ${
-            isArabic ? "text-right" : ""
-          }`}
+          className="
+            md:hidden
+            bg-white dark:bg-neutral-950
+            border-t border-gray-200 dark:border-neutral-800
+            px-6 py-6 space-y-4
+          "
         >
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="block text-gray-700 dark:text-gray-200"
+              className="block text-gray-900 dark:text-white"
               onClick={() => setOpen(false)}
             >
               {item.label}
@@ -156,7 +184,11 @@ export default function HeaderClient() {
 
           <Link
             href={link("/contact")}
-            className="block bg-orange-500 text-white text-center py-2 rounded-md"
+            className="
+              block text-center
+              bg-orange-500 text-white
+              py-2 rounded-md
+            "
             onClick={() => setOpen(false)}
           >
             {t.cta}
