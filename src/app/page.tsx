@@ -204,7 +204,7 @@ function FlagshipBackground() {
   );
 }
 
-// Static hexagonal background for intro section (NO ANIMATION)
+// Static hexagonal background for intro section (NO ANIMATION) - MORE VISIBLE
 function StaticHexagonalBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -228,17 +228,17 @@ function StaticHexagonalBackground() {
         0, 0, 
         canvas.width, canvas.height
       );
-      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
-      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.01)');
-      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.005)');
+      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.03)'); // Increased opacity
+      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.02)'); // Increased opacity
+      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.01)'); // Increased opacity
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw hexagonal pattern (same as footer)
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.03)';
-      ctx.lineWidth = 0.5;
+      // Draw MORE VISIBLE hexagonal pattern
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.08)'; // Increased opacity from 0.03 to 0.08
+      ctx.lineWidth = 1; // Increased from 0.5 to 1
       
-      const hexSize = 60; // Same size as footer
+      const hexSize = 70; // Slightly larger hexagons
       for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
         for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
           ctx.beginPath();
@@ -256,6 +256,26 @@ function StaticHexagonalBackground() {
           ctx.stroke();
         }
       }
+
+      // Draw subtle connecting dots at hexagon centers
+      ctx.fillStyle = 'rgba(255, 115, 0, 0.06)';
+      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
+        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.5, 0, Math.PI * 2); // Center dots
+          ctx.fill();
+          
+          // Draw dots at hexagon vertices too
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const hexX = x + hexSize * Math.cos(angle);
+            const hexY = y + hexSize * Math.sin(angle);
+            ctx.beginPath();
+            ctx.arc(hexX, hexY, 1, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
     };
 
     resizeCanvas();
@@ -269,7 +289,7 @@ function StaticHexagonalBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full opacity-30"
+      className="absolute inset-0 w-full h-full"
     />
   );
 }
@@ -304,11 +324,11 @@ export default function Home() {
       {/* ================= INTRO ================= */}
       <section className="relative py-28 bg-white dark:bg-neutral-900 overflow-hidden">
         
-        {/* Static Hexagonal Background Pattern (NO ANIMATION) */}
+        {/* Static Hexagonal Background Pattern (MORE VISIBLE) */}
         <StaticHexagonalBackground />
 
         {/* Orange gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-500/5" />
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-orange-500/10" />
 
         <div className="relative z-10 container mx-auto px-6 text-center max-w-4xl">
           <FadeUp>
