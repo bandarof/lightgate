@@ -13,13 +13,13 @@ export default function HeaderClient() {
 
   const isArabic = pathname.startsWith("/ar");
 
-  /* ---------------- THEME INIT ---------------- */
+  /* ---------------- THEME ---------------- */
   useEffect(() => {
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const stored = localStorage.getItem("theme");
+    const system = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
     const active =
-      stored === "dark" || (!stored && systemDark) ? "dark" : "light";
+      stored === "dark" || (!stored && system) ? "dark" : "light";
 
     document.documentElement.classList.toggle("dark", active === "dark");
     setTheme(active);
@@ -32,7 +32,7 @@ export default function HeaderClient() {
     setTheme(next);
   };
 
-  /* ---------------- TRANSLATIONS ---------------- */
+  /* ---------------- COPY ---------------- */
 
   const t = {
     home: isArabic ? "الرئيسية" : "Home",
@@ -62,20 +62,21 @@ export default function HeaderClient() {
       "
     >
       <div
-        className={`max-w-7xl mx-auto px-6 h-24 flex items-center justify-between ${
+        className={`max-w-7xl mx-auto px-6 h-[120px] flex items-center justify-between ${
           isArabic ? "flex-row-reverse" : ""
         }`}
       >
         {/* LOGO */}
         <Link href={link("/")} className="flex items-center">
-          <Image
-            src="/logo.png"
-            alt="Lightgate"
-            width={160}
-            height={50}
-            className="object-contain"
-            priority
-          />
+          <div className="w-[180px] h-[60px] relative">
+            <Image
+              src="/logo.png"
+              alt="Lightgate"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
         </Link>
 
         {/* DESKTOP NAV */}
@@ -99,7 +100,7 @@ export default function HeaderClient() {
 
           <LanguageToggle />
 
-          {/* THEME TOGGLE */}
+          {/* THEME */}
           <button
             onClick={toggleTheme}
             className="
@@ -107,10 +108,7 @@ export default function HeaderClient() {
               border border-gray-300 dark:border-neutral-700
               flex items-center justify-center
               bg-gray-50 dark:bg-neutral-900
-              hover:bg-gray-100 dark:hover:bg-neutral-800
-              transition
             "
-            aria-label="Toggle Theme"
           >
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
@@ -128,11 +126,7 @@ export default function HeaderClient() {
         </nav>
 
         {/* MOBILE */}
-        <div
-          className={`md:hidden flex items-center gap-3 ${
-            isArabic ? "flex-row-reverse" : ""
-          }`}
-        >
+        <div className="md:hidden flex items-center gap-3">
           <LanguageToggle />
 
           <button
@@ -154,7 +148,6 @@ export default function HeaderClient() {
               border border-gray-300 dark:border-neutral-700
               text-gray-900 dark:text-white
             "
-            aria-label="Menu"
           >
             ☰
           </button>
