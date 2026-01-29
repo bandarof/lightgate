@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { FadeUp } from "@/components/Motion";
 import Image from "next/image";
 import Link from "next/link";
