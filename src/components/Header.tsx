@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
+import LanguageToggle from "./LanguageToggle";
 
 export default function Header() {
   return (
@@ -37,8 +38,9 @@ export default function Header() {
         </nav>
 
         {/* RIGHT SIDE */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5">
 
+          <LanguageToggle />
           <ThemeToggle />
 
           <Link
