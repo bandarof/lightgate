@@ -724,7 +724,7 @@ export default function About() {
                                       border border-gray-200 dark:border-neutral-700
                                       group-hover:border-orange-500/50
                                       group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                                      transition-all duration-500">
+                                      transition-all duration-500 h-full flex flex-col">
                           
                           {/* Year Badge */}
                           <div className={`mb-4 ${milestone.align === "left" ? "lg:flex lg:justify-end" : ""}`}>
@@ -739,19 +739,19 @@ export default function About() {
                             {milestone.title}
                           </h3>
                           
-                          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
                             {milestone.description}
                           </p>
 
-                          {/* Image Preview */}
+                          {/* Image Preview - NOT CROPPED */}
                           <div className="rounded-xl overflow-hidden h-40 relative bg-gray-100 dark:bg-neutral-700">
-                            <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="absolute inset-0 flex items-center justify-center bg-white p-4">
                               <div className="relative w-full h-full">
                                 <Image
                                   src={milestone.image}
                                   alt={milestone.title}
                                   fill
-                                  className="object-cover"
+                                  className="object-contain"
                                   onError={(e) => {
                                     // Fallback if image doesn't exist
                                     const target = e.target as HTMLImageElement;
@@ -861,37 +861,38 @@ export default function About() {
                                 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
                                 transition-all duration-500">
                     
-                    {/* Team Member Photo - REMOVED white background */}
-                    <div className="relative h-full w-full">
-                      <div className="absolute inset-0">
-                        <Image
-                          src={member.image}
-                          alt={member.name}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          onError={(e) => {
-                            // Fallback to placeholder if image doesn't exist
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const container = target.parentElement;
-                            if (container) {
-                              container.innerHTML = `
-                                <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
-                                  <div class="text-5xl font-bold text-gray-300 mb-4">
-                                    ${member.name.split(' ')[0].charAt(0)}
+                    {/* Team Member Photo - FIT TO FRAME (not cropped) */}
+                    <div className="relative h-full w-full bg-white">
+                      <div className="absolute inset-0 flex items-center justify-center p-4">
+                        <div className="relative w-full h-full max-w-[200px] mx-auto">
+                          <Image
+                            src={member.image}
+                            alt={member.name}
+                            fill
+                            className="object-contain"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            onError={(e) => {
+                              // Fallback to placeholder if image doesn't exist
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const container = target.parentElement;
+                              if (container) {
+                                container.innerHTML = `
+                                  <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
+                                    <div class="text-5xl font-bold text-gray-300 mb-4">
+                                      ${member.name.split(' ')[0].charAt(0)}
+                                    </div>
+                                    <div class="text-center">
+                                      <div class="text-lg font-semibold text-gray-800">${member.name.split(' ')[0]}</div>
+                                      <div class="text-sm text-gray-600">${member.role.split(' ')[0]}</div>
+                                    </div>
                                   </div>
-                                  <div class="text-center">
-                                    <div class="text-lg font-semibold text-gray-800">${member.name.split(' ')[0]}</div>
-                                    <div class="text-sm text-gray-600">${member.role.split(' ')[0]}</div>
-                                  </div>
-                                </div>
-                              `;
-                            }
-                          }}
-                        />
+                                `;
+                              }
+                            }}
+                          />
+                        </div>
                       </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                     </div>
                     
                     {/* Hover overlay */}
@@ -945,7 +946,7 @@ export default function About() {
             
             {/* Jassim Alsaady */}
             <FadeUp>
-              <div className="relative group">
+              <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
                               rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
@@ -954,9 +955,9 @@ export default function About() {
                               border border-gray-200 dark:border-neutral-700
                               group-hover:border-orange-500/50
                               group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
-                              transition-all duration-500 h-full">
+                              transition-all duration-500 h-full flex flex-col">
                   
-                  <div className="flex flex-col items-center text-center">
+                  <div className="flex flex-col items-center text-center flex-grow">
                     {/* Profile image */}
                     <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
                       <div className="relative w-full h-full">
@@ -990,7 +991,7 @@ export default function About() {
                     
                     <div className="w-12 h-1 bg-orange-500 mb-4" />
                     
-                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
                       Award-winning film and commercial director bringing cinematic excellence to our projects.
                     </p>
                     
@@ -998,7 +999,7 @@ export default function About() {
                       href="https://www.jassimalsady.com" 
                       target="_blank"
                       className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600
-                               transition-colors duration-300"
+                               transition-colors duration-300 mt-auto"
                     >
                       <span>www.jassimalsady.com</span>
                       <ArrowRight className="w-4 h-4" />
@@ -1010,7 +1011,7 @@ export default function About() {
 
             {/* Emad El Sayed */}
             <FadeUp>
-              <div className="relative group">
+              <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
                               rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
@@ -1019,9 +1020,9 @@ export default function About() {
                               border border-gray-200 dark:border-neutral-700
                               group-hover:border-orange-500/50
                               group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
-                              transition-all duration-500 h-full">
+                              transition-all duration-500 h-full flex flex-col">
                   
-                  <div className="flex flex-col items-center text-center">
+                  <div className="flex flex-col items-center text-center flex-grow">
                     {/* Profile image */}
                     <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
                       <div className="relative w-full h-full">
@@ -1055,9 +1056,19 @@ export default function About() {
                     
                     <div className="w-12 h-1 bg-orange-500 mb-4" />
                     
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
                       Renowned creative director specializing in brand strategy and visual storytelling.
                     </p>
+                    
+                    <Link 
+                      href="https://www.emadelsayed.com" 
+                      target="_blank"
+                      className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600
+                               transition-colors duration-300 mt-auto"
+                    >
+                      <span>www.emadelsayed.com</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
               </div>
