@@ -1,106 +1,72 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 
 export default function Footer() {
-  const pathname = usePathname();
-  const isArabic = pathname.startsWith("/ar");
-
-  const t = {
-    tagline: isArabic
-      ? "نصمم تجارب ثقافية تعيد تعريف الترفيه على نطاق عالمي."
-      : "We design cultural experiences that redefine entertainment globally.",
-
-    home: isArabic ? "الرئيسية" : "Home",
-    about: isArabic ? "من نحن" : "About",
-    services: isArabic ? "الخدمات" : "Services",
-    portfolio: isArabic ? "الأعمال" : "Portfolio",
-    contact: isArabic ? "تواصل" : "Contact",
-
-    follow: isArabic ? "تابعنا" : "Follow Us",
-    rights: isArabic
-      ? "جميع الحقوق محفوظة"
-      : "All rights reserved",
-  };
-
-  const link = (path: string) =>
-    isArabic ? `/ar${path}` : path;
-
   return (
-    <footer className="bg-black text-white pt-32 pb-12">
-      <div className="container mx-auto px-6">
+    <footer className="relative overflow-hidden bg-neutral-950 text-gray-300">
 
-        {/* TOP */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-24">
+      {/* ANIMATED GRADIENT BACKGROUND */}
+      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-purple-500/20 to-blue-500/20 animate-gradient" />
+
+      <div className="relative z-10 container mx-auto px-6 py-24">
+
+        <div className="grid md:grid-cols-3 gap-16">
 
           {/* BRAND */}
           <div>
-            <Image
-              src="/logo.png"
-              alt="Lightgate"
-              width={120}
-              height={40}
-              className="mb-6"
-            />
-
-            <p className="text-gray-400 leading-relaxed max-w-sm">
-              {t.tagline}
+            <h3 className="text-2xl font-bold text-white">Lightgate</h3>
+            <p className="mt-4 max-w-sm opacity-80">
+              Illuminating the world through culture, technology and unforgettable experiences.
             </p>
           </div>
 
-          {/* NAV */}
+          {/* LINKS */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">
-              {isArabic ? "الروابط" : "Links"}
-            </h4>
-
-            <ul className="space-y-3 text-gray-400">
-              <li><Link href={link("/")}>{t.home}</Link></li>
-              <li><Link href={link("/about")}>{t.about}</Link></li>
-              <li><Link href={link("/services")}>{t.services}</Link></li>
-              <li><Link href={link("/portfolio")}>{t.portfolio}</Link></li>
-              <li><Link href={link("/contact")}>{t.contact}</Link></li>
+            <h4 className="font-semibold text-white mb-4">Company</h4>
+            <ul className="space-y-2">
+              <li><Link href="/about" className="hover:text-orange-400">About</Link></li>
+              <li><Link href="/services" className="hover:text-orange-400">Services</Link></li>
+              <li><Link href="/contact" className="hover:text-orange-400">Contact</Link></li>
             </ul>
           </div>
 
-          {/* CONTACT */}
+          {/* SOCIAL */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">
-              {isArabic ? "تواصل معنا" : "Contact"}
-            </h4>
+            <h4 className="font-semibold text-white mb-4">Follow Us</h4>
 
-            <div className="space-y-3 text-gray-400">
-              <p>Riyadh | Jeddah, KSA</p>
-              <p>+966-569169169</p>
-              <p>+966-591015666</p>
-              <p>lightgate.fest@gmail.com</p>
-              <p>www.Lightgate.media</p>
-            </div>
+            <a
+              href="https://www.instagram.com/lightgate.co/"
+              target="_blank"
+              className="inline-block hover:text-orange-400 transition"
+            >
+              Instagram
+            </a>
           </div>
 
         </div>
 
-        {/* DIVIDER */}
-        <div className="w-full h-px bg-white/10 mb-10" />
-
         {/* BOTTOM */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-gray-500">
-
-          <p>
-            © {new Date().getFullYear()} Lightgate. {t.rights}
-          </p>
-
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-orange-500">Instagram</a>
-            <a href="#" className="hover:text-orange-500">X</a>
-            <a href="#" className="hover:text-orange-500">LinkedIn</a>
-          </div>
-
+        <div className="mt-20 border-t border-white/10 pt-8 text-sm text-center opacity-70">
+          © {new Date().getFullYear()} Lightgate. All rights reserved.
         </div>
 
       </div>
+
+      {/* KEYFRAMES */}
+      <style jsx>{`
+        .animate-gradient {
+          background-size: 300% 300%;
+          animation: gradientMove 15s ease infinite;
+        }
+
+        @keyframes gradientMove {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+
     </footer>
   );
 }
