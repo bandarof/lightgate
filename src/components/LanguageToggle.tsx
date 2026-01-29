@@ -1,3 +1,4 @@
+// src/components/LanguageToggle.tsx
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
@@ -19,18 +20,24 @@ export default function LanguageToggle() {
     <button
       onClick={toggle}
       className="
-        px-3 py-1.5
-        rounded-full
-        border
-        text-sm
-        font-medium
-        flex items-center gap-2
-        hover:bg-orange-500 hover:text-white
-        transition
+        flex items-center justify-center
+        hover:opacity-80
+        transition-opacity
+        text-2xl
+        w-full h-full
       "
+      aria-label={isArabic ? "Switch to English" : "Switch to Arabic"}
+      title={isArabic ? "Switch to English" : "Switch to Arabic"}
     >
-      <span className="text-lg">🌐</span>
-      {isArabic ? "EN" : "AR"}
+      {/* Show Saudi flag when English is selected (click to switch to Arabic) */}
+      {/* Show US flag when Arabic is selected (click to switch to English) */}
+      {isArabic ? (
+        // When in Arabic, show US flag (click to switch to English)
+        <span className="text-2xl">🇺🇸</span>
+      ) : (
+        // When in English, show Saudi flag (click to switch to Arabic)
+        <span className="text-2xl">🇸🇦</span>
+      )}
     </button>
   );
 }
