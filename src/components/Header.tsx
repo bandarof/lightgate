@@ -23,7 +23,7 @@ export default function Header() {
 
         {/* NAV */}
         <nav className="hidden md:flex items-center gap-10 text-sm font-medium">
-          {["Home", "About", "Services", "Contact"].map((item) => (
+          {["Home", "About", "Portfolio", "Services", "Contact"].map((item) => (
             <Link
               key={item}
               href={`/${item === "Home" ? "" : item.toLowerCase()}`}

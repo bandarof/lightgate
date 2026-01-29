@@ -157,7 +157,7 @@ export default function Home() {
       </section>
 
       {/* ================= SERVICES SNAPSHOT ================= */}
-      <section className="relative py-32">
+      <section className="py-32 bg-white dark:bg-neutral-950">
 
         <Image
           src="/global.jpg"
