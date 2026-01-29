@@ -416,12 +416,13 @@ function MissionVisionBackground() {
   );
 }
 
-// Animated timeline background
+// Animated timeline background - ENHANCED for seamless transition
 function TimelineBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !containerRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -429,14 +430,14 @@ function TimelineBackground() {
 
     // Set canvas dimensions
     const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      canvas.width = containerRef.current!.offsetWidth;
+      canvas.height = containerRef.current!.offsetHeight;
     };
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Timeline animation
+    // Timeline particles
     const particles: Array<{
       x: number;
       y: number;
@@ -445,25 +446,29 @@ function TimelineBackground() {
       speedY: number;
       color: string;
       opacity: number;
+      type: 'timeline' | 'energy' | 'spark';
     }> = [];
 
     const colors = [
       'rgba(255, 115, 0, 0.4)',
-      'rgba(255, 165, 0, 0.3)',
-      'rgba(255, 200, 50, 0.2)',
+      'rgba(255, 165, 0, 0.5)',
+      'rgba(255, 200, 50, 0.6)',
+      'rgba(255, 225, 100, 0.7)',
     ];
 
     // Create particles along timeline
-    const particleCount = 50;
+    const particleCount = 60;
     for (let i = 0; i < particleCount; i++) {
+      const type = i % 3 === 0 ? 'energy' : i % 3 === 1 ? 'spark' : 'timeline';
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 3 + 1,
-        speedX: (Math.random() - 0.5) * 0.2,
-        speedY: (Math.random() - 0.5) * 0.2,
+        size: type === 'spark' ? Math.random() * 2 + 1 : Math.random() * 4 + 2,
+        speedX: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
+        speedY: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
         color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: 0.1 + Math.random() * 0.3,
+        opacity: type === 'energy' ? 0.4 + Math.random() * 0.4 : 0.2 + Math.random() * 0.3,
+        type: type
       });
     }
 
@@ -475,45 +480,59 @@ function TimelineBackground() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.01;
 
-      // Draw gradient background
+      // Draw gradient background that transitions to team section
       const gradient = ctx.createLinearGradient(
         0, 0, 
         0, canvas.height
       );
       gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
-      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.015)');
-      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.01)');
+      gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.025)');
+      gradient.addColorStop(0.6, 'rgba(255, 200, 0, 0.03)');
+      gradient.addColorStop(0.8, 'rgba(255, 225, 100, 0.04)');
+      gradient.addColorStop(1, 'rgba(255, 240, 150, 0.05)'); // Brighter at bottom for transition
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw timeline path
+      // Draw timeline path with stronger glow
       const timelineY = canvas.height / 2;
       ctx.beginPath();
       ctx.moveTo(100, timelineY);
       ctx.lineTo(canvas.width - 100, timelineY);
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.1)';
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.15)';
+      ctx.lineWidth = 4;
       ctx.stroke();
 
       // Draw timeline glow
       ctx.beginPath();
       ctx.moveTo(100, timelineY);
       ctx.lineTo(canvas.width - 100, timelineY);
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.05)';
-      ctx.lineWidth = 10;
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.08)';
+      ctx.lineWidth = 12;
       ctx.stroke();
 
       // Draw pulsing orb on timeline
-      const pulseSize = 8 + Math.sin(time * 2) * 2;
+      const pulseSize = 10 + Math.sin(time * 3) * 3;
       ctx.beginPath();
       ctx.arc(canvas.width / 2, timelineY, pulseSize, 0, Math.PI * 2);
       const pulseGradient = ctx.createRadialGradient(
         canvas.width / 2, timelineY, 0,
         canvas.width / 2, timelineY, pulseSize
       );
-      pulseGradient.addColorStop(0, 'rgba(255, 115, 0, 0.8)');
+      pulseGradient.addColorStop(0, `rgba(255, 115, 0, ${0.9 + Math.sin(time * 4) * 0.1})`);
       pulseGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
       ctx.fillStyle = pulseGradient;
+      ctx.fill();
+
+      // Draw additional glow around orb
+      ctx.beginPath();
+      ctx.arc(canvas.width / 2, timelineY, pulseSize * 2, 0, Math.PI * 2);
+      const outerGlow = ctx.createRadialGradient(
+        canvas.width / 2, timelineY, pulseSize,
+        canvas.width / 2, timelineY, pulseSize * 2
+      );
+      outerGlow.addColorStop(0, `rgba(255, 165, 0, ${0.4})`);
+      outerGlow.addColorStop(1, 'rgba(255, 165, 0, 0)');
+      ctx.fillStyle = outerGlow;
       ctx.fill();
 
       // Update and draw particles
@@ -521,6 +540,12 @@ function TimelineBackground() {
         // Update position
         p.x += p.speedX;
         p.y += p.speedY;
+        
+        // Pulsing effect for energy particles
+        if (p.type === 'energy') {
+          const pulse = Math.sin(time * 4 + i) * 0.5 + 0.5;
+          p.size = (Math.random() * 4 + 2) * pulse;
+        }
         
         // Wrap around edges
         if (p.x < -50) p.x = canvas.width + 50;
@@ -531,33 +556,68 @@ function TimelineBackground() {
         // Draw particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color.replace('0.4', p.opacity.toString());
+        
+        if (p.type === 'energy') {
+          const gradient = ctx.createRadialGradient(
+            p.x, p.y, 0,
+            p.x, p.y, p.size * 2
+          );
+          gradient.addColorStop(0, p.color.replace('0.5', (p.opacity * 0.8).toString()));
+          gradient.addColorStop(1, p.color.replace('0.5', '0'));
+          ctx.fillStyle = gradient;
+        } else {
+          ctx.fillStyle = p.color.replace('0.4', (p.opacity * (p.type === 'spark' ? 0.7 : 1)).toString());
+        }
+        
         ctx.fill();
 
-        // Draw connection to timeline
-        const distanceToTimeline = Math.abs(p.y - timelineY);
-        if (distanceToTimeline < 100) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x, timelineY);
-          ctx.strokeStyle = `rgba(255, 115, 0, ${0.05 * (1 - distanceToTimeline / 100)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
+        // Draw connection to timeline for timeline particles
+        if (p.type === 'timeline') {
+          const distanceToTimeline = Math.abs(p.y - timelineY);
+          if (distanceToTimeline < 150) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x, timelineY);
+            ctx.strokeStyle = `rgba(255, 115, 0, ${0.08 * (1 - distanceToTimeline / 150) * p.opacity})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+
+        // Draw connections between nearby energy particles
+        if (p.type === 'energy') {
+          for (let j = i + 1; j < particles.length; j++) {
+            if (particles[j].type === 'energy') {
+              const dx = p.x - particles[j].x;
+              const dy = p.y - particles[j].y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              
+              if (distance < 100) {
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                const opacity = (1 - distance / 100) * 0.15 * p.opacity * particles[j].opacity;
+                ctx.strokeStyle = `rgba(255, 165, 0, ${opacity})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+              }
+            }
+          }
         }
       });
 
-      // Draw subtle waves
+      // Draw subtle waves with more energy
       for (let w = 0; w < 3; w++) {
         const waveOffset = time * 0.5 + (w * Math.PI * 2) / 3;
-        const waveAmplitude = 15;
+        const waveAmplitude = 20;
         
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(255, 115, 0, ${0.03 + 0.02 * Math.sin(time + w)})`;
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = `rgba(255, 115, 0, ${0.05 + 0.03 * Math.sin(time + w)})`;
+        ctx.lineWidth = 1.5;
         
         for (let x = 0; x < canvas.width; x += 20) {
           const y = timelineY + 
-                    Math.sin(x * 0.02 + waveOffset) * waveAmplitude;
+                    Math.sin(x * 0.015 + waveOffset) * waveAmplitude;
           
           if (x === 0) {
             ctx.moveTo(x, y);
@@ -566,6 +626,51 @@ function TimelineBackground() {
           }
         }
         ctx.stroke();
+      }
+
+      // Draw transition energy field at bottom
+      const transitionHeight = canvas.height * 0.2;
+      const transitionY = canvas.height - transitionHeight;
+      
+      // Draw gradient transition zone
+      const transitionGradient = ctx.createLinearGradient(
+        0, transitionY,
+        0, canvas.height
+      );
+      transitionGradient.addColorStop(0, 'rgba(255, 200, 50, 0.05)');
+      transitionGradient.addColorStop(0.5, 'rgba(255, 225, 100, 0.08)');
+      transitionGradient.addColorStop(1, 'rgba(255, 240, 150, 0.12)');
+      
+      ctx.fillStyle = transitionGradient;
+      ctx.fillRect(0, transitionY, canvas.width, transitionHeight);
+      
+      // Draw energy field lines in transition zone
+      for (let i = 0; i < 8; i++) {
+        const x = (canvas.width / 9) * (i + 1);
+        const startY = transitionY + 10;
+        const endY = canvas.height - 10;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, startY);
+        for (let y = startY; y < endY; y += 10) {
+          const offset = Math.sin(time * 2 + x * 0.01 + y * 0.02) * 8;
+          ctx.lineTo(x + offset, y);
+        }
+        ctx.strokeStyle = `rgba(255, 165, 0, ${0.1 + Math.sin(time * 3 + i) * 0.05})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Draw floating transition particles
+      for (let i = 0; i < 15; i++) {
+        const progress = (time * 0.2 + i * 0.1) % 1;
+        const x = Math.random() * canvas.width;
+        const y = transitionY + progress * transitionHeight;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 225, 100, ${0.4 + Math.sin(time * 4 + i) * 0.3})`;
+        ctx.fill();
       }
 
       animationId = requestAnimationFrame(animate);
@@ -580,14 +685,18 @@ function TimelineBackground() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full opacity-30"
-    />
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+      />
+      {/* Gradient overlay for seamless transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white dark:from-neutral-900 via-white/70 dark:via-neutral-900/70 to-transparent" />
+    </div>
   );
 }
 
-// SUBTLE Hexagonal background for Team Members section - matches site theme
+// BOLD ELECTRIC Hexagonal background for Team Members section
 function TeamMembersBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -608,8 +717,8 @@ function TeamMembersBackground() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Subtle warm particle system
-    class WarmParticle {
+    // Electric particle system - BOLD but within orange palette
+    class ElectricParticle {
       x: number;
       y: number;
       size: number;
@@ -619,59 +728,106 @@ function TeamMembersBackground() {
       life: number;
       maxLife: number;
       waveOffset: number;
+      pulseSpeed: number;
+      trail: Array<{x: number, y: number, size: number}>;
 
       constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
-        this.size = 0.5 + Math.random() * 2;
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = (Math.random() - 0.5) * 0.3;
-        this.opacity = 0.1 + Math.random() * 0.2;
-        this.life = 5 + Math.random() * 10;
+        this.size = 1.5 + Math.random() * 3;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.speedY = (Math.random() - 0.5) * 0.8;
+        this.opacity = 0.6 + Math.random() * 0.4;
+        this.life = 4 + Math.random() * 8;
         this.maxLife = this.life;
         this.waveOffset = Math.random() * Math.PI * 2;
+        this.pulseSpeed = 3 + Math.random() * 4;
+        this.trail = [];
       }
 
       update(time: number) {
-        this.life -= 0.005;
+        this.life -= 0.003;
         
-        // Gentle floating motion with wave pattern
-        this.x += this.speedX + Math.sin(time * 0.5 + this.waveOffset) * 0.1;
-        this.y += this.speedY + Math.cos(time * 0.5 + this.waveOffset) * 0.1;
+        // Electric movement with wave pattern
+        this.x += this.speedX + Math.sin(time * this.pulseSpeed + this.waveOffset) * 0.5;
+        this.y += this.speedY + Math.cos(time * this.pulseSpeed + this.waveOffset) * 0.5;
+        
+        // Add to trail
+        this.trail.push({
+          x: this.x,
+          y: this.y,
+          size: this.size * (0.3 + Math.sin(time * this.pulseSpeed) * 0.2)
+        });
+        if (this.trail.length > 8) {
+          this.trail.shift();
+        }
         
         // Wrap around edges
-        if (this.x < -20) this.x = canvas.width + 20;
-        if (this.x > canvas.width + 20) this.x = -20;
-        if (this.y < -20) this.y = canvas.height + 20;
-        if (this.y > canvas.height + 20) this.y = -20;
+        if (this.x < -30) this.x = canvas.width + 30;
+        if (this.x > canvas.width + 30) this.x = -30;
+        if (this.y < -30) this.y = canvas.height + 30;
+        if (this.y > canvas.height + 30) this.y = -30;
       }
 
       draw(ctx: CanvasRenderingContext2D, time: number) {
         if (this.life <= 0) return;
 
         const currentOpacity = this.opacity * (this.life / this.maxLife);
-        const pulse = Math.sin(time * 3 + this.waveOffset) * 0.3 + 0.7;
+        const pulse = Math.sin(time * this.pulseSpeed) * 0.4 + 0.6;
         const currentSize = this.size * pulse;
         
-        // Draw subtle particle
+        // Draw trail
+        this.trail.forEach((point, i) => {
+          const trailOpacity = currentOpacity * (i / this.trail.length) * 0.4;
+          const trailSize = point.size * (i / this.trail.length);
+          
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
+          
+          const gradient = ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, trailSize
+          );
+          gradient.addColorStop(0, `rgba(255, ${180 + Math.random() * 40}, ${80}, ${trailOpacity})`);
+          gradient.addColorStop(1, `rgba(255, 140, 40, 0)`);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+        });
+        
+        // Draw main particle
         ctx.beginPath();
         ctx.arc(this.x, this.y, currentSize, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, ${150 + Math.random() * 50}, ${50}, ${currentOpacity * 0.5})`;
+        
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, currentSize * 2
+        );
+        gradient.addColorStop(0, `rgba(255, 200, 100, ${currentOpacity})`);
+        gradient.addColorStop(0.5, `rgba(255, 165, 0, ${currentOpacity * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 115, 0, 0)`);
+        ctx.fillStyle = gradient;
         ctx.fill();
+        
+        // Draw electric aura
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, currentSize * 2.5, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 200, 100, ${currentOpacity * 0.2})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       }
     }
 
-    // Create subtle particles
-    const particles: WarmParticle[] = [];
-    const particleCount = 20; // Reduced count for subtlety
+    // Create electric particles
+    const particles: ElectricParticle[] = [];
+    const particleCount = 35;
     
     for (let i = 0; i < particleCount; i++) {
       const x = Math.random() * canvas.width;
       const y = Math.random() * canvas.height;
-      particles.push(new WarmParticle(x, y));
+      particles.push(new ElectricParticle(x, y));
     }
 
-    // Hexagon grid system with subtle animation
+    // Hexagon grid with ELECTRIC energy
     class HexagonCell {
       x: number;
       y: number;
@@ -679,26 +835,48 @@ function TeamMembersBackground() {
       energy: number;
       maxEnergy: number;
       pulsePhase: number;
+      connections: Array<{x: number, y: number}>;
+      isActive: boolean;
+      activationTime: number;
+      rotation: number;
+      rotationSpeed: number;
 
       constructor(x: number, y: number, size: number) {
         this.x = x;
         this.y = y;
         this.size = size;
         this.energy = 0;
-        this.maxEnergy = 0.3 + Math.random() * 0.3; // Lower energy for subtlety
+        this.maxEnergy = 0.5 + Math.random() * 0.5;
         this.pulsePhase = Math.random() * Math.PI * 2;
+        this.connections = [];
+        this.isActive = false;
+        this.activationTime = 0;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
       }
 
       update(time: number) {
-        // Very slow energy pulse
-        this.energy = this.maxEnergy * (Math.sin(time * 0.5 + this.pulsePhase) * 0.3 + 0.5);
+        this.rotation += this.rotationSpeed;
+        
+        // Energy pulse
+        this.energy = this.maxEnergy * (Math.sin(time * 2 + this.pulsePhase) * 0.4 + 0.6);
+        
+        // Random activation for electric effects
+        if (!this.isActive && Math.random() < 0.02) {
+          this.isActive = true;
+          this.activationTime = time;
+        }
+        
+        if (this.isActive && time - this.activationTime > 0.8) {
+          this.isActive = false;
+        }
       }
 
       draw(ctx: CanvasRenderingContext2D, time: number) {
-        // Draw very subtle hexagon outline
+        // Draw hexagon with electric energy
         ctx.beginPath();
         for (let i = 0; i < 6; i++) {
-          const angle = (Math.PI / 3) * i + time * 0.05; // Slower rotation
+          const angle = (Math.PI / 3) * i + this.rotation;
           const hexX = this.x + this.size * Math.cos(angle);
           const hexY = this.y + this.size * Math.sin(angle);
           if (i === 0) {
@@ -709,17 +887,54 @@ function TeamMembersBackground() {
         }
         ctx.closePath();
         
-        // Very subtle glow effect
-        const energyColor = Math.floor(this.energy * 100);
-        ctx.strokeStyle = `rgba(255, ${150 + energyColor}, ${50}, ${0.05 + this.energy * 0.1})`; // Very subtle
-        ctx.lineWidth = 0.5 + this.energy;
+        // Electric glow effect when active
+        if (this.isActive) {
+          const pulse = Math.sin(time * 15) * 0.5 + 0.5;
+          const gradient = ctx.createRadialGradient(
+            this.x, this.y, 0,
+            this.x, this.y, this.size * 2.5
+          );
+          gradient.addColorStop(0, `rgba(255, 225, 100, ${0.4 * pulse})`);
+          gradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+          
+          // Draw electric arcs from vertices
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i + this.rotation;
+            const hexX = this.x + this.size * Math.cos(angle);
+            const hexY = this.y + this.size * Math.sin(angle);
+            
+            if (Math.random() < 0.3) {
+              ctx.beginPath();
+              ctx.moveTo(hexX, hexY);
+              const arcX = hexX + (Math.random() - 0.5) * 25;
+              const arcY = hexY + (Math.random() - 0.5) * 25;
+              ctx.lineTo(arcX, arcY);
+              ctx.strokeStyle = `rgba(255, 225, 100, ${0.6 * pulse})`;
+              ctx.lineWidth = 1.2;
+              ctx.stroke();
+            }
+          }
+        }
+        
+        // Draw hexagon outline with energy-based color
+        const energyColor = Math.floor(this.energy * 200);
+        ctx.strokeStyle = `rgba(255, ${150 + energyColor}, ${50 + energyColor}, ${0.15 + this.energy * 0.25})`;
+        ctx.lineWidth = 1.5 + this.energy * 2;
         ctx.stroke();
         
-        // Draw very subtle center dot
-        if (this.energy > 0.2) {
+        // Draw electric center energy dot
+        if (this.energy > 0.3) {
           ctx.beginPath();
-          ctx.arc(this.x, this.y, 1 + this.energy * 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 165, 0, ${0.1 + this.energy * 0.2})`;
+          ctx.arc(this.x, this.y, 2 + this.energy * 4, 0, Math.PI * 2);
+          const centerGradient = ctx.createRadialGradient(
+            this.x, this.y, 0,
+            this.x, this.y, 2 + this.energy * 4
+          );
+          centerGradient.addColorStop(0, `rgba(255, 225, 100, ${0.7 + this.energy * 0.3})`);
+          centerGradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
+          ctx.fillStyle = centerGradient;
           ctx.fill();
         }
       }
@@ -727,88 +942,157 @@ function TeamMembersBackground() {
 
     // Create hexagon grid
     const hexagonGrid: HexagonCell[] = [];
-    const hexSize = 80; // Larger, more spaced out
+    const hexSize = 65;
     const hexWidth = hexSize * 2;
     const hexHeight = hexSize * Math.sqrt(3);
     
-    for (let x = -hexWidth; x < canvas.width + hexWidth; x += hexWidth * 0.9) {
+    for (let x = -hexWidth; x < canvas.width + hexWidth; x += hexWidth * 0.8) {
       for (let y = -hexHeight; y < canvas.height + hexHeight; y += hexHeight) {
-        const offsetX = (Math.floor(y / hexHeight) % 2 === 0) ? 0 : hexWidth * 0.45;
+        const offsetX = (Math.floor(y / hexHeight) % 2 === 0) ? 0 : hexWidth * 0.4;
         hexagonGrid.push(new HexagonCell(x + offsetX, y, hexSize));
       }
     }
 
-    // Very subtle connection system
-    class SubtleConnection {
-      x1: number;
-      y1: number;
-      x2: number;
-      y2: number;
-      opacity: number;
-      pulsePhase: number;
-
-      constructor(x1: number, y1: number, x2: number, y2: number) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.opacity = 0.02 + Math.random() * 0.03;
-        this.pulsePhase = Math.random() * Math.PI * 2;
-      }
-
-      update(time: number) {
-        // Very slow pulse
-        this.opacity = (0.02 + Math.random() * 0.03) * (Math.sin(time * 0.3 + this.pulsePhase) * 0.3 + 0.7);
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        ctx.beginPath();
-        ctx.moveTo(this.x1, this.y1);
-        ctx.lineTo(this.x2, this.y2);
-        ctx.strokeStyle = `rgba(255, 165, 0, ${this.opacity})`;
-        ctx.lineWidth = 0.3;
-        ctx.stroke();
-      }
-    }
-
-    // Create subtle connections between nearby hexagons
-    const connections: SubtleConnection[] = [];
+    // Create connections between nearby hexagons
     hexagonGrid.forEach((hex, i) => {
+      hex.connections = [];
       hexagonGrid.forEach((otherHex, j) => {
-        if (i < j) { // Only create each connection once
+        if (i !== j) {
           const dx = hex.x - otherHex.x;
           const dy = hex.y - otherHex.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < hexSize * 2.5 && Math.random() < 0.3) { // Fewer connections
-            connections.push(new SubtleConnection(hex.x, hex.y, otherHex.x, otherHex.y));
+          if (distance < hexSize * 2.8) {
+            hex.connections.push({x: otherHex.x, y: otherHex.y});
           }
         }
       });
     });
 
-    // Animation loop - SLOWER
+    // Electric pulse system
+    class ElectricPulse {
+      x: number;
+      y: number;
+      targetX: number;
+      targetY: number;
+      progress: number;
+      speed: number;
+      opacity: number;
+      points: Array<{x: number, y: number}>;
+
+      constructor(startX: number, startY: number, endX: number, endY: number) {
+        this.x = startX;
+        this.y = startY;
+        this.targetX = endX;
+        this.targetY = endY;
+        this.progress = 0;
+        this.speed = 0.8 + Math.random() * 0.4;
+        this.opacity = 0.8 + Math.random() * 0.2;
+        this.points = this.generatePulsePath(startX, startY, endX, endY);
+      }
+
+      generatePulsePath(startX: number, startY: number, endX: number, endY: number): Array<{x: number, y: number}> {
+        const points = [{x: startX, y: startY}];
+        const segments = 6;
+        
+        for (let i = 1; i <= segments; i++) {
+          const t = i / segments;
+          const x = startX + (endX - startX) * t + (Math.random() - 0.5) * 20;
+          const y = startY + (endY - startY) * t + (Math.random() - 0.5) * 20;
+          points.push({x, y});
+        }
+        
+        points.push({x: endX, y: endY});
+        return points;
+      }
+
+      update() {
+        this.progress += this.speed * 0.02;
+        this.opacity -= 0.01;
+        return this.progress < 1 && this.opacity > 0;
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        const currentProgress = this.progress;
+        const segmentIndex = Math.floor(currentProgress * (this.points.length - 1));
+        const segmentProgress = (currentProgress * (this.points.length - 1)) % 1;
+        
+        if (segmentIndex >= this.points.length - 1) return;
+        
+        const startPoint = this.points[segmentIndex];
+        const endPoint = this.points[segmentIndex + 1];
+        const currentX = startPoint.x + (endPoint.x - startPoint.x) * segmentProgress;
+        const currentY = startPoint.y + (endPoint.y - startPoint.y) * segmentProgress;
+        
+        // Draw pulse head
+        ctx.beginPath();
+        ctx.arc(currentX, currentY, 3, 0, Math.PI * 2);
+        const headGradient = ctx.createRadialGradient(
+          currentX, currentY, 0,
+          currentX, currentY, 6
+        );
+        headGradient.addColorStop(0, `rgba(255, 225, 100, ${this.opacity})`);
+        headGradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
+        ctx.fillStyle = headGradient;
+        ctx.fill();
+        
+        // Draw pulse trail
+        for (let i = 0; i <= segmentIndex; i++) {
+          const point = this.points[i];
+          const trailOpacity = this.opacity * (i / this.points.length);
+          
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 200, 80, ${trailOpacity})`;
+          ctx.fill();
+        }
+      }
+    }
+
+    const electricPulses: ElectricPulse[] = [];
+
+    // Create occasional electric pulses between hexagons
+    setInterval(() => {
+      if (electricPulses.length < 8 && hexagonGrid.length >= 2) {
+        const hex1 = hexagonGrid[Math.floor(Math.random() * hexagonGrid.length)];
+        const hex2 = hexagonGrid[Math.floor(Math.random() * hexagonGrid.length)];
+        if (hex1 !== hex2 && Math.random() < 0.5) {
+          electricPulses.push(new ElectricPulse(hex1.x, hex1.y, hex2.x, hex2.y));
+        }
+      }
+    }, 800);
+
+    // Animation loop
     let animationId: number;
     let time = 0;
     
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.005; // Much slower time increment
+      time += 0.015; // Slightly faster for more energy
 
-      // Draw warm gradient background matching site theme
+      // Draw warm gradient background with more intensity
       const gradient = ctx.createLinearGradient(
         0, 0, 
         canvas.width, canvas.height
       );
-      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.01)');
-      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.008)');
-      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.005)');
+      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.08)');
+      gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.1)');
+      gradient.addColorStop(0.6, 'rgba(255, 200, 50, 0.12)');
+      gradient.addColorStop(1, 'rgba(255, 225, 100, 0.1)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Update and draw connections
-      connections.forEach(connection => {
-        connection.update(time);
-        connection.draw(ctx);
+      // Draw electric connections between hexagons
+      ctx.strokeStyle = 'rgba(255, 200, 100, 0.08)';
+      ctx.lineWidth = 0.8;
+      hexagonGrid.forEach(hex => {
+        hex.connections.forEach(connection => {
+          if (Math.random() < 0.3) { // Only draw some connections for electric feel
+            ctx.beginPath();
+            ctx.moveTo(hex.x, hex.y);
+            ctx.lineTo(connection.x, connection.y);
+            ctx.stroke();
+          }
+        });
       });
 
       // Update and draw hexagon grid
@@ -817,7 +1101,16 @@ function TeamMembersBackground() {
         hex.draw(ctx, time);
       });
 
-      // Update and draw particles
+      // Update and draw electric pulses
+      for (let i = electricPulses.length - 1; i >= 0; i--) {
+        if (!electricPulses[i].update()) {
+          electricPulses.splice(i, 1);
+        } else {
+          electricPulses[i].draw(ctx);
+        }
+      }
+
+      // Update and draw electric particles
       particles.forEach((particle, i) => {
         particle.update(time);
         particle.draw(ctx, time);
@@ -826,27 +1119,86 @@ function TeamMembersBackground() {
         if (particle.life <= 0) {
           const x = Math.random() * canvas.width;
           const y = Math.random() * canvas.height;
-          particles[i] = new WarmParticle(x, y);
+          particles[i] = new ElectricParticle(x, y);
+        }
+
+        // Draw electric arcs between nearby particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particle.x - particles[j].x;
+          const dy = particle.y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 120 && Math.random() < 0.2) {
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            
+            // Create jagged electric arc
+            const segments = 4;
+            const segmentX = (particles[j].x - particle.x) / segments;
+            const segmentY = (particles[j].y - particle.y) / segments;
+            
+            let currentX = particle.x;
+            let currentY = particle.y;
+            
+            for (let s = 1; s <= segments; s++) {
+              currentX += segmentX + (Math.random() - 0.5) * 25;
+              currentY += segmentY + (Math.random() - 0.5) * 25;
+              ctx.lineTo(currentX, currentY);
+            }
+            ctx.lineTo(particles[j].x, particles[j].y);
+            
+            const arcOpacity = (1 - distance / 120) * 0.4;
+            ctx.strokeStyle = `rgba(255, 225, 100, ${arcOpacity})`;
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+          }
         }
       });
 
-      // Draw very subtle team member connections
+      // Draw team grid visualization with more energy
       const teamGridX = canvas.width / 2;
       const teamGridY = canvas.height / 2;
-      const gridSpacing = 100;
+      const gridSpacing = 90;
       
       for (let i = -2; i <= 2; i++) {
         for (let j = -1; j <= 1; j++) {
           const nodeX = teamGridX + i * gridSpacing;
           const nodeY = teamGridY + j * gridSpacing * 1.5;
           
-          // Draw very subtle team node
+          // Draw energetic team node
           ctx.beginPath();
-          ctx.arc(nodeX, nodeY, 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 165, 0, ${0.1 + Math.sin(time * 2 + i + j) * 0.05})`;
+          ctx.arc(nodeX, nodeY, 4, 0, Math.PI * 2);
+          const nodeGradient = ctx.createRadialGradient(
+            nodeX, nodeY, 0,
+            nodeX, nodeY, 8
+          );
+          nodeGradient.addColorStop(0, `rgba(255, 225, 100, ${0.8 + Math.sin(time * 5 + i + j) * 0.2})`);
+          nodeGradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
+          ctx.fillStyle = nodeGradient;
           ctx.fill();
+          
+          // Connect to nearby nodes
+          if (i < 2) {
+            ctx.beginPath();
+            ctx.moveTo(nodeX, nodeY);
+            ctx.lineTo(nodeX + gridSpacing, nodeY);
+            ctx.strokeStyle = `rgba(255, 200, 100, ${0.15 + Math.sin(time * 3 + i) * 0.1})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
         }
       }
+
+      // Draw top transition fade from timeline section
+      const topFadeHeight = 60;
+      const topFadeGradient = ctx.createLinearGradient(
+        0, 0,
+        0, topFadeHeight
+      );
+      topFadeGradient.addColorStop(0, 'rgba(255, 240, 150, 0.3)');
+      topFadeGradient.addColorStop(1, 'transparent');
+      ctx.fillStyle = topFadeGradient;
+      ctx.fillRect(0, 0, canvas.width, topFadeHeight);
 
       animationId = requestAnimationFrame(animate);
     };
@@ -863,8 +1215,10 @@ function TeamMembersBackground() {
     <div ref={containerRef} className="absolute inset-0 overflow-hidden">
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-40"
+        className="absolute inset-0 w-full h-full"
       />
+      {/* Electric glow overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-amber-500/8 to-yellow-500/5" />
     </div>
   );
 }
@@ -1262,8 +1616,8 @@ export default function About() {
       </section>
 
       {/* ================= MAJOR MILESTONES TIMELINE ================= */}
-      <section className="relative py-32 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-900 dark:to-neutral-950 overflow-hidden">
-        {/* Animated Timeline Background */}
+      <section className="relative py-32 overflow-hidden">
+        {/* Enhanced Animated Timeline Background */}
         <TimelineBackground />
         
         <div className="relative z-10 container mx-auto px-6">
@@ -1420,17 +1774,17 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= CORE TEAM MEMBERS (9 members) with SUBTLE HEXAGONAL BACKGROUND ================= */}
-      <section className="relative py-32 bg-white dark:bg-neutral-900 overflow-hidden">
+      {/* ================= CORE TEAM MEMBERS with BOLD ELECTRIC HEXAGONAL BACKGROUND ================= */}
+      <section className="relative py-32 bg-gradient-to-b from-white via-orange-50/30 to-white dark:from-neutral-900 dark:via-orange-950/20 dark:to-neutral-900 overflow-hidden">
         
-        {/* SUBTLE Hexagonal Animated Background */}
+        {/* BOLD ELECTRIC Hexagonal Animated Background */}
         <TeamMembersBackground />
 
         <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
             <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
+              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/30 text-orange-500 text-sm font-medium mb-6">
                 OUR PEOPLE
               </span>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -1495,12 +1849,13 @@ export default function About() {
                 <div className="group relative">
                   <div className="relative h-80 rounded-2xl overflow-hidden mb-6
                                 border-2 border-transparent
-                                group-hover:border-orange-500/50
-                                group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
-                                transition-all duration-500">
+                                group-hover:border-orange-500/70
+                                group-hover:shadow-[0_0_40px_rgba(255,115,0,0.4)]
+                                transition-all duration-500
+                                bg-gradient-to-br from-gray-50 to-white dark:from-neutral-800 dark:to-neutral-900">
                     
                     {/* Team Member Photo - FIT TO FRAME (no white background) */}
-                    <div className="relative h-full w-full bg-gray-100 dark:bg-neutral-800">
+                    <div className="relative h-full w-full">
                       <div className="absolute inset-0">
                         <Image
                           src={member.image}
@@ -1515,8 +1870,8 @@ export default function About() {
                             const container = target.parentElement;
                             if (container) {
                               container.innerHTML = `
-                                <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
-                                  <div class="text-5xl font-bold text-gray-300 mb-4">
+                                <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-amber-500/5">
+                                  <div class="text-5xl font-bold text-orange-400 mb-4">
                                     ${member.name.split(' ')[0].charAt(0)}
                                   </div>
                                   <div class="text-center">
@@ -1529,34 +1884,76 @@ export default function About() {
                           }}
                         />
                       </div>
+                      
+                      {/* Electric border effect on hover */}
+                      <div className="absolute inset-0 border-2 border-transparent group-hover:border-orange-400/40 transition-all duration-500" />
+                      
+                      {/* Electric pulse effect */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-400 to-transparent animate-pulse" />
+                        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-400 to-transparent animate-pulse delay-300" />
+                        <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-orange-400 to-transparent animate-pulse delay-150" />
+                        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-orange-400 to-transparent animate-pulse delay-450" />
+                      </div>
                     </div>
                     
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent 
+                    {/* Hover overlay with electric theme */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
                                   opacity-0 group-hover:opacity-100 
                                   transition-all duration-500 flex items-end p-6">
                       <div className="transform translate-y-4 opacity-0 
                                     group-hover:translate-y-0 group-hover:opacity-100
                                     transition-all duration-500">
                         <div className="text-white">
-                          <div className="w-8 h-1 bg-white mb-3" />
-                          <p className="text-sm opacity-90">View Profile</p>
+                          <div className="w-8 h-1 bg-gradient-to-r from-orange-400 to-amber-400 mb-3" />
+                          <p className="text-sm opacity-90 flex items-center gap-2">
+                            <span className="text-orange-300">View Profile</span>
+                            <ArrowRight className="w-3 h-3 text-orange-300" />
+                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
                   
                   <div className="text-center">
-                    <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">
+                    <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white group-hover:text-orange-500 transition-colors duration-300">
                       {member.name}
                     </h3>
-                    <p className="text-orange-500 font-medium">{member.role}</p>
+                    <p className="text-orange-500 font-medium bg-gradient-to-r from-orange-500/20 to-amber-500/20 px-4 py-1 rounded-full inline-block">
+                      {member.role}
+                    </p>
+                    
+                    {/* Electric connection dots */}
+                    <div className="flex justify-center gap-1 mt-4">
+                      {[1, 2, 3].map((dot) => (
+                        <div 
+                          key={dot}
+                          className="w-1.5 h-1.5 rounded-full bg-orange-400/60 group-hover:bg-orange-400 transition-colors duration-300"
+                          style={{
+                            animation: `pulse 1.5s infinite ${dot * 0.2}s`
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </FadeUp>
             ))}
 
           </div>
+          
+          {/* Team synergy message */}
+          <FadeUp>
+            <div className="text-center mt-20 max-w-2xl mx-auto">
+              <div className="inline-flex items-center gap-4 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 backdrop-blur-sm">
+                <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                <p className="text-gray-700 dark:text-gray-300">
+                  <span className="text-orange-500 font-semibold">Electric Synergy:</span> Our team collaborates with dynamic energy and precision
+                </p>
+                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse delay-300" />
+              </div>
+            </div>
+          </FadeUp>
         </div>
       </section>
 
