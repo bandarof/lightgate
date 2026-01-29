@@ -4,7 +4,7 @@ import React from "react";
 import { FadeUp } from "@/components/Motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Users, Target, Eye, Globe, Award, Calendar, Sparkles, Mountain, Ship, Heart, Rocket } from "lucide-react";
+import { ArrowRight, Users, Target, Eye } from "lucide-react";
 
 // Static hexagonal background for about section
 function StaticHexagonalBackground() {
@@ -651,15 +651,14 @@ export default function About() {
             {/* Main Timeline Line */}
             <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500/20 via-orange-500/40 to-orange-500/20 -translate-x-1/2 hidden lg:block" />
             
-            {/* Timeline Items */}
-            <div className="space-y-24 lg:space-y-32">
+            {/* Timeline Items - Reduced spacing */}
+            <div className="space-y-16 lg:space-y-20">
               {[
                 {
                   year: "2009",
                   title: "The Birth",
                   description: "Lightgate was founded with a vision to revolutionize cultural entertainment.",
                   image: "/milestone-birth.jpg",
-                  icon: <Sparkles className="w-6 h-6" />,
                   align: "left"
                 },
                 {
@@ -667,7 +666,6 @@ export default function About() {
                   title: "Hiking & Outdoor Community",
                   description: "Established community-driven outdoor activities promoting healthy lifestyles and environmental awareness.",
                   image: "/milestone-hiking.jpg",
-                  icon: <Mountain className="w-6 h-6" />,
                   align: "right"
                 },
                 {
@@ -675,7 +673,6 @@ export default function About() {
                   title: "Peace Boat Hosting Event",
                   description: "Curated cultural exchange for 150+ international guests with Saudi folkloric performances and traditional crafts exhibition.",
                   image: "/milestone-peaceboat.jpg",
-                  icon: <Ship className="w-6 h-6" />,
                   align: "left"
                 },
                 {
@@ -683,7 +680,6 @@ export default function About() {
                   title: "CSR Programs",
                   description: "Launched comprehensive Corporate Social Responsibility initiatives focusing on community development.",
                   image: "/milestone-csr.jpg",
-                  icon: <Heart className="w-6 h-6" />,
                   align: "right"
                 },
                 {
@@ -691,7 +687,6 @@ export default function About() {
                   title: "Walk for a Cause",
                   description: "Community-driven initiative promoting social responsibility through organized walks and fundraising events.",
                   image: "/milestone-walk.jpg",
-                  icon: <Users className="w-6 h-6" />,
                   align: "left"
                 },
                 {
@@ -699,7 +694,6 @@ export default function About() {
                   title: "International Presence",
                   description: "Expanded operations to multiple countries, establishing Lightgate as an international cultural platform.",
                   image: "/milestone-international.jpg",
-                  icon: <Globe className="w-6 h-6" />,
                   align: "right"
                 },
                 {
@@ -707,7 +701,6 @@ export default function About() {
                   title: "SPAR Initiative",
                   description: "Saudi sports initiative redefining physical activity as a lifestyle through coast-to-coast events.",
                   image: "/milestone-spar.jpg",
-                  icon: <Rocket className="w-6 h-6" />,
                   align: "left"
                 }
               ].map((milestone, index) => (
@@ -721,48 +714,37 @@ export default function About() {
                     </div>
 
                     {/* Content Card */}
-                    <div className={`lg:w-5/12 mt-8 lg:mt-0 ${milestone.align === "left" ? "lg:pr-16 lg:text-right" : "lg:pl-16"}`}>
+                    <div className={`lg:w-5/12 mt-8 lg:mt-0 ${milestone.align === "left" ? "lg:pr-12 lg:text-right" : "lg:pl-12"}`}>
                       <div className="relative group">
                         <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
                                       rounded-2xl opacity-0 group-hover:opacity-100 
                                       transition-opacity duration-500 blur-xl" />
                         
-                        <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 
+                        <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-6 
                                       border border-gray-200 dark:border-neutral-700
                                       group-hover:border-orange-500/50
                                       group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
                                       transition-all duration-500">
                           
                           {/* Year Badge */}
-                          <div className={`mb-6 ${milestone.align === "left" ? "lg:flex lg:justify-end" : ""}`}>
-                            <span className={`inline-block px-4 py-2 rounded-full 
+                          <div className={`mb-4 ${milestone.align === "left" ? "lg:flex lg:justify-end" : ""}`}>
+                            <span className={`inline-block px-3 py-1.5 rounded-full 
                                           ${milestone.year === "Coming Soon" ? "bg-gradient-to-r from-orange-500 to-orange-600" : "bg-orange-500"} 
                                           text-white text-sm font-bold`}>
                               {milestone.year}
                             </span>
                           </div>
 
-                          {/* Icon */}
-                          <div className={`w-16 h-16 rounded-xl mb-6 
-                                        bg-gradient-to-br from-orange-500/20 to-orange-500/5
-                                        flex items-center justify-center
-                                        group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                        transition-all duration-500 ${milestone.align === "left" ? "lg:ml-auto" : ""}`}>
-                            <div className="text-orange-500">
-                              {milestone.icon}
-                            </div>
-                          </div>
-
-                          <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
+                          <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-white">
                             {milestone.title}
                           </h3>
                           
-                          <p className="text-gray-600 dark:text-gray-400">
+                          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
                             {milestone.description}
                           </p>
 
                           {/* Image Preview */}
-                          <div className="mt-6 rounded-xl overflow-hidden h-48 relative bg-gray-100 dark:bg-neutral-700">
+                          <div className="rounded-xl overflow-hidden h-40 relative bg-gray-100 dark:bg-neutral-700">
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="relative w-full h-full">
                                 <Image
@@ -779,8 +761,8 @@ export default function About() {
                                       parent.innerHTML = `
                                         <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
                                           <div class="text-center">
-                                            <div class="text-4xl font-bold text-gray-300 mb-2">${milestone.year}</div>
-                                            <div class="text-lg text-gray-400">${milestone.title}</div>
+                                            <div class="text-3xl font-bold text-gray-300 mb-2">${milestone.year}</div>
+                                            <div class="text-md text-gray-400">${milestone.title}</div>
                                           </div>
                                         </div>
                                       `;
@@ -804,7 +786,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= CORE TEAM MEMBERS (9 members) ================= */}
+      {/* ================= CORE TEAM MEMBERS (9 members) - FIXED IMAGES ================= */}
       <section className="relative py-32 bg-white dark:bg-neutral-900">
         <div className="container mx-auto px-6">
           
@@ -879,39 +861,37 @@ export default function About() {
                                 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
                                 transition-all duration-500">
                     
-                    {/* Team Member Photo with white background */}
-                    <div className="relative h-full w-full bg-white">
-                      <div className="absolute inset-0 flex items-center justify-center p-4 bg-white">
-                        <div className="relative w-full h-full max-w-[200px] mx-auto">
-                          <Image
-                            src={member.image}
-                            alt={member.name}
-                            fill
-                            className="object-contain"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            onError={(e) => {
-                              // Fallback to placeholder if image doesn't exist
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const container = target.parentElement?.parentElement;
-                              if (container) {
-                                container.innerHTML = `
-                                  <div class="flex flex-col items-center justify-center h-full w-full">
-                                    <div class="text-5xl font-bold text-gray-300 mb-4">
-                                      ${member.name.split(' ')[0].charAt(0)}
-                                    </div>
-                                    <div class="text-center">
-                                      <div class="text-lg font-semibold text-gray-800">${member.name.split(' ')[0]}</div>
-                                      <div class="text-sm text-gray-600">${member.role.split(' ')[0]}</div>
-                                    </div>
+                    {/* Team Member Photo - REMOVED white background */}
+                    <div className="relative h-full w-full">
+                      <div className="absolute inset-0">
+                        <Image
+                          src={member.image}
+                          alt={member.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          onError={(e) => {
+                            // Fallback to placeholder if image doesn't exist
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const container = target.parentElement;
+                            if (container) {
+                              container.innerHTML = `
+                                <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
+                                  <div class="text-5xl font-bold text-gray-300 mb-4">
+                                    ${member.name.split(' ')[0].charAt(0)}
                                   </div>
-                                `;
-                              }
-                            }}
-                          />
-                        </div>
+                                  <div class="text-center">
+                                    <div class="text-lg font-semibold text-gray-800">${member.name.split(' ')[0]}</div>
+                                    <div class="text-sm text-gray-600">${member.role.split(' ')[0]}</div>
+                                  </div>
+                                </div>
+                              `;
+                            }
+                          }}
+                        />
                       </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                     </div>
                     
                     {/* Hover overlay */}
@@ -978,7 +958,7 @@ export default function About() {
                   
                   <div className="flex flex-col items-center text-center">
                     {/* Profile image */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-white">
+                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
                       <div className="relative w-full h-full">
                         <Image
                           src="/team-jassim.jpg"
@@ -1043,7 +1023,7 @@ export default function About() {
                   
                   <div className="flex flex-col items-center text-center">
                     {/* Profile image */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-white">
+                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
                       <div className="relative w-full h-full">
                         <Image
                           src="/team-emad.jpg"
