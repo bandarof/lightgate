@@ -204,8 +204,8 @@ function FlagshipBackground() {
   );
 }
 
-// Hexagonal background for intro section (without particles)
-function HexagonalBackground() {
+// Static hexagonal background for intro section (NO ANIMATION)
+function StaticHexagonalBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -219,13 +219,8 @@ function HexagonalBackground() {
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
-    };
-
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Draw static hexagonal pattern
-    const drawHexagons = () => {
+      
+      // Clear and draw static pattern
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       // Draw subtle gradient background
@@ -239,11 +234,11 @@ function HexagonalBackground() {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw hexagonal pattern
+      // Draw hexagonal pattern (same as footer)
       ctx.strokeStyle = 'rgba(255, 115, 0, 0.03)';
       ctx.lineWidth = 0.5;
       
-      const hexSize = 80; // Slightly larger hexagons for intro
+      const hexSize = 60; // Same size as footer
       for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
         for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
           ctx.beginPath();
@@ -261,33 +256,10 @@ function HexagonalBackground() {
           ctx.stroke();
         }
       }
-
-      // Draw subtle connecting lines between hexagon centers
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.02)';
-      ctx.lineWidth = 0.3;
-      
-      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
-        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
-          // Connect to right neighbor
-          if (x + hexSize * 1.5 < canvas.width) {
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + hexSize * 1.5, y);
-            ctx.stroke();
-          }
-          
-          // Connect to bottom-right neighbor
-          if (x + hexSize * 0.75 < canvas.width && y + hexSize * Math.sqrt(3) / 2 < canvas.height) {
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + hexSize * 0.75, y + hexSize * Math.sqrt(3) / 2);
-            ctx.stroke();
-          }
-        }
-      }
     };
 
-    drawHexagons();
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
@@ -332,8 +304,8 @@ export default function Home() {
       {/* ================= INTRO ================= */}
       <section className="relative py-28 bg-white dark:bg-neutral-900 overflow-hidden">
         
-        {/* Hexagonal Background Pattern */}
-        <HexagonalBackground />
+        {/* Static Hexagonal Background Pattern (NO ANIMATION) */}
+        <StaticHexagonalBackground />
 
         {/* Orange gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-500/5" />
