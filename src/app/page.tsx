@@ -2,7 +2,9 @@
 
 import { FadeUp, useCounters } from "@/components/Motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { ArrowRight } from "lucide-react";
 
 // Background animation component for flagship experiences
 function FlagshipBackground() {
@@ -280,7 +282,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= FLAGSHIP EXPERIENCES ================= */}
+      {/* ================= THE PROCESS & FLAGSHIP EXPERIENCES ================= */}
       <section className="relative py-32 bg-white dark:bg-neutral-900 overflow-hidden">
 
         {/* Background Animation */}
@@ -288,6 +290,257 @@ export default function Home() {
 
         <div className="relative z-10 container mx-auto px-6">
 
+          {/* THE PROCESS SECTION - MOVED TO TOP */}
+          <FadeUp>
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-bold">
+                The <span className="text-orange-500">Process</span>
+              </h2>
+              <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Our systematic approach ensures every project is executed with precision, 
+                creativity, and excellence from conception to delivery.
+              </p>
+            </div>
+          </FadeUp>
+
+          <div className="grid md:grid-cols-4 gap-8 mb-32">
+            
+            {/* Step 1: Briefing & Brainstorming */}
+            <FadeUp>
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
+                              rounded-2xl opacity-0 group-hover:opacity-100 
+                              transition-opacity duration-500 blur-xl" />
+                
+                <div className="relative bg-white dark:bg-neutral-800 rounded-xl p-8 
+                              border border-gray-200 dark:border-neutral-700
+                              group-hover:border-orange-500/50
+                              group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                              transition-all duration-500 h-full">
+                  
+                  {/* Step Number */}
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-orange-500 
+                                rounded-full flex items-center justify-center
+                                text-white font-bold text-lg
+                                group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,115,0,0.8)]
+                                transition-all duration-500">
+                    01
+                  </div>
+
+                  {/* Icon/Visual */}
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl 
+                                bg-gradient-to-br from-orange-500/20 to-orange-500/5
+                                flex items-center justify-center
+                                group-hover:from-orange-500/30 group-hover:to-orange-500/10
+                                transition-all duration-500">
+                    <div className="w-8 h-8 rounded-full bg-orange-500/30 
+                                  flex items-center justify-center
+                                  group-hover:bg-orange-500/40
+                                  transition-colors duration-500">
+                      <div className="w-4 h-4 rounded-full bg-orange-500" />
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-center mb-4 
+                               text-gray-800 dark:text-white
+                               group-hover:text-orange-500
+                               transition-colors duration-500">
+                    Briefing & Brainstorming
+                  </h3>
+                  
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    We collaborate on a vision board to capture goals, design concepts, 
+                    and key details, ensuring a unified plan before production begins.
+                  </p>
+
+                  {/* Connecting Line (Desktop Only) */}
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 
+                                bg-gradient-to-r from-orange-500/30 to-transparent
+                                group-hover:from-orange-500 group-hover:to-orange-500/30
+                                transition-all duration-500" />
+                </div>
+              </div>
+            </FadeUp>
+
+            {/* Step 2: Execution */}
+            <FadeUp delay={0.1}>
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
+                              rounded-2xl opacity-0 group-hover:opacity-100 
+                              transition-opacity duration-500 blur-xl" />
+                
+                <div className="relative bg-white dark:bg-neutral-800 rounded-xl p-8 
+                              border border-gray-200 dark:border-neutral-700
+                              group-hover:border-orange-500/50
+                              group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                              transition-all duration-500 h-full">
+                  
+                  {/* Step Number */}
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-orange-500 
+                                rounded-full flex items-center justify-center
+                                text-white font-bold text-lg
+                                group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,115,0,0.8)]
+                                transition-all duration-500">
+                    02
+                  </div>
+
+                  {/* Icon/Visual */}
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl 
+                                bg-gradient-to-br from-orange-500/20 to-orange-500/5
+                                flex items-center justify-center
+                                group-hover:from-orange-500/30 group-hover:to-orange-500/10
+                                transition-all duration-500">
+                    <div className="w-10 h-2 bg-orange-500 rounded-full 
+                                  group-hover:w-12 group-hover:bg-orange-400
+                                  transition-all duration-500" />
+                  </div>
+
+                  <h3 className="text-xl font-bold text-center mb-4 
+                               text-gray-800 dark:text-white
+                               group-hover:text-orange-500
+                               transition-colors duration-500">
+                    Execution
+                  </h3>
+                  
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    We bring the approved design to life, crafting the product while 
+                    making any needed tweaks in close collaboration with the client.
+                  </p>
+
+                  {/* Connecting Line (Desktop Only) */}
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 
+                                bg-gradient-to-r from-orange-500/30 to-transparent
+                                group-hover:from-orange-500 group-hover:to-orange-500/30
+                                transition-all duration-500" />
+                </div>
+              </div>
+            </FadeUp>
+
+            {/* Step 3: Finalization */}
+            <FadeUp delay={0.2}>
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
+                              rounded-2xl opacity-0 group-hover:opacity-100 
+                              transition-opacity duration-500 blur-xl" />
+                
+                <div className="relative bg-white dark:bg-neutral-800 rounded-xl p-8 
+                              border border-gray-200 dark:border-neutral-700
+                              group-hover:border-orange-500/50
+                              group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                              transition-all duration-500 h-full">
+                  
+                  {/* Step Number */}
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-orange-500 
+                                rounded-full flex items-center justify-center
+                                text-white font-bold text-lg
+                                group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,115,0,0.8)]
+                                transition-all duration-500">
+                    03
+                  </div>
+
+                  {/* Icon/Visual */}
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl 
+                                bg-gradient-to-br from-orange-500/20 to-orange-500/5
+                                flex items-center justify-center
+                                group-hover:from-orange-500/30 group-hover:to-orange-500/10
+                                transition-all duration-500">
+                    <div className="w-8 h-8 border-2 border-orange-500 rounded-full 
+                                  flex items-center justify-center
+                                  group-hover:border-orange-400 group-hover:scale-110
+                                  transition-all duration-500">
+                      <div className="w-4 h-4 rounded-full bg-orange-500 
+                                    group-hover:bg-orange-400
+                                    transition-colors duration-500" />
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-center mb-4 
+                               text-gray-800 dark:text-white
+                               group-hover:text-orange-500
+                               transition-colors duration-500">
+                    Finalization
+                  </h3>
+                  
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    We conduct a quality review and final fitting, making last-minute 
+                    adjustments so the piece meets our exacting standards.
+                  </p>
+
+                  {/* Connecting Line (Desktop Only) */}
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 
+                                bg-gradient-to-r from-orange-500/30 to-transparent
+                                group-hover:from-orange-500 group-hover:to-orange-500/30
+                                transition-all duration-500" />
+                </div>
+              </div>
+            </FadeUp>
+
+            {/* Step 4: Delivery */}
+            <FadeUp delay={0.3}>
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 
+                              rounded-2xl opacity-0 group-hover:opacity-100 
+                              transition-opacity duration-500 blur-xl" />
+                
+                <div className="relative bg-white dark:bg-neutral-800 rounded-xl p-8 
+                              border border-gray-200 dark:border-neutral-700
+                              group-hover:border-orange-500/50
+                              group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                              transition-all duration-500 h-full">
+                  
+                  {/* Step Number */}
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-orange-500 
+                                rounded-full flex items-center justify-center
+                                text-white font-bold text-lg
+                                group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,115,0,0.8)]
+                                transition-all duration-500">
+                    04
+                  </div>
+
+                  {/* Icon/Visual */}
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl 
+                                bg-gradient-to-br from-orange-500/20 to-orange-500/5
+                                flex items-center justify-center
+                                group-hover:from-orange-500/30 group-hover:to-orange-500/10
+                                transition-all duration-500">
+                    <div className="w-10 h-1.5 bg-orange-500 rounded-full rotate-45 
+                                  group-hover:bg-orange-400 group-hover:rotate-90
+                                  transition-all duration-500" />
+                    <div className="absolute w-10 h-1.5 bg-orange-500 rounded-full -rotate-45 
+                                  group-hover:bg-orange-400 group-hover:-rotate-90
+                                  transition-all duration-500" />
+                  </div>
+
+                  <h3 className="text-xl font-bold text-center mb-4 
+                               text-gray-800 dark:text-white
+                               group-hover:text-orange-500
+                               transition-colors duration-500">
+                    Delivery
+                  </h3>
+                  
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    We hand over the finished product at least one week before the event, 
+                    performing a final check to guarantee complete client satisfaction.
+                  </p>
+                </div>
+              </div>
+            </FadeUp>
+
+          </div>
+
+          {/* Process Flow Line (Mobile Only) */}
+          <div className="mb-20 md:hidden relative">
+            <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-500/30 to-transparent -translate-x-1/2" />
+            <div className="grid grid-cols-1 gap-20 relative">
+              {[1, 2, 3, 4].map((step) => (
+                <div key={step} className="relative">
+                  <div className="absolute left-1/2 -top-10 w-4 h-4 bg-orange-500 rounded-full -translate-x-1/2" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* FLAGSHIP EXPERIENCES SECTION - MOVED BELOW PROCESS */}
           <FadeUp>
             <div className="text-center mb-20">
               <h2 className="text-4xl md:text-5xl font-bold">
@@ -301,7 +554,7 @@ export default function Home() {
             </div>
           </FadeUp>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-10 mb-16">
 
             {[
               { img: "/experience-1.jpg", title: "Immersive Festivals", sub: "Mega Scale Cultural Events" },
@@ -355,8 +608,29 @@ export default function Home() {
 
           </div>
 
-        </div>
+          {/* View Portfolio Button - UNDER FLAGSHIP EXPERIENCES */}
+          <FadeUp>
+            <div className="text-center">
+              <Link
+                href="/portfolio"
+                className="inline-flex items-center gap-3 px-8 py-4 
+                         rounded-full bg-gradient-to-r from-orange-500 to-orange-600
+                         text-white font-medium text-lg
+                         hover:from-orange-600 hover:to-orange-700
+                         hover:shadow-[0_0_30px_rgba(255,115,0,0.5)]
+                         transform hover:-translate-y-1
+                         transition-all duration-300"
+              >
+                Explore Our Portfolio
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">
+                Discover our complete collection of monumental cultural experiences
+              </p>
+            </div>
+          </FadeUp>
 
+        </div>
       </section>
 
       {/* ================= SERVICES SNAPSHOT ================= */}
@@ -378,10 +652,14 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl font-bold">
                 Our <span className="text-orange-500">Services</span>
               </h2>
+              <p className="mt-4 max-w-2xl mx-auto text-gray-300">
+                Comprehensive solutions for creating unforgettable cultural experiences 
+                with precision and innovation.
+              </p>
             </div>
           </FadeUp>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
 
             {[
               "Event Production",
@@ -443,6 +721,28 @@ export default function Home() {
             ))}
 
           </div>
+
+          {/* View Services Button */}
+          <FadeUp>
+            <div className="text-center">
+              <Link
+                href="/services"
+                className="inline-flex items-center gap-3 px-8 py-4 
+                         rounded-full bg-transparent border-2 border-orange-500
+                         text-orange-500 font-medium text-lg
+                         hover:bg-orange-500 hover:text-white
+                         hover:shadow-[0_0_30px_rgba(255,115,0,0.5)]
+                         transform hover:-translate-y-1
+                         transition-all duration-300"
+              >
+                View All Services
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <p className="mt-4 text-gray-300">
+                Explore our complete range of professional event services
+              </p>
+            </div>
+          </FadeUp>
 
         </div>
       </section>
