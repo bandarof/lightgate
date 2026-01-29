@@ -76,6 +76,96 @@ function StaticHexagonalBackground() {
   );
 }
 
+// Hexagonal background for CTA section (same as home page intro)
+function CTAHexagonalBackground() {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+  React.useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas dimensions
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      
+      // Clear and draw static pattern
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw subtle gradient background
+      const gradient = ctx.createLinearGradient(
+        0, 0, 
+        canvas.width, canvas.height
+      );
+      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.03)');
+      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.02)');
+      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.01)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw MORE VISIBLE hexagonal pattern
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.08)';
+      ctx.lineWidth = 1;
+      
+      const hexSize = 70;
+      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
+        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const hexX = x + hexSize * Math.cos(angle);
+            const hexY = y + hexSize * Math.sin(angle);
+            if (i === 0) {
+              ctx.moveTo(hexX, hexY);
+            } else {
+              ctx.lineTo(hexX, hexY);
+            }
+          }
+          ctx.closePath();
+          ctx.stroke();
+        }
+      }
+
+      // Draw subtle connecting dots at hexagon centers
+      ctx.fillStyle = 'rgba(255, 115, 0, 0.06)';
+      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
+        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Draw dots at hexagon vertices too
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const hexX = x + hexSize * Math.cos(angle);
+            const hexY = y + hexSize * Math.sin(angle);
+            ctx.beginPath();
+            ctx.arc(hexX, hexY, 1, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full"
+    />
+  );
+}
+
 export default function About() {
   return (
     <main className="bg-white dark:bg-neutral-950">
@@ -364,7 +454,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= MILESTONES (From PDF Page 5) ================= */}
+      {/* ================= MAJOR MILESTONES (From PDF Page 5) ================= */}
       <section className="relative py-32 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-900 dark:to-neutral-950">
         <div className="container mx-auto px-6">
           
@@ -374,7 +464,7 @@ export default function About() {
                 OUR WORK
               </span>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Major <span className="text-orange-500">Projects</span>
+                Major <span className="text-orange-500">Milestones</span>
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-400">
                 Iconic projects that showcase our capabilities
@@ -388,37 +478,37 @@ export default function About() {
               {
                 title: "Walk for a Cause",
                 description: "Community-driven initiative promoting social responsibility through organized walks and fundraising events.",
-                icon: "👣"
+                image: "/milestone-walk.jpg"
               },
               {
                 title: "International Presence",
                 description: "Expanded our cultural events to multiple countries, establishing global recognition and partnerships.",
-                icon: "🌍"
+                image: "/milestone-international.jpg"
               },
               {
                 title: "SPAR Initiative",
                 description: "Saudi sports initiative redefining physical activity as a lifestyle through coast-to-coast events.",
-                icon: "🏃‍♂️"
+                image: "/milestone-spar.jpg"
               },
               {
                 title: "Creative Photography",
                 description: "World-class photography services capturing the essence of cultural events and celebrations.",
-                icon: "📸"
+                image: "/milestone-photography.jpg"
               },
               {
                 title: "Event Production",
                 description: "Full-scale event production from concept to execution for corporate and cultural occasions.",
-                icon: "🎪"
+                image: "/milestone-events.jpg"
               },
               {
                 title: "Digital Marketing",
                 description: "Comprehensive social media and digital marketing strategies for event promotion and engagement.",
-                icon: "📱"
+                image: "/milestone-digital.jpg"
               },
               {
                 title: "Media Production",
                 description: "High-quality video production, filming, and media content creation for cultural storytelling.",
-                icon: "🎬"
+                image: "/milestone-media.jpg"
               }
             ].map((project, index) => (
               <FadeUp key={index}>
@@ -427,34 +517,31 @@ export default function About() {
                                 rounded-2xl opacity-0 group-hover:opacity-100 
                                 transition-opacity duration-500 blur-xl" />
                   
-                  <div className="relative bg-white dark:bg-neutral-800 rounded-xl p-8 
+                  <div className="relative bg-white dark:bg-neutral-800 rounded-xl overflow-hidden
                                 border border-gray-200 dark:border-neutral-700
                                 group-hover:border-orange-500/50
                                 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
                                 transition-all duration-500 h-full flex flex-col">
                     
-                    {/* Icon */}
-                    <div className="w-20 h-20 rounded-2xl mb-6 
-                                  bg-gradient-to-br from-orange-500/20 to-orange-500/5
-                                  flex items-center justify-center
-                                  group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                  transition-all duration-500">
-                      <span className="text-3xl">{project.icon}</span>
+                    {/* Image */}
+                    <div className="relative h-48 w-full overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-orange-500/5" />
+                      <div className="relative h-full w-full">
+                        <div className="text-4xl font-bold text-gray-800/10 dark:text-gray-200/10 absolute inset-0 flex items-center justify-center">
+                          {project.title.split(' ')[0].charAt(0)}
+                        </div>
+                      </div>
                     </div>
 
-                    <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-                      {project.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 dark:text-gray-400 flex-grow">
-                      {project.description}
-                    </p>
-
-                    {/* Learn More Link */}
-                    <div className="mt-6 pt-4 border-t border-gray-200 dark:border-neutral-700">
-                      <span className="text-orange-500 text-sm font-medium group-hover:text-orange-600 transition-colors duration-300">
-                        View Project →
-                      </span>
+                    {/* Content */}
+                    <div className="p-6 flex flex-col flex-grow">
+                      <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+                        {project.title}
+                      </h3>
+                      
+                      <p className="text-gray-600 dark:text-gray-400 flex-grow">
+                        {project.description}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -545,19 +632,35 @@ export default function About() {
                                 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
                                 transition-all duration-500">
                     
-                    {/* If image exists, show it, otherwise show placeholder */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-500/5 flex items-center justify-center">
-                      <div className="text-center p-6">
-                        <div className="text-6xl font-bold text-gray-800/10 dark:text-gray-200/10 mb-4">
-                          {member.name.split(' ')[0].charAt(0)}
-                        </div>
-                        <div className="relative z-10">
-                          <h3 className="text-xl font-bold text-gray-800 dark:text-white">
-                            {member.name}
-                          </h3>
-                          <p className="text-orange-500 font-medium mt-2">{member.role}</p>
-                        </div>
-                      </div>
+                    {/* Team Member Photo */}
+                    <div className="relative h-full w-full">
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover"
+                        onError={(e) => {
+                          // Fallback to placeholder if image doesn't exist
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `
+                            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-500/5 flex items-center justify-center">
+                              <div class="text-center p-6">
+                                <div class="text-6xl font-bold text-gray-800/10 dark:text-gray-200/10 mb-4">
+                                  ${member.name.split(' ')[0].charAt(0)}
+                                </div>
+                                <div class="relative z-10">
+                                  <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+                                    ${member.name}
+                                  </h3>
+                                  <p class="text-orange-500 font-medium mt-2">${member.role}</p>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
                     </div>
                     
                     {/* Hover overlay */}
@@ -623,13 +726,24 @@ export default function About() {
                               transition-all duration-500 h-full">
                   
                   <div className="flex flex-col items-center text-center">
-                    {/* Profile image or placeholder */}
-                    <div className="w-32 h-32 rounded-full mb-6 
-                                  bg-gradient-to-br from-orange-500/20 to-orange-500/5
-                                  flex items-center justify-center
-                                  group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                  transition-all duration-500">
-                      <span className="text-4xl font-bold text-orange-500">J</span>
+                    {/* Profile image */}
+                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
+                      <Image
+                        src="/team-jassim.jpg"
+                        alt="Jassim Alsaady"
+                        fill
+                        className="object-cover"
+                        onError={(e) => {
+                          // Fallback to placeholder
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `
+                            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-orange-500/5 flex items-center justify-center">
+                              <span class="text-4xl font-bold text-orange-500">J</span>
+                            </div>
+                          `;
+                        }}
+                      />
                     </div>
                     
                     <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
@@ -671,13 +785,24 @@ export default function About() {
                               transition-all duration-500 h-full">
                   
                   <div className="flex flex-col items-center text-center">
-                    {/* Profile image or placeholder */}
-                    <div className="w-32 h-32 rounded-full mb-6 
-                                  bg-gradient-to-br from-orange-500/20 to-orange-500/5
-                                  flex items-center justify-center
-                                  group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                  transition-all duration-500">
-                      <span className="text-4xl font-bold text-orange-500">E</span>
+                    {/* Profile image */}
+                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
+                      <Image
+                        src="/team-emad.jpg"
+                        alt="Emad El Sayed"
+                        fill
+                        className="object-cover"
+                        onError={(e) => {
+                          // Fallback to placeholder
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `
+                            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-orange-500/5 flex items-center justify-center">
+                              <span class="text-4xl font-bold text-orange-500">E</span>
+                            </div>
+                          `;
+                        }}
+                      />
                     </div>
                     
                     <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
@@ -737,9 +862,26 @@ export default function About() {
                                 group-hover:border-orange-500/50
                                 group-hover:shadow-[0_0_20px_rgba(255,115,0,0.1)]
                                 transition-all duration-500">
-                    <div className="text-gray-400 dark:text-gray-500 text-sm text-center
-                                  group-hover:text-orange-500 transition-colors duration-500">
-                      Partner {index + 1}
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={logo}
+                        alt={`Strategic Partner ${index + 1}`}
+                        fill
+                        className="object-contain p-4"
+                        onError={(e) => {
+                          // Fallback to text if logo doesn't exist
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `
+                            <div class="flex items-center justify-center h-full w-full">
+                              <div class="text-gray-400 dark:text-gray-500 text-sm text-center
+                                        group-hover:text-orange-500 transition-colors duration-500">
+                                Partner ${index + 1}
+                              </div>
+                            </div>
+                          `;
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -759,13 +901,19 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= CTA SECTION ================= */}
-      <section className="relative py-32 bg-gradient-to-br from-orange-500/10 via-transparent to-orange-500/5">
-        <div className="container mx-auto px-6">
+      {/* ================= CTA SECTION with Hexagonal Background ================= */}
+      <section className="relative py-32 overflow-hidden">
+        {/* Hexagonal Background Pattern (same as home page intro) */}
+        <CTAHexagonalBackground />
+
+        {/* Orange gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-orange-500/5" />
+
+        <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-bold mb-8">
+              <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-800 dark:text-white">
                 Ready to Illuminate Your <span className="text-orange-500">Vision</span>?
               </h2>
               
