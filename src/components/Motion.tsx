@@ -10,7 +10,7 @@ export function FadeUp({ children }: { children: React.ReactNode }) {
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.9, ease: "easeOut" }}
       viewport={{ once: true }}
     >
       {children}
@@ -24,34 +24,44 @@ export function useCounters() {
   useEffect(() => {
     const counters = document.querySelectorAll(".counter");
 
-    counters.forEach((el) => {
-      const counter = el as HTMLElement;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
 
-      const update = () => {
-        const target = Number(counter.dataset.target);
-        const current = Number(counter.innerText.replace(/\D/g, ""));
-        const increment = target / 200;
+          const counter = entry.target as HTMLElement;
+          observer.unobserve(counter);
 
-        if (current < target) {
-          counter.innerText = Math.ceil(current + increment).toString();
-          requestAnimationFrame(update);
-        } else {
-          counter.innerText = target.toString();
+          const target = Number(counter.dataset.target);
+          const duration = 2000; // ms
+          const start = performance.now();
 
-          /* ===== FINAL FORMAT AFTER FINISH ===== */
+          function animate(now: number) {
+            const progress = Math.min((now - start) / duration, 1);
+            const value = Math.floor(progress * target);
 
-          if (counter.dataset.suffix) {
-            if (counter.dataset.suffix === "M+") {
-              counter.innerText = "2M+";
+            counter.innerText = value.toString();
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
             } else {
-              counter.innerText =
-                target.toString() + counter.dataset.suffix;
+              if (counter.dataset.suffix) {
+                counter.innerText =
+                  target.toString() + counter.dataset.suffix;
+              }
+
+              if (target >= 1000000) {
+                counter.innerText = "2M+";
+              }
             }
           }
-        }
-      };
 
-      update();
-    });
+          requestAnimationFrame(animate);
+        });
+      },
+      { threshold: 0.4 }
+    );
+
+    counters.forEach((c) => observer.observe(c));
   }, []);
 }
