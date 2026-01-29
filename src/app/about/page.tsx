@@ -4,7 +4,7 @@ import React from "react";
 import { FadeUp } from "@/components/Motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Users, Target, Eye, Globe, Award, Calendar, Sparkles } from "lucide-react";
+import { ArrowRight, Users, Target, Eye, Globe, Award, Calendar, Sparkles, Mountain, Ship, Heart, Rocket } from "lucide-react";
 
 // Static hexagonal background for about section
 function StaticHexagonalBackground() {
@@ -76,7 +76,178 @@ function StaticHexagonalBackground() {
   );
 }
 
-// Hexagonal background for CTA section (same as home page intro)
+// Animated timeline background
+function TimelineBackground() {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+  React.useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas dimensions
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Timeline animation
+    const particles: Array<{
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
+      opacity: number;
+    }> = [];
+
+    const colors = [
+      'rgba(255, 115, 0, 0.4)',
+      'rgba(255, 165, 0, 0.3)',
+      'rgba(255, 200, 50, 0.2)',
+    ];
+
+    // Create particles along timeline
+    const particleCount = 50;
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 3 + 1,
+        speedX: (Math.random() - 0.5) * 0.2,
+        speedY: (Math.random() - 0.5) * 0.2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        opacity: 0.1 + Math.random() * 0.3,
+      });
+    }
+
+    // Animation loop
+    let animationId: number;
+    let time = 0;
+    
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 0.01;
+
+      // Draw gradient background
+      const gradient = ctx.createLinearGradient(
+        0, 0, 
+        0, canvas.height
+      );
+      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
+      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.015)');
+      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.01)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw timeline path
+      const timelineY = canvas.height / 2;
+      ctx.beginPath();
+      ctx.moveTo(100, timelineY);
+      ctx.lineTo(canvas.width - 100, timelineY);
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.1)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Draw timeline glow
+      ctx.beginPath();
+      ctx.moveTo(100, timelineY);
+      ctx.lineTo(canvas.width - 100, timelineY);
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.05)';
+      ctx.lineWidth = 10;
+      ctx.stroke();
+
+      // Draw pulsing orb on timeline
+      const pulseSize = 8 + Math.sin(time * 2) * 2;
+      ctx.beginPath();
+      ctx.arc(canvas.width / 2, timelineY, pulseSize, 0, Math.PI * 2);
+      const pulseGradient = ctx.createRadialGradient(
+        canvas.width / 2, timelineY, 0,
+        canvas.width / 2, timelineY, pulseSize
+      );
+      pulseGradient.addColorStop(0, 'rgba(255, 115, 0, 0.8)');
+      pulseGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
+      ctx.fillStyle = pulseGradient;
+      ctx.fill();
+
+      // Update and draw particles
+      particles.forEach((p, i) => {
+        // Update position
+        p.x += p.speedX;
+        p.y += p.speedY;
+        
+        // Wrap around edges
+        if (p.x < -50) p.x = canvas.width + 50;
+        if (p.x > canvas.width + 50) p.x = -50;
+        if (p.y < -50) p.y = canvas.height + 50;
+        if (p.y > canvas.height + 50) p.y = -50;
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color.replace('0.4', p.opacity.toString());
+        ctx.fill();
+
+        // Draw connection to timeline
+        const distanceToTimeline = Math.abs(p.y - timelineY);
+        if (distanceToTimeline < 100) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.x, timelineY);
+          ctx.strokeStyle = `rgba(255, 115, 0, ${0.05 * (1 - distanceToTimeline / 100)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      });
+
+      // Draw subtle waves
+      for (let w = 0; w < 3; w++) {
+        const waveOffset = time * 0.5 + (w * Math.PI * 2) / 3;
+        const waveAmplitude = 15;
+        
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255, 115, 0, ${0.03 + 0.02 * Math.sin(time + w)})`;
+        ctx.lineWidth = 1;
+        
+        for (let x = 0; x < canvas.width; x += 20) {
+          const y = timelineY + 
+                    Math.sin(x * 0.02 + waveOffset) * waveAmplitude;
+          
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.stroke();
+      }
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full opacity-30"
+    />
+  );
+}
+
+// Hexagonal background for CTA section
 function CTAHexagonalBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
@@ -454,105 +625,186 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= MAJOR MILESTONES (From PDF Page 5) ================= */}
-      <section className="relative py-32 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-900 dark:to-neutral-950">
-        <div className="container mx-auto px-6">
+      {/* ================= MAJOR MILESTONES TIMELINE ================= */}
+      <section className="relative py-32 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-900 dark:to-neutral-950 overflow-hidden">
+        {/* Animated Timeline Background */}
+        <TimelineBackground />
+        
+        <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
             <div className="text-center mb-20 max-w-3xl mx-auto">
               <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
-                OUR WORK
+                OUR JOURNEY
               </span>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Major <span className="text-orange-500">Milestones</span>
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-400">
-                Iconic projects that showcase our capabilities
+                Significant moments that defined our growth
               </p>
             </div>
           </FadeUp>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Timeline Container */}
+          <div className="relative">
+            {/* Main Timeline Line */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500/20 via-orange-500/40 to-orange-500/20 -translate-x-1/2 hidden lg:block" />
             
-            {[
-              {
-                title: "Walk for a Cause",
-                description: "Community-driven initiative promoting social responsibility through organized walks and fundraising events.",
-                image: "/milestone-walk.jpg"
-              },
-              {
-                title: "International Presence",
-                description: "Expanded our cultural events to multiple countries, establishing global recognition and partnerships.",
-                image: "/milestone-international.jpg"
-              },
-              {
-                title: "SPAR Initiative",
-                description: "Saudi sports initiative redefining physical activity as a lifestyle through coast-to-coast events.",
-                image: "/milestone-spar.jpg"
-              },
-              {
-                title: "Creative Photography",
-                description: "World-class photography services capturing the essence of cultural events and celebrations.",
-                image: "/milestone-photography.jpg"
-              },
-              {
-                title: "Event Production",
-                description: "Full-scale event production from concept to execution for corporate and cultural occasions.",
-                image: "/milestone-events.jpg"
-              },
-              {
-                title: "Digital Marketing",
-                description: "Comprehensive social media and digital marketing strategies for event promotion and engagement.",
-                image: "/milestone-digital.jpg"
-              },
-              {
-                title: "Media Production",
-                description: "High-quality video production, filming, and media content creation for cultural storytelling.",
-                image: "/milestone-media.jpg"
-              }
-            ].map((project, index) => (
-              <FadeUp key={index}>
-                <div className="relative group h-full">
-                  <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                                rounded-2xl opacity-0 group-hover:opacity-100 
-                                transition-opacity duration-500 blur-xl" />
-                  
-                  <div className="relative bg-white dark:bg-neutral-800 rounded-xl overflow-hidden
-                                border border-gray-200 dark:border-neutral-700
-                                group-hover:border-orange-500/50
-                                group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                                transition-all duration-500 h-full flex flex-col">
+            {/* Timeline Items */}
+            <div className="space-y-24 lg:space-y-32">
+              {[
+                {
+                  year: "2009",
+                  title: "The Birth",
+                  description: "Lightgate was founded with a vision to revolutionize cultural entertainment.",
+                  image: "/milestone-birth.jpg",
+                  icon: <Sparkles className="w-6 h-6" />,
+                  align: "left"
+                },
+                {
+                  year: "2011",
+                  title: "Hiking & Outdoor Community",
+                  description: "Established community-driven outdoor activities promoting healthy lifestyles and environmental awareness.",
+                  image: "/milestone-hiking.jpg",
+                  icon: <Mountain className="w-6 h-6" />,
+                  align: "right"
+                },
+                {
+                  year: "2013",
+                  title: "Peace Boat Hosting Event",
+                  description: "Curated cultural exchange for 150+ international guests with Saudi folkloric performances and traditional crafts exhibition.",
+                  image: "/milestone-peaceboat.jpg",
+                  icon: <Ship className="w-6 h-6" />,
+                  align: "left"
+                },
+                {
+                  year: "2014",
+                  title: "CSR Programs",
+                  description: "Launched comprehensive Corporate Social Responsibility initiatives focusing on community development.",
+                  image: "/milestone-csr.jpg",
+                  icon: <Heart className="w-6 h-6" />,
+                  align: "right"
+                },
+                {
+                  year: "2015",
+                  title: "Walk for a Cause",
+                  description: "Community-driven initiative promoting social responsibility through organized walks and fundraising events.",
+                  image: "/milestone-walk.jpg",
+                  icon: <Users className="w-6 h-6" />,
+                  align: "left"
+                },
+                {
+                  year: "2017",
+                  title: "International Presence",
+                  description: "Expanded operations to multiple countries, establishing Lightgate as an international cultural platform.",
+                  image: "/milestone-international.jpg",
+                  icon: <Globe className="w-6 h-6" />,
+                  align: "right"
+                },
+                {
+                  year: "Coming Soon",
+                  title: "SPAR Initiative",
+                  description: "Saudi sports initiative redefining physical activity as a lifestyle through coast-to-coast events.",
+                  image: "/milestone-spar.jpg",
+                  icon: <Rocket className="w-6 h-6" />,
+                  align: "left"
+                }
+              ].map((milestone, index) => (
+                <FadeUp key={index}>
+                  <div className={`relative flex flex-col lg:flex-row items-center ${milestone.align === "left" ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
                     
-                    {/* Image */}
-                    <div className="relative h-48 w-full overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-orange-500/5" />
-                      <div className="relative h-full w-full">
-                        <div className="text-4xl font-bold text-gray-800/10 dark:text-gray-200/10 absolute inset-0 flex items-center justify-center">
-                          {project.title.split(' ')[0].charAt(0)}
+                    {/* Timeline Node */}
+                    <div className="relative z-10 lg:absolute left-1/2 -translate-x-1/2">
+                      <div className="w-6 h-6 rounded-full bg-orange-500 border-4 border-white dark:border-neutral-900 shadow-lg shadow-orange-500/30" />
+                      <div className="absolute inset-0 rounded-full bg-orange-500 animate-ping opacity-20" />
+                    </div>
+
+                    {/* Content Card */}
+                    <div className={`lg:w-5/12 mt-8 lg:mt-0 ${milestone.align === "left" ? "lg:pr-16 lg:text-right" : "lg:pl-16"}`}>
+                      <div className="relative group">
+                        <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                                      rounded-2xl opacity-0 group-hover:opacity-100 
+                                      transition-opacity duration-500 blur-xl" />
+                        
+                        <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 
+                                      border border-gray-200 dark:border-neutral-700
+                                      group-hover:border-orange-500/50
+                                      group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                                      transition-all duration-500">
+                          
+                          {/* Year Badge */}
+                          <div className={`mb-6 ${milestone.align === "left" ? "lg:flex lg:justify-end" : ""}`}>
+                            <span className={`inline-block px-4 py-2 rounded-full 
+                                          ${milestone.year === "Coming Soon" ? "bg-gradient-to-r from-orange-500 to-orange-600" : "bg-orange-500"} 
+                                          text-white text-sm font-bold`}>
+                              {milestone.year}
+                            </span>
+                          </div>
+
+                          {/* Icon */}
+                          <div className={`w-16 h-16 rounded-xl mb-6 
+                                        bg-gradient-to-br from-orange-500/20 to-orange-500/5
+                                        flex items-center justify-center
+                                        group-hover:from-orange-500/30 group-hover:to-orange-500/10
+                                        transition-all duration-500 ${milestone.align === "left" ? "lg:ml-auto" : ""}`}>
+                            <div className="text-orange-500">
+                              {milestone.icon}
+                            </div>
+                          </div>
+
+                          <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
+                            {milestone.title}
+                          </h3>
+                          
+                          <p className="text-gray-600 dark:text-gray-400">
+                            {milestone.description}
+                          </p>
+
+                          {/* Image Preview */}
+                          <div className="mt-6 rounded-xl overflow-hidden h-48 relative bg-gray-100 dark:bg-neutral-700">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="relative w-full h-full">
+                                <Image
+                                  src={milestone.image}
+                                  alt={milestone.title}
+                                  fill
+                                  className="object-cover"
+                                  onError={(e) => {
+                                    // Fallback if image doesn't exist
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    const parent = target.parentElement;
+                                    if (parent) {
+                                      parent.innerHTML = `
+                                        <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
+                                          <div class="text-center">
+                                            <div class="text-4xl font-bold text-gray-300 mb-2">${milestone.year}</div>
+                                            <div class="text-lg text-gray-400">${milestone.title}</div>
+                                          </div>
+                                        </div>
+                                      `;
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Content */}
-                    <div className="p-6 flex flex-col flex-grow">
-                      <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-                        {project.title}
-                      </h3>
-                      
-                      <p className="text-gray-600 dark:text-gray-400 flex-grow">
-                        {project.description}
-                      </p>
-                    </div>
+                    {/* Spacer for desktop */}
+                    <div className="lg:w-2/12" />
                   </div>
-                </div>
-              </FadeUp>
-            ))}
-
+                </FadeUp>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ================= CORE TEAM MEMBERS ================= */}
+      {/* ================= CORE TEAM MEMBERS (9 members) ================= */}
       <section className="relative py-32 bg-white dark:bg-neutral-900">
         <div className="container mx-auto px-6">
           
@@ -582,11 +834,6 @@ export default function About() {
                 name: "LUAI HIJAZI",
                 role: "PARTNER & COO",
                 image: "/team-luai.png"
-              },
-              {
-                name: "JASSIM ALSAADY",
-                role: "DIRECTOR - FILM & COMMERCIAL",
-                image: "/team-jassim.png"
               },
               {
                 name: "AYAH ALRIMAWI",
@@ -632,39 +879,43 @@ export default function About() {
                                 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
                                 transition-all duration-500">
                     
-                    {/* Team Member Photo */}
-                    <div className="relative h-full w-full">
-                      <Image
-                        src={member.image}
-                        alt={member.name}
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          // Fallback to placeholder if image doesn't exist
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.parentElement!.innerHTML = `
-                            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-500/5 flex items-center justify-center">
-                              <div class="text-center p-6">
-                                <div class="text-6xl font-bold text-gray-800/10 dark:text-gray-200/10 mb-4">
-                                  ${member.name.split(' ')[0].charAt(0)}
-                                </div>
-                                <div class="relative z-10">
-                                  <h3 class="text-xl font-bold text-gray-800 dark:text-white">
-                                    ${member.name}
-                                  </h3>
-                                  <p class="text-orange-500 font-medium mt-2">${member.role}</p>
-                                </div>
-                              </div>
-                            </div>
-                          `;
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
+                    {/* Team Member Photo with white background */}
+                    <div className="relative h-full w-full bg-white">
+                      <div className="absolute inset-0 flex items-center justify-center p-4 bg-white">
+                        <div className="relative w-full h-full max-w-[200px] mx-auto">
+                          <Image
+                            src={member.image}
+                            alt={member.name}
+                            fill
+                            className="object-contain"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            onError={(e) => {
+                              // Fallback to placeholder if image doesn't exist
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const container = target.parentElement?.parentElement;
+                              if (container) {
+                                container.innerHTML = `
+                                  <div class="flex flex-col items-center justify-center h-full w-full">
+                                    <div class="text-5xl font-bold text-gray-300 mb-4">
+                                      ${member.name.split(' ')[0].charAt(0)}
+                                    </div>
+                                    <div class="text-center">
+                                      <div class="text-lg font-semibold text-gray-800">${member.name.split(' ')[0]}</div>
+                                      <div class="text-sm text-gray-600">${member.role.split(' ')[0]}</div>
+                                    </div>
+                                  </div>
+                                `;
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                     </div>
                     
                     {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent 
                                   opacity-0 group-hover:opacity-100 
                                   transition-all duration-500 flex items-end p-6">
                       <div className="transform translate-y-4 opacity-0 
@@ -672,7 +923,7 @@ export default function About() {
                                     transition-all duration-500">
                         <div className="text-white">
                           <div className="w-8 h-1 bg-white mb-3" />
-                          <p className="text-sm opacity-90">Professional Profile</p>
+                          <p className="text-sm opacity-90">View Profile</p>
                         </div>
                       </div>
                     </div>
@@ -727,23 +978,29 @@ export default function About() {
                   
                   <div className="flex flex-col items-center text-center">
                     {/* Profile image */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
-                      <Image
-                        src="/team-jassim.jpg"
-                        alt="Jassim Alsaady"
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          // Fallback to placeholder
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.parentElement!.innerHTML = `
-                            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-orange-500/5 flex items-center justify-center">
-                              <span class="text-4xl font-bold text-orange-500">J</span>
-                            </div>
-                          `;
-                        }}
-                      />
+                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-white">
+                      <div className="relative w-full h-full">
+                        <Image
+                          src="/team-jassim.jpg"
+                          alt="Jassim Alsaady"
+                          fill
+                          className="object-cover"
+                          sizes="128px"
+                          onError={(e) => {
+                            // Fallback to placeholder
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `
+                                <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
+                                  <span class="text-4xl font-bold text-orange-500">J</span>
+                                </div>
+                              `;
+                            }
+                          }}
+                        />
+                      </div>
                     </div>
                     
                     <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
@@ -786,23 +1043,29 @@ export default function About() {
                   
                   <div className="flex flex-col items-center text-center">
                     {/* Profile image */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
-                      <Image
-                        src="/team-emad.jpg"
-                        alt="Emad El Sayed"
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          // Fallback to placeholder
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.parentElement!.innerHTML = `
-                            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-orange-500/5 flex items-center justify-center">
-                              <span class="text-4xl font-bold text-orange-500">E</span>
-                            </div>
-                          `;
-                        }}
-                      />
+                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-white">
+                      <div className="relative w-full h-full">
+                        <Image
+                          src="/team-emad.jpg"
+                          alt="Emad El Sayed"
+                          fill
+                          className="object-cover"
+                          sizes="128px"
+                          onError={(e) => {
+                            // Fallback to placeholder
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `
+                                <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
+                                  <span class="text-4xl font-bold text-orange-500">E</span>
+                                </div>
+                              `;
+                            }
+                          }}
+                        />
+                      </div>
                     </div>
                     
                     <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
@@ -846,14 +1109,14 @@ export default function About() {
             
             {/* 7 Strategic Partners as shown in PDF */}
             {[
-              "partner-1.png",
-              "partner-2.png",
-              "partner-3.png",
-              "partner-4.png",
-              "partner-5.png",
-              "partner-6.png",
-              "partner-7.png"
-            ].map((logo, index) => (
+              { name: "Partner 1", logo: "/partner-1.png" },
+              { name: "Partner 2", logo: "/partner-2.png" },
+              { name: "Partner 3", logo: "/partner-3.png" },
+              { name: "Partner 4", logo: "/partner-4.png" },
+              { name: "Partner 5", logo: "/partner-5.png" },
+              { name: "Partner 6", logo: "/partner-6.png" },
+              { name: "Partner 7", logo: "/partner-7.png" }
+            ].map((partner, index) => (
               <FadeUp key={index}>
                 <div className="group relative">
                   <div className="aspect-square rounded-2xl bg-white dark:bg-neutral-800 
@@ -862,24 +1125,29 @@ export default function About() {
                                 group-hover:border-orange-500/50
                                 group-hover:shadow-[0_0_20px_rgba(255,115,0,0.1)]
                                 transition-all duration-500">
-                    <div className="relative w-full h-full">
+                    <div className="relative w-full h-full flex items-center justify-center">
                       <Image
-                        src={logo}
-                        alt={`Strategic Partner ${index + 1}`}
-                        fill
-                        className="object-contain p-4"
+                        src={partner.logo}
+                        alt={partner.name}
+                        width={120}
+                        height={60}
+                        className="object-contain max-h-16"
+                        sizes="(max-width: 768px) 100px, 120px"
                         onError={(e) => {
                           // Fallback to text if logo doesn't exist
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
-                          target.parentElement!.innerHTML = `
-                            <div class="flex items-center justify-center h-full w-full">
-                              <div class="text-gray-400 dark:text-gray-500 text-sm text-center
-                                        group-hover:text-orange-500 transition-colors duration-500">
-                                Partner ${index + 1}
+                          const container = target.parentElement;
+                          if (container) {
+                            container.innerHTML = `
+                              <div class="flex items-center justify-center h-full w-full">
+                                <div class="text-gray-400 dark:text-gray-500 text-sm text-center
+                                          group-hover:text-orange-500 transition-colors duration-500">
+                                  ${partner.name}
+                                </div>
                               </div>
-                            </div>
-                          `;
+                            `;
+                          }
                         }}
                       />
                     </div>
@@ -903,7 +1171,7 @@ export default function About() {
 
       {/* ================= CTA SECTION with Hexagonal Background ================= */}
       <section className="relative py-32 overflow-hidden">
-        {/* Hexagonal Background Pattern (same as home page intro) */}
+        {/* Hexagonal Background Pattern */}
         <CTAHexagonalBackground />
 
         {/* Orange gradient overlay */}
