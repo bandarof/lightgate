@@ -587,6 +587,625 @@ function TimelineBackground() {
   );
 }
 
+// ELECTRIC Hexagonal background for Team Members section
+function TeamMembersBackground() {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!canvasRef.current || !containerRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas dimensions
+    const resizeCanvas = () => {
+      canvas.width = containerRef.current!.offsetWidth;
+      canvas.height = containerRef.current!.offsetHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Electric charge particles
+    class ElectricCharge {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      opacity: number;
+      life: number;
+      maxLife: number;
+      targetX: number;
+      targetY: number;
+      type: 'positive' | 'negative';
+      trail: Array<{x: number, y: number}>;
+
+      constructor(x: number, y: number, type: 'positive' | 'negative' = 'positive') {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.size = type === 'positive' ? 2 + Math.random() * 3 : 1 + Math.random() * 2;
+        this.speedX = (Math.random() - 0.5) * 2;
+        this.speedY = (Math.random() - 0.5) * 2;
+        this.opacity = 0.8 + Math.random() * 0.2;
+        this.life = 3 + Math.random() * 5;
+        this.maxLife = this.life;
+        this.targetX = x + (Math.random() - 0.5) * 100;
+        this.targetY = y + (Math.random() - 0.5) * 100;
+        this.trail = [];
+      }
+
+      update(time: number) {
+        this.life -= 0.005;
+        
+        // Follow target with some randomness
+        const dx = this.targetX - this.x;
+        const dy = this.targetY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > 10) {
+          this.speedX += dx * 0.01;
+          this.speedY += dy * 0.01;
+        } else {
+          // New random target
+          this.targetX = this.x + (Math.random() - 0.5) * 200;
+          this.targetY = this.y + (Math.random() - 0.5) * 200;
+        }
+        
+        // Add some randomness
+        this.speedX += (Math.random() - 0.5) * 0.5;
+        this.speedY += (Math.random() - 0.5) * 0.5;
+        
+        // Limit speed
+        const speed = Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY);
+        if (speed > 5) {
+          this.speedX = (this.speedX / speed) * 5;
+          this.speedY = (this.speedY / speed) * 5;
+        }
+        
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        // Add to trail
+        this.trail.push({x: this.x, y: this.y});
+        if (this.trail.length > 10) {
+          this.trail.shift();
+        }
+        
+        // Wrap around edges
+        if (this.x < -50) this.x = canvas.width + 50;
+        if (this.x > canvas.width + 50) this.x = -50;
+        if (this.y < -50) this.y = canvas.height + 50;
+        if (this.y > canvas.height + 50) this.y = -50;
+      }
+
+      draw(ctx: CanvasRenderingContext2D, time: number) {
+        if (this.life <= 0) return;
+
+        const currentOpacity = this.opacity * (this.life / this.maxLife);
+        const pulse = Math.sin(time * 10 + this.x * 0.01) * 0.3 + 0.7;
+        const currentSize = this.size * pulse;
+        
+        // Draw trail
+        for (let i = 0; i < this.trail.length; i++) {
+          const point = this.trail[i];
+          const trailOpacity = currentOpacity * (i / this.trail.length) * 0.3;
+          
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, currentSize * 0.5, 0, Math.PI * 2);
+          
+          if (this.type === 'positive') {
+            const gradient = ctx.createRadialGradient(
+              point.x, point.y, 0,
+              point.x, point.y, currentSize * 0.5
+            );
+            gradient.addColorStop(0, `rgba(0, 200, 255, ${trailOpacity})`);
+            gradient.addColorStop(1, `rgba(0, 150, 255, 0)`);
+            ctx.fillStyle = gradient;
+          } else {
+            const gradient = ctx.createRadialGradient(
+              point.x, point.y, 0,
+              point.x, point.y, currentSize * 0.5
+            );
+            gradient.addColorStop(0, `rgba(255, 50, 50, ${trailOpacity})`);
+            gradient.addColorStop(1, `rgba(255, 0, 0, 0)`);
+            ctx.fillStyle = gradient;
+          }
+          ctx.fill();
+        }
+        
+        // Draw main particle
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, currentSize, 0, Math.PI * 2);
+        
+        if (this.type === 'positive') {
+          const gradient = ctx.createRadialGradient(
+            this.x, this.y, 0,
+            this.x, this.y, currentSize * 2
+          );
+          gradient.addColorStop(0, `rgba(0, 255, 255, ${currentOpacity})`);
+          gradient.addColorStop(0.5, `rgba(0, 200, 255, ${currentOpacity * 0.5})`);
+          gradient.addColorStop(1, `rgba(0, 150, 255, 0)`);
+          ctx.fillStyle = gradient;
+        } else {
+          const gradient = ctx.createRadialGradient(
+            this.x, this.y, 0,
+            this.x, this.y, currentSize * 2
+          );
+          gradient.addColorStop(0, `rgba(255, 100, 100, ${currentOpacity})`);
+          gradient.addColorStop(0.5, `rgba(255, 50, 50, ${currentOpacity * 0.5})`);
+          gradient.addColorStop(1, `rgba(255, 0, 0, 0)`);
+          ctx.fillStyle = gradient;
+        }
+        ctx.fill();
+        
+        // Draw electric aura
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, currentSize * 3, 0, Math.PI * 2);
+        ctx.strokeStyle = this.type === 'positive' 
+          ? `rgba(0, 200, 255, ${currentOpacity * 0.2})`
+          : `rgba(255, 50, 50, ${currentOpacity * 0.2})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // Create electric charges
+    const electricCharges: ElectricCharge[] = [];
+    const chargeCount = 40;
+    
+    for (let i = 0; i < chargeCount; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const type = Math.random() > 0.5 ? 'positive' : 'negative';
+      electricCharges.push(new ElectricCharge(x, y, type));
+    }
+
+    // Hexagon grid system
+    class HexagonCell {
+      x: number;
+      y: number;
+      size: number;
+      energy: number;
+      maxEnergy: number;
+      pulsePhase: number;
+      connections: Array<{x: number, y: number}>;
+      isActive: boolean;
+      activationTime: number;
+
+      constructor(x: number, y: number, size: number) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.energy = 0;
+        this.maxEnergy = 0.5 + Math.random() * 0.5;
+        this.pulsePhase = Math.random() * Math.PI * 2;
+        this.connections = [];
+        this.isActive = false;
+        this.activationTime = 0;
+      }
+
+      update(time: number) {
+        // Natural energy pulse
+        this.energy = this.maxEnergy * (Math.sin(time * 2 + this.pulsePhase) * 0.5 + 0.5);
+        
+        // Random activation
+        if (!this.isActive && Math.random() < 0.01) {
+          this.isActive = true;
+          this.activationTime = time;
+        }
+        
+        if (this.isActive && time - this.activationTime > 1) {
+          this.isActive = false;
+        }
+      }
+
+      draw(ctx: CanvasRenderingContext2D, time: number) {
+        // Draw hexagon outline
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const angle = (Math.PI / 3) * i;
+          const hexX = this.x + this.size * Math.cos(angle);
+          const hexY = this.y + this.size * Math.sin(angle);
+          if (i === 0) {
+            ctx.moveTo(hexX, hexY);
+          } else {
+            ctx.lineTo(hexX, hexY);
+          }
+        }
+        ctx.closePath();
+        
+        // Electric glow effect
+        if (this.isActive) {
+          const pulse = Math.sin(time * 20) * 0.5 + 0.5;
+          const gradient = ctx.createRadialGradient(
+            this.x, this.y, 0,
+            this.x, this.y, this.size * 2
+          );
+          gradient.addColorStop(0, `rgba(0, 255, 255, ${0.3 * pulse})`);
+          gradient.addColorStop(1, `rgba(0, 255, 255, 0)`);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+          
+          // Draw electric arcs from vertices
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const hexX = this.x + this.size * Math.cos(angle);
+            const hexY = this.y + this.size * Math.sin(angle);
+            
+            ctx.beginPath();
+            ctx.moveTo(hexX, hexY);
+            const arcX = hexX + (Math.random() - 0.5) * 20;
+            const arcY = hexY + (Math.random() - 0.5) * 20;
+            ctx.lineTo(arcX, arcY);
+            ctx.strokeStyle = `rgba(0, 255, 255, ${0.5 * pulse})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+        
+        // Draw hexagon with energy-based color
+        const energyColor = Math.floor(this.energy * 255);
+        ctx.strokeStyle = `rgba(${energyColor}, ${150 + energyColor * 0.5}, 255, ${0.1 + this.energy * 0.3})`;
+        ctx.lineWidth = 1 + this.energy * 2;
+        ctx.stroke();
+        
+        // Draw center energy dot
+        if (this.energy > 0.3) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, 2 + this.energy * 3, 0, Math.PI * 2);
+          const centerGradient = ctx.createRadialGradient(
+            this.x, this.y, 0,
+            this.x, this.y, 2 + this.energy * 3
+          );
+          centerGradient.addColorStop(0, `rgba(0, 255, 255, ${0.5 + this.energy * 0.5})`);
+          centerGradient.addColorStop(1, `rgba(0, 150, 255, 0)`);
+          ctx.fillStyle = centerGradient;
+          ctx.fill();
+        }
+      }
+    }
+
+    // Create hexagon grid
+    const hexagonGrid: HexagonCell[] = [];
+    const hexSize = 60;
+    const hexWidth = hexSize * 2;
+    const hexHeight = hexSize * Math.sqrt(3);
+    
+    for (let x = -hexWidth; x < canvas.width + hexWidth; x += hexWidth * 0.75) {
+      for (let y = -hexHeight; y < canvas.height + hexHeight; y += hexHeight) {
+        const offsetX = (Math.floor(y / hexHeight) % 2 === 0) ? 0 : hexWidth * 0.375;
+        hexagonGrid.push(new HexagonCell(x + offsetX, y, hexSize));
+      }
+    }
+
+    // Create connections between nearby hexagons
+    hexagonGrid.forEach((hex, i) => {
+      hex.connections = [];
+      hexagonGrid.forEach((otherHex, j) => {
+        if (i !== j) {
+          const dx = hex.x - otherHex.x;
+          const dy = hex.y - otherHex.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < hexSize * 3) {
+            hex.connections.push({x: otherHex.x, y: otherHex.y});
+          }
+        }
+      });
+    });
+
+    // Lightning bolt system
+    class LightningBolt {
+      points: Array<{x: number, y: number}>;
+      life: number;
+      maxLife: number;
+      opacity: number;
+      thickness: number;
+
+      constructor(startX: number, startY: number, endX: number, endY: number) {
+        this.points = this.generateBolt(startX, startY, endX, endY, 8);
+        this.life = 0.5 + Math.random() * 0.5;
+        this.maxLife = this.life;
+        this.opacity = 0.8 + Math.random() * 0.2;
+        this.thickness = 1 + Math.random() * 2;
+      }
+
+      generateBolt(startX: number, startY: number, endX: number, endY: number, detail: number): Array<{x: number, y: number}> {
+        const points = [{x: startX, y: startY}];
+        
+        const dx = endX - startX;
+        const dy = endY - startY;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        
+        for (let i = 1; i < detail; i++) {
+          const t = i / detail;
+          const x = startX + dx * t + (Math.random() - 0.5) * length * 0.2;
+          const y = startY + dy * t + (Math.random() - 0.5) * length * 0.2;
+          points.push({x, y});
+        }
+        
+        points.push({x: endX, y: endY});
+        return points;
+      }
+
+      update() {
+        this.life -= 0.02;
+        return this.life > 0;
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        const currentOpacity = this.opacity * (this.life / this.maxLife);
+        
+        // Draw main bolt
+        ctx.beginPath();
+        ctx.moveTo(this.points[0].x, this.points[0].y);
+        for (let i = 1; i < this.points.length; i++) {
+          ctx.lineTo(this.points[i].x, this.points[i].y);
+        }
+        
+        const gradient = ctx.createLinearGradient(
+          this.points[0].x, this.points[0].y,
+          this.points[this.points.length - 1].x, this.points[this.points.length - 1].y
+        );
+        gradient.addColorStop(0, `rgba(0, 255, 255, ${currentOpacity})`);
+        gradient.addColorStop(0.5, `rgba(100, 200, 255, ${currentOpacity})`);
+        gradient.addColorStop(1, `rgba(0, 150, 255, ${currentOpacity})`);
+        
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = this.thickness;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        
+        // Draw glow
+        ctx.beginPath();
+        ctx.moveTo(this.points[0].x, this.points[0].y);
+        for (let i = 1; i < this.points.length; i++) {
+          ctx.lineTo(this.points[i].x, this.points[i].y);
+        }
+        ctx.strokeStyle = `rgba(0, 200, 255, ${currentOpacity * 0.3})`;
+        ctx.lineWidth = this.thickness * 3;
+        ctx.stroke();
+      }
+    }
+
+    const lightningBolts: LightningBolt[] = [];
+
+    // Create occasional lightning between hexagons
+    setInterval(() => {
+      if (lightningBolts.length < 5 && hexagonGrid.length >= 2) {
+        const hex1 = hexagonGrid[Math.floor(Math.random() * hexagonGrid.length)];
+        const hex2 = hexagonGrid[Math.floor(Math.random() * hexagonGrid.length)];
+        if (hex1 !== hex2) {
+          lightningBolts.push(new LightningBolt(hex1.x, hex1.y, hex2.x, hex2.y));
+        }
+      }
+    }, 1000);
+
+    // Animation loop
+    let animationId: number;
+    let time = 0;
+    
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 0.01;
+
+      // Draw dark blue gradient background
+      const gradient = ctx.createLinearGradient(
+        0, 0, 
+        canvas.width, canvas.height
+      );
+      gradient.addColorStop(0, 'rgba(10, 10, 30, 0.8)');
+      gradient.addColorStop(0.5, 'rgba(15, 15, 40, 0.9)');
+      gradient.addColorStop(1, 'rgba(20, 20, 50, 0.8)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw connections between hexagons
+      ctx.strokeStyle = 'rgba(0, 150, 255, 0.05)';
+      ctx.lineWidth = 0.5;
+      hexagonGrid.forEach(hex => {
+        hex.connections.forEach(connection => {
+          ctx.beginPath();
+          ctx.moveTo(hex.x, hex.y);
+          ctx.lineTo(connection.x, connection.y);
+          ctx.stroke();
+        });
+      });
+
+      // Update and draw hexagon grid
+      hexagonGrid.forEach(hex => {
+        hex.update(time);
+        hex.draw(ctx, time);
+      });
+
+      // Update and draw lightning bolts
+      for (let i = lightningBolts.length - 1; i >= 0; i--) {
+        if (!lightningBolts[i].update()) {
+          lightningBolts.splice(i, 1);
+        } else {
+          lightningBolts[i].draw(ctx);
+        }
+      }
+
+      // Update and draw electric charges
+      electricCharges.forEach((charge, i) => {
+        charge.update(time);
+        charge.draw(ctx, time);
+        
+        // Remove and replace dead charges
+        if (charge.life <= 0) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height;
+          const type = Math.random() > 0.5 ? 'positive' : 'negative';
+          electricCharges[i] = new ElectricCharge(x, y, type);
+        }
+
+        // Draw electric arcs between opposite charges
+        for (let j = i + 1; j < electricCharges.length; j++) {
+          if (charge.type !== electricCharges[j].type) {
+            const dx = charge.x - electricCharges[j].x;
+            const dy = charge.y - electricCharges[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 150 && Math.random() < 0.1) {
+              ctx.beginPath();
+              ctx.moveTo(charge.x, charge.y);
+              
+              // Create jagged electric arc
+              const segments = 5;
+              const segmentX = (electricCharges[j].x - charge.x) / segments;
+              const segmentY = (electricCharges[j].y - charge.y) / segments;
+              
+              let currentX = charge.x;
+              let currentY = charge.y;
+              
+              for (let s = 1; s <= segments; s++) {
+                currentX += segmentX + (Math.random() - 0.5) * 30;
+                currentY += segmentY + (Math.random() - 0.5) * 30;
+                ctx.lineTo(currentX, currentY);
+              }
+              ctx.lineTo(electricCharges[j].x, electricCharges[j].y);
+              
+              const arcOpacity = (1 - distance / 150) * 0.5;
+              ctx.strokeStyle = `rgba(0, 255, 255, ${arcOpacity})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+              
+              // Draw secondary thinner arc
+              ctx.beginPath();
+              ctx.moveTo(charge.x, charge.y);
+              currentX = charge.x;
+              currentY = charge.y;
+              
+              for (let s = 1; s <= segments; s++) {
+                currentX += segmentX + (Math.random() - 0.5) * 20;
+                currentY += segmentY + (Math.random() - 0.5) * 20;
+                ctx.lineTo(currentX, currentY);
+              }
+              ctx.lineTo(electricCharges[j].x, electricCharges[j].y);
+              
+              ctx.strokeStyle = `rgba(100, 200, 255, ${arcOpacity * 0.7})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+      });
+
+      // Draw electric field lines
+      for (let i = 0; i < 20; i++) {
+        const startX = Math.random() * canvas.width;
+        const startY = Math.random() * canvas.height;
+        
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        
+        let currentX = startX;
+        let currentY = startY;
+        const segments = 10;
+        
+        for (let s = 0; s < segments; s++) {
+          // Calculate direction based on nearby charges
+          let dirX = 0;
+          let dirY = 0;
+          
+          electricCharges.forEach(charge => {
+            const dx = currentX - charge.x;
+            const dy = currentY - charge.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) + 1;
+            const force = (charge.type === 'positive' ? 1 : -1) / (distance * distance);
+            
+            dirX += dx * force;
+            dirY += dy * force;
+          });
+          
+          // Normalize and add randomness
+          const length = Math.sqrt(dirX * dirX + dirY * dirY);
+          if (length > 0) {
+            dirX = (dirX / length) * 10;
+            dirY = (dirY / length) * 10;
+          }
+          
+          currentX += dirX + (Math.random() - 0.5) * 5;
+          currentY += dirY + (Math.random() - 0.5) * 5;
+          ctx.lineTo(currentX, currentY);
+        }
+        
+        const fieldOpacity = 0.05 + Math.sin(time * 3 + i) * 0.02;
+        ctx.strokeStyle = `rgba(0, 200, 255, ${fieldOpacity})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Draw team member connection lines
+      const teamGridX = canvas.width / 2;
+      const teamGridY = canvas.height / 2;
+      const gridSpacing = 80;
+      
+      for (let i = -2; i <= 2; i++) {
+        for (let j = -1; j <= 1; j++) {
+          const nodeX = teamGridX + i * gridSpacing;
+          const nodeY = teamGridY + j * gridSpacing * 1.5;
+          
+          // Draw team node
+          ctx.beginPath();
+          ctx.arc(nodeX, nodeY, 3, 0, Math.PI * 2);
+          const nodeGradient = ctx.createRadialGradient(
+            nodeX, nodeY, 0,
+            nodeX, nodeY, 5
+          );
+          nodeGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + Math.sin(time * 5 + i + j) * 0.2})`);
+          nodeGradient.addColorStop(1, `rgba(0, 200, 255, 0)`);
+          ctx.fillStyle = nodeGradient;
+          ctx.fill();
+          
+          // Connect to nearby nodes
+          if (i < 2) {
+            ctx.beginPath();
+            ctx.moveTo(nodeX, nodeY);
+            ctx.lineTo(nodeX + gridSpacing, nodeY);
+            ctx.strokeStyle = `rgba(0, 200, 255, ${0.1 + Math.sin(time * 3 + i) * 0.05})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+          if (j < 1) {
+            ctx.beginPath();
+            ctx.moveTo(nodeX, nodeY);
+            ctx.lineTo(nodeX, nodeY + gridSpacing * 1.5);
+            ctx.strokeStyle = `rgba(0, 200, 255, ${0.1 + Math.cos(time * 3 + j) * 0.05})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationId);
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+      />
+      {/* Electric glow overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-blue-500/3 to-purple-500/5" />
+    </div>
+  );
+}
+
 // Hexagonal background for CTA section
 function CTAHexagonalBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -1138,19 +1757,23 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= CORE TEAM MEMBERS (9 members) - FITTED IMAGES ================= */}
-      <section className="relative py-32 bg-white dark:bg-neutral-900">
-        <div className="container mx-auto px-6">
+      {/* ================= CORE TEAM MEMBERS (9 members) with ELECTRIC HEXAGONAL BACKGROUND ================= */}
+      <section className="relative py-32 bg-gray-900 dark:bg-black overflow-hidden">
+        
+        {/* ELECTRIC Hexagonal Animated Background */}
+        <TeamMembersBackground />
+
+        <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
             <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
+              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-medium mb-6">
                 OUR PEOPLE
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Leadership <span className="text-orange-500">Team</span>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+                Leadership <span className="text-cyan-400">Team</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">
+              <p className="text-xl text-gray-300">
                 Visionaries driving cultural innovation forward
               </p>
             </div>
@@ -1209,12 +1832,13 @@ export default function About() {
                 <div className="group relative">
                   <div className="relative h-80 rounded-2xl overflow-hidden mb-6
                                 border-2 border-transparent
-                                group-hover:border-orange-500/50
-                                group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
-                                transition-all duration-500">
+                                group-hover:border-cyan-500/70
+                                group-hover:shadow-[0_0_40px_rgba(0,200,255,0.4)]
+                                transition-all duration-500
+                                bg-gradient-to-br from-gray-800 to-gray-900">
                     
-                    {/* Team Member Photo - FIT TO FRAME (no white background) */}
-                    <div className="relative h-full w-full bg-gray-100 dark:bg-neutral-800">
+                    {/* Team Member Photo - FIT TO FRAME (no white background) with electric glow */}
+                    <div className="relative h-full w-full">
                       <div className="absolute inset-0">
                         <Image
                           src={member.image}
@@ -1229,13 +1853,13 @@ export default function About() {
                             const container = target.parentElement;
                             if (container) {
                               container.innerHTML = `
-                                <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
-                                  <div class="text-5xl font-bold text-gray-300 mb-4">
+                                <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-gray-800 to-gray-900">
+                                  <div class="text-5xl font-bold text-cyan-400 mb-4">
                                     ${member.name.split(' ')[0].charAt(0)}
                                   </div>
                                   <div class="text-center">
-                                    <div class="text-lg font-semibold text-gray-800 dark:text-white">${member.name.split(' ')[0]}</div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-400">${member.role.split(' ')[0]}</div>
+                                    <div class="text-lg font-semibold text-white">${member.name.split(' ')[0]}</div>
+                                    <div class="text-sm text-gray-400">${member.role.split(' ')[0]}</div>
                                   </div>
                                 </div>
                               `;
@@ -1243,34 +1867,79 @@ export default function About() {
                           }}
                         />
                       </div>
+                      
+                      {/* Electric border effect on hover */}
+                      <div className="absolute inset-0 border-2 border-transparent group-hover:border-cyan-500/30 transition-all duration-500" />
+                      
+                      {/* Glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/0 via-transparent to-cyan-500/0 opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
                     </div>
                     
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent 
+                    {/* Electric pulse effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-pulse" />
+                      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-pulse delay-300" />
+                      <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-cyan-500 to-transparent animate-pulse delay-150" />
+                      <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-cyan-500 to-transparent animate-pulse delay-450" />
+                    </div>
+                    
+                    {/* Hover overlay with electric theme */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
                                   opacity-0 group-hover:opacity-100 
                                   transition-all duration-500 flex items-end p-6">
                       <div className="transform translate-y-4 opacity-0 
                                     group-hover:translate-y-0 group-hover:opacity-100
                                     transition-all duration-500">
                         <div className="text-white">
-                          <div className="w-8 h-1 bg-white mb-3" />
-                          <p className="text-sm opacity-90">View Profile</p>
+                          <div className="w-8 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mb-3" />
+                          <p className="text-sm opacity-90 flex items-center gap-2">
+                            <span className="text-cyan-400">View Profile</span>
+                            <ArrowRight className="w-3 h-3 text-cyan-400" />
+                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
                   
                   <div className="text-center">
-                    <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">
+                    <h3 className="text-xl font-bold mb-2 text-white group-hover:text-cyan-400 transition-colors duration-300">
                       {member.name}
                     </h3>
-                    <p className="text-orange-500 font-medium">{member.role}</p>
+                    <p className="text-cyan-400 font-medium bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-4 py-1 rounded-full inline-block">
+                      {member.role}
+                    </p>
+                    
+                    {/* Electric connection dots */}
+                    <div className="flex justify-center gap-1 mt-4">
+                      {[1, 2, 3].map((dot) => (
+                        <div 
+                          key={dot}
+                          className="w-1 h-1 rounded-full bg-cyan-500/50 group-hover:bg-cyan-400 transition-colors duration-300"
+                          style={{
+                            animation: `pulse 2s infinite ${dot * 0.3}s`
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </FadeUp>
             ))}
 
           </div>
+          
+          {/* Team synergy message */}
+          <FadeUp>
+            <div className="text-center mt-20 max-w-2xl mx-auto">
+              <div className="inline-flex items-center gap-4 px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20">
+                <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+                <p className="text-gray-300">
+                  <span className="text-cyan-400 font-semibold">Synergy in Action:</span> Our team collaborates like interconnected circuits
+                </p>
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse delay-300" />
+              </div>
+            </div>
+          </FadeUp>
         </div>
       </section>
 
