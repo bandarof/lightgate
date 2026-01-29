@@ -2,7 +2,6 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
 
 export default function LanguageToggle() {
   const router = useRouter();
@@ -29,23 +28,72 @@ export default function LanguageToggle() {
       aria-label={isArabic ? "Switch to English" : "Switch to Arabic"}
       title={isArabic ? "Switch to English" : "Switch to Arabic"}
     >
-      {/* Show Saudi flag when English is selected (click to switch to Arabic) */}
-      {/* Show US flag when Arabic is selected (click to switch to English) */}
       {isArabic ? (
-        // When in Arabic, show US flag (click to switch to English)
-        <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center bg-gray-100">
-          <div className="w-full h-1/2 bg-blue-600"></div>
-          <div className="w-full h-1/2 bg-red-600"></div>
-          <div className="absolute w-4 h-4">
-            <div className="w-2 h-2 bg-white rounded-full"></div>
-            <div className="w-1 h-1 bg-red-600 rounded-full"></div>
-          </div>
-        </div>
+        // USA Flag SVG
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 7410 3900" 
+          className="w-6 h-4"
+          fill="none"
+        >
+          <rect width="7410" height="3900" fill="#b22234"/>
+          <rect width="7410" height="3900" fill="none" stroke="#b22234" strokeWidth="300"/>
+          <path d="M0,450H7410m0,600H0m0,600H7410m0,600H0m0,600H7410m0,600H0" stroke="#fff" strokeWidth="300"/>
+          <rect width="2964" height="2100" fill="#3c3b6e"/>
+          <g fill="#fff">
+            <g id="s18">
+              <g id="s9">
+                <g id="s5">
+                  <g id="s4">
+                    <path id="s" d="M247,90 317.534230,307.082039 132.873218,172.917961H361.126782L176.465770,307.082039z"/>
+                    <use xlinkHref="#s" y="420"/>
+                    <use xlinkHref="#s" y="840"/>
+                    <use xlinkHref="#s" y="1260"/>
+                  </g>
+                  <use xlinkHref="#s" y="1680"/>
+                </g>
+                <use xlinkHref="#s4" x="247" y="210"/>
+              </g>
+              <use xlinkHref="#s9" x="494"/>
+            </g>
+            <use xlinkHref="#s18" x="988"/>
+            <use xlinkHref="#s9" x="1976"/>
+            <use xlinkHref="#s5" x="2470"/>
+          </g>
+        </svg>
       ) : (
-        // When in English, show Saudi flag (click to switch to Arabic)
-        <div className="w-6 h-6 rounded overflow-hidden flex items-center justify-center bg-green-600">
-          <span className="text-white text-xs font-bold">SA</span>
-        </div>
+        // Saudi Arabia Flag SVG
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 750 500" 
+          className="w-6 h-4"
+        >
+          <rect width="750" height="500" fill="#006233"/>
+          <path d="M0,0H750V500H0Z" fill="none" stroke="#fff" strokeWidth="100"/>
+          <text 
+            x="375" 
+            y="265" 
+            textAnchor="middle" 
+            fill="#fff" 
+            fontFamily="Arial, sans-serif" 
+            fontSize="180" 
+            fontWeight="bold"
+            style={{ userSelect: 'none' }}
+          >
+            ﺍﻟﻠﻪ ﺃﻛﺒﺮ
+          </text>
+          <path 
+            d="M375,125 C375,170 340,205 295,205 C250,205 215,170 215,125 C215,80 250,45 295,45 C340,45 375,80 375,125 Z" 
+            fill="none" 
+            stroke="#fff" 
+            strokeWidth="15"
+          />
+          <path 
+            d="M295,85 L295,165 M255,125 L335,125" 
+            stroke="#fff" 
+            strokeWidth="15"
+          />
+        </svg>
       )}
     </button>
   );
