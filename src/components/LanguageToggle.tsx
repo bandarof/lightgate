@@ -16,6 +16,17 @@ export default function LanguageToggle() {
     }
   };
 
+  // Using Unicode flag emojis with better fallback
+  const getFlag = () => {
+    if (isArabic) {
+      // US flag emoji
+      return String.fromCodePoint(0x1F1FA, 0x1F1F8);
+    } else {
+      // Saudi Arabia flag emoji
+      return String.fromCodePoint(0x1F1F8, 0x1F1E6);
+    }
+  };
+
   return (
     <button
       onClick={toggle}
@@ -23,21 +34,15 @@ export default function LanguageToggle() {
         flex items-center justify-center
         hover:opacity-80
         transition-opacity
+        w-10 h-10
         text-2xl
-        w-full h-full
       "
       aria-label={isArabic ? "Switch to English" : "Switch to Arabic"}
       title={isArabic ? "Switch to English" : "Switch to Arabic"}
     >
-      {/* Show Saudi flag when English is selected (click to switch to Arabic) */}
-      {/* Show US flag when Arabic is selected (click to switch to English) */}
-      {isArabic ? (
-        // When in Arabic, show US flag (click to switch to English)
-        <span className="text-2xl">🇺🇸</span>
-      ) : (
-        // When in English, show Saudi flag (click to switch to Arabic)
-        <span className="text-2xl">🇸🇦</span>
-      )}
+      <span className="text-2xl" role="img" aria-hidden="true">
+        {getFlag()}
+      </span>
     </button>
   );
 }
