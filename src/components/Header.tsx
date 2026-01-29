@@ -59,10 +59,10 @@ export default function Header() {
           <Image
             src="/logo.png"
             alt="Lightgate"
-            width={160}
-            height={50}
+            width={120}
+            height={40}
             priority
-            className="w-[160px] h-auto"
+            className="w-[120px] h-auto"
           />
         </Link>
 
