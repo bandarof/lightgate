@@ -12,7 +12,7 @@ export default function Home() {
       {/* ================= HERO ================= */}
       <section
         className="relative min-h-screen flex items-center bg-cover bg-center"
-        style={{ backgroundImage: "url(/home.jpg)" }}
+        style={{ backgroundImage: "url(/hero.jpg)" }}
       >
         <div className="absolute inset-0 bg-black/60" />
 
@@ -36,7 +36,7 @@ export default function Home() {
 
           <FadeUp>
             <p className="text-2xl md:text-3xl font-light">
-              Lightgate is not just another event maker, it’s a global
+              Lightgate is not just another event maker, it's a global
               phenomenon that will{" "}
               <span className="text-orange-500">redefine entertainment</span>.
             </p>
@@ -157,7 +157,7 @@ export default function Home() {
       </section>
 
       {/* ================= SERVICES SNAPSHOT ================= */}
-      <section className="py-32 bg-white dark:bg-neutral-950">
+      <section className="relative py-32">
 
         <Image
           src="/global.jpg"
