@@ -445,17 +445,24 @@ export default function Home() {
                     01
                   </div>
 
-                  {/* Icon/Visual */}
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl 
-                                bg-gradient-to-br from-orange-500/20 to-orange-500/5
-                                flex items-center justify-center
-                                group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500 flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-orange-500/30 
-                                  flex items-center justify-center
-                                  group-hover:bg-orange-500/40
-                                  transition-colors duration-500">
-                      <div className="w-4 h-4 rounded-full bg-orange-500" />
+                  {/* Image from PDF Page 8 - Briefing & Brainstorming */}
+                  <div className="w-full h-48 mb-6 rounded-xl overflow-hidden relative 
+                                group-hover:scale-[1.02] transition-transform duration-500">
+                    <Image
+                      src="/process-briefing.jpg" // Add this image to /public folder
+                      alt="Briefing & Brainstorming"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    
+                    {/* Overlay icon */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 
+                                  group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="w-12 h-12 rounded-full bg-orange-500/80 
+                                    flex items-center justify-center backdrop-blur-sm">
+                        <div className="w-6 h-6 rounded-full bg-white" />
+                      </div>
                     </div>
                   </div>
 
@@ -502,15 +509,25 @@ export default function Home() {
                     02
                   </div>
 
-                  {/* Icon/Visual */}
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl 
-                                bg-gradient-to-br from-orange-500/20 to-orange-500/5
-                                flex items-center justify-center
-                                group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500 flex-shrink-0">
-                    <div className="w-10 h-2 bg-orange-500 rounded-full 
-                                  group-hover:w-12 group-hover:bg-orange-400
-                                  transition-all duration-500" />
+                  {/* Image from PDF Page 8 - Execution */}
+                  <div className="w-full h-48 mb-6 rounded-xl overflow-hidden relative 
+                                group-hover:scale-[1.02] transition-transform duration-500">
+                    <Image
+                      src="/process-execution.jpg" // Add this image to /public folder
+                      alt="Execution"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    
+                    {/* Overlay icon */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 
+                                  group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="w-12 h-12 rounded-full bg-orange-500/80 
+                                    flex items-center justify-center backdrop-blur-sm">
+                        <div className="w-8 h-1.5 bg-white rounded-full" />
+                      </div>
+                    </div>
                   </div>
 
                   <h3 className="text-xl font-bold text-center mb-4 
@@ -556,19 +573,27 @@ export default function Home() {
                     03
                   </div>
 
-                  {/* Icon/Visual */}
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl 
-                                bg-gradient-to-br from-orange-500/20 to-orange-500/5
-                                flex items-center justify-center
-                                group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500 flex-shrink-0">
-                    <div className="w-8 h-8 border-2 border-orange-500 rounded-full 
-                                  flex items-center justify-center
-                                  group-hover:border-orange-400 group-hover:scale-110
-                                  transition-all duration-500">
-                      <div className="w-4 h-4 rounded-full bg-orange-500 
-                                    group-hover:bg-orange-400
-                                    transition-colors duration-500" />
+                  {/* Image from PDF Page 8 - Finalization */}
+                  <div className="w-full h-48 mb-6 rounded-xl overflow-hidden relative 
+                                group-hover:scale-[1.02] transition-transform duration-500">
+                    <Image
+                      src="/process-finalization.jpg" // Add this image to /public folder
+                      alt="Finalization"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    
+                    {/* Overlay icon */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 
+                                  group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="w-12 h-12 rounded-full bg-orange-500/80 
+                                    flex items-center justify-center backdrop-blur-sm">
+                        <div className="w-6 h-6 border-2 border-white rounded-full 
+                                      flex items-center justify-center">
+                          <div className="w-3 h-3 rounded-full bg-white" />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -615,18 +640,30 @@ export default function Home() {
                     04
                   </div>
 
-                  {/* Icon/Visual */}
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl 
-                                bg-gradient-to-br from-orange-500/20 to-orange-500/5
-                                flex items-center justify-center
-                                group-hover:from-orange-500/30 group-hover:to-orange-500/10
-                                transition-all duration-500 flex-shrink-0">
-                    <div className="w-10 h-1.5 bg-orange-500 rounded-full rotate-45 
-                                  group-hover:bg-orange-400 group-hover:rotate-90
-                                  transition-all duration-500" />
-                    <div className="absolute w-10 h-1.5 bg-orange-500 rounded-full -rotate-45 
-                                  group-hover:bg-orange-400 group-hover:-rotate-90
-                                  transition-all duration-500" />
+                  {/* Image from PDF Page 8 - Delivery */}
+                  <div className="w-full h-48 mb-6 rounded-xl overflow-hidden relative 
+                                group-hover:scale-[1.02] transition-transform duration-500">
+                    <Image
+                      src="/process-delivery.jpg" // Add this image to /public folder
+                      alt="Delivery"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    
+                    {/* Overlay icon */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 
+                                  group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="w-12 h-12 rounded-full bg-orange-500/80 
+                                    flex items-center justify-center backdrop-blur-sm">
+                        <div className="w-6 h-6 relative">
+                          <div className="w-4 h-1.5 bg-white rounded-full rotate-45 absolute top-1/2 left-1/2 
+                                        -translate-x-1/2 -translate-y-1/2" />
+                          <div className="w-4 h-1.5 bg-white rounded-full -rotate-45 absolute top-1/2 left-1/2 
+                                        -translate-x-1/2 -translate-y-1/2" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <h3 className="text-xl font-bold text-center mb-4 
