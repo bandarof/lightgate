@@ -743,33 +743,31 @@ export default function About() {
                             {milestone.description}
                           </p>
 
-                          {/* Image Preview - NOT CROPPED */}
-                          <div className="rounded-xl overflow-hidden h-40 relative bg-gray-100 dark:bg-neutral-700">
-                            <div className="absolute inset-0 flex items-center justify-center bg-white p-4">
-                              <div className="relative w-full h-full">
-                                <Image
-                                  src={milestone.image}
-                                  alt={milestone.title}
-                                  fill
-                                  className="object-contain"
-                                  onError={(e) => {
-                                    // Fallback if image doesn't exist
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                    const parent = target.parentElement;
-                                    if (parent) {
-                                      parent.innerHTML = `
-                                        <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
-                                          <div class="text-center">
-                                            <div class="text-3xl font-bold text-gray-300 mb-2">${milestone.year}</div>
-                                            <div class="text-md text-gray-400">${milestone.title}</div>
-                                          </div>
+                          {/* Image Preview - FITTED TO CARD WITHOUT WHITE BACKGROUND */}
+                          <div className="rounded-xl overflow-hidden h-40 relative">
+                            <div className="absolute inset-0">
+                              <Image
+                                src={milestone.image}
+                                alt={milestone.title}
+                                fill
+                                className="object-cover"
+                                onError={(e) => {
+                                  // Fallback if image doesn't exist
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    parent.innerHTML = `
+                                      <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
+                                        <div class="text-center">
+                                          <div class="text-3xl font-bold text-gray-300 mb-2">${milestone.year}</div>
+                                          <div class="text-md text-gray-400">${milestone.title}</div>
                                         </div>
-                                      `;
-                                    }
-                                  }}
-                                />
-                              </div>
+                                      </div>
+                                    `;
+                                  }
+                                }}
+                              />
                             </div>
                           </div>
                         </div>
@@ -786,7 +784,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= CORE TEAM MEMBERS (9 members) - FIXED IMAGES ================= */}
+      {/* ================= CORE TEAM MEMBERS (9 members) - FITTED IMAGES ================= */}
       <section className="relative py-32 bg-white dark:bg-neutral-900">
         <div className="container mx-auto px-6">
           
@@ -861,37 +859,35 @@ export default function About() {
                                 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
                                 transition-all duration-500">
                     
-                    {/* Team Member Photo - FIT TO FRAME (not cropped) */}
-                    <div className="relative h-full w-full bg-white">
-                      <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <div className="relative w-full h-full max-w-[200px] mx-auto">
-                          <Image
-                            src={member.image}
-                            alt={member.name}
-                            fill
-                            className="object-contain"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            onError={(e) => {
-                              // Fallback to placeholder if image doesn't exist
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const container = target.parentElement;
-                              if (container) {
-                                container.innerHTML = `
-                                  <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
-                                    <div class="text-5xl font-bold text-gray-300 mb-4">
-                                      ${member.name.split(' ')[0].charAt(0)}
-                                    </div>
-                                    <div class="text-center">
-                                      <div class="text-lg font-semibold text-gray-800">${member.name.split(' ')[0]}</div>
-                                      <div class="text-sm text-gray-600">${member.role.split(' ')[0]}</div>
-                                    </div>
+                    {/* Team Member Photo - FIT TO FRAME (no white background) */}
+                    <div className="relative h-full w-full bg-gray-100 dark:bg-neutral-800">
+                      <div className="absolute inset-0">
+                        <Image
+                          src={member.image}
+                          alt={member.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          onError={(e) => {
+                            // Fallback to placeholder if image doesn't exist
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const container = target.parentElement;
+                            if (container) {
+                              container.innerHTML = `
+                                <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
+                                  <div class="text-5xl font-bold text-gray-300 mb-4">
+                                    ${member.name.split(' ')[0].charAt(0)}
                                   </div>
-                                `;
-                              }
-                            }}
-                          />
-                        </div>
+                                  <div class="text-center">
+                                    <div class="text-lg font-semibold text-gray-800 dark:text-white">${member.name.split(' ')[0]}</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">${member.role.split(' ')[0]}</div>
+                                  </div>
+                                </div>
+                              `;
+                            }
+                          }}
+                        />
                       </div>
                     </div>
                     
@@ -958,30 +954,28 @@ export default function About() {
                               transition-all duration-500 h-full flex flex-col">
                   
                   <div className="flex flex-col items-center text-center flex-grow">
-                    {/* Profile image */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
-                      <div className="relative w-full h-full">
-                        <Image
-                          src="/team-jassim.jpg"
-                          alt="Jassim Alsaady"
-                          fill
-                          className="object-cover"
-                          sizes="128px"
-                          onError={(e) => {
-                            // Fallback to placeholder
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `
-                                <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
-                                  <span class="text-4xl font-bold text-orange-500">J</span>
-                                </div>
-                              `;
-                            }
-                          }}
-                        />
-                      </div>
+                    {/* Profile image - fitted without white background */}
+                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-gray-100 dark:bg-neutral-700">
+                      <Image
+                        src="/team-jassim.jpg"
+                        alt="Jassim Alsaady"
+                        fill
+                        className="object-cover"
+                        sizes="128px"
+                        onError={(e) => {
+                          // Fallback to placeholder
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
+                                <span class="text-4xl font-bold text-orange-500">J</span>
+                              </div>
+                            `;
+                          }
+                        }}
+                      />
                     </div>
                     
                     <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
@@ -1023,30 +1017,28 @@ export default function About() {
                               transition-all duration-500 h-full flex flex-col">
                   
                   <div className="flex flex-col items-center text-center flex-grow">
-                    {/* Profile image */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden">
-                      <div className="relative w-full h-full">
-                        <Image
-                          src="/team-emad.jpg"
-                          alt="Emad El Sayed"
-                          fill
-                          className="object-cover"
-                          sizes="128px"
-                          onError={(e) => {
-                            // Fallback to placeholder
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `
-                                <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
-                                  <span class="text-4xl font-bold text-orange-500">E</span>
-                                </div>
-                              `;
-                            }
-                          }}
-                        />
-                      </div>
+                    {/* Profile image - fitted without white background */}
+                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-gray-100 dark:bg-neutral-700">
+                      <Image
+                        src="/team-emad.jpg"
+                        alt="Emad El Sayed"
+                        fill
+                        className="object-cover"
+                        sizes="128px"
+                        onError={(e) => {
+                          // Fallback to placeholder
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
+                                <span class="text-4xl font-bold text-orange-500">E</span>
+                              </div>
+                            `;
+                          }
+                        }}
+                      />
                     </div>
                     
                     <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
