@@ -198,7 +198,7 @@ export default function About() {
             </FadeUp>
 
             {/* VISION */}
-            <FadeUp delay={0.1}>
+            <FadeUp>
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
                               rounded-3xl opacity-0 group-hover:opacity-100 
@@ -297,7 +297,7 @@ export default function About() {
             </FadeUp>
 
             {/* Content Column */}
-            <FadeUp delay={0.1}>
+            <FadeUp>
               <div className="space-y-8">
                 <div className="p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
                               border border-orange-500/10">
@@ -389,7 +389,7 @@ export default function About() {
                 icon: <Sparkles className="w-6 h-6" />
               }
             ].map((milestone, index) => (
-              <FadeUp key={index} delay={index * 0.1}>
+              <FadeUp key={index}>
                 <div className="relative group h-full">
                   <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
                                 rounded-2xl opacity-0 group-hover:opacity-100 
@@ -468,7 +468,7 @@ export default function About() {
               {
                 name: "AMEER ALRIMAWI",
                 role: "FOUNDER & CEO",
-                image: "/team-ameer.jpg" // Add team images to /public folder
+                image: "/team-ameer.jpg"
               },
               {
                 name: "LUAI HIJAZI",
@@ -496,7 +496,7 @@ export default function About() {
                 image: "/team-sara.jpg"
               }
             ].map((member, index) => (
-              <FadeUp key={index} delay={index * 0.1}>
+              <FadeUp key={index}>
                 <div className="group relative">
                   <div className="relative h-80 rounded-2xl overflow-hidden mb-6
                                 border-2 border-transparent
@@ -578,7 +578,7 @@ export default function About() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
             
             {Array.from({ length: 12 }).map((_, index) => (
-              <FadeUp key={index} delay={index * 0.05}>
+              <FadeUp key={index}>
                 <div className="group relative">
                   <div className="aspect-square rounded-2xl bg-white dark:bg-neutral-800 
                                 border border-gray-200 dark:border-neutral-700
