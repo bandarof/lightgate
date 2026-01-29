@@ -62,10 +62,10 @@ export default function Header() {
           <Image
             src="/logo.png"
             alt="Lightgate"
-            width={100}
+            width={80}
             height={30}
             priority
-            className="w-[100px] h-auto"
+            className="w-[80px] h-auto"
           />
         </Link>
 
@@ -89,9 +89,9 @@ export default function Header() {
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-4 z-10">
           <div className="w-10 h-10 flex items-center justify-center">
-            <LanguageToggle />
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
+          <LanguageToggle />
         </div>
 
       </div>
