@@ -82,7 +82,7 @@ export default function About() {
 
       {/* ================= HERO ================= */}
       <section
-        className="relative min-h-[90vh] flex items-center bg-cover bg-center"
+        className="relative min-h-screen flex items-center bg-cover bg-center"
         style={{ backgroundImage: "url(/about.jpg)" }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
@@ -296,15 +296,22 @@ export default function About() {
               </div>
             </FadeUp>
 
-            {/* Content Column */}
+            {/* Content Column with Hover Animations */}
             <FadeUp>
               <div className="space-y-8">
-                <div className="p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
-                              border border-orange-500/10">
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
+                <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
+                              border border-orange-500/10
+                              hover:border-orange-500/50
+                              hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                              transition-all duration-500">
+                  <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                                rounded-2xl opacity-0 group-hover:opacity-100 
+                                transition-opacity duration-500 blur-xl" />
+                  
+                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white relative z-10">
                     The Beginning
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-400 relative z-10">
                     Lightgate began with a bold vision to redefine cultural entertainment by 
                     uniting the world's most iconic festivals under one groundbreaking platform. 
                     What started as a creative concept has grown into a powerful brand known 
@@ -312,12 +319,19 @@ export default function About() {
                   </p>
                 </div>
 
-                <div className="p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
-                              border border-orange-500/10">
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
+                <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
+                              border border-orange-500/10
+                              hover:border-orange-500/50
+                              hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                              transition-all duration-500">
+                  <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                                rounded-2xl opacity-0 group-hover:opacity-100 
+                                transition-opacity duration-500 blur-xl" />
+                  
+                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white relative z-10">
                     Evolution & Growth
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-400 relative z-10">
                     As we expanded, Lightgate evolved into a full-service experience company, 
                     offering world-class photography, creative design, and festive event execution. 
                     We've consistently pushed boundaries while maintaining our core focus on 
@@ -325,12 +339,19 @@ export default function About() {
                   </p>
                 </div>
 
-                <div className="p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
-                              border border-orange-500/10">
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
+                <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
+                              border border-orange-500/10
+                              hover:border-orange-500/50
+                              hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                              transition-all duration-500">
+                  <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                                rounded-2xl opacity-0 group-hover:opacity-100 
+                                transition-opacity duration-500 blur-xl" />
+                  
+                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white relative z-10">
                     Today & Beyond
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-400 relative z-10">
                     Today, we continue to push boundaries, creating unforgettable moments that 
                     connect people, cultures, and ideas across the globe. Lightgate stands as a 
                     testament to what's possible when creativity meets execution at scale.
@@ -343,52 +364,63 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= MILESTONES ================= */}
+      {/* ================= MILESTONES (From PDF Page 5) ================= */}
       <section className="relative py-32 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-900 dark:to-neutral-950">
         <div className="container mx-auto px-6">
           
           <FadeUp>
             <div className="text-center mb-20 max-w-3xl mx-auto">
               <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
-                KEY ACHIEVEMENTS
+                OUR WORK
               </span>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Major <span className="text-orange-500">Milestones</span>
+                Major <span className="text-orange-500">Projects</span>
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-400">
-                Significant moments that shaped our journey
+                Iconic projects that showcase our capabilities
               </p>
             </div>
           </FadeUp>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             
             {[
               {
-                year: "2013",
-                title: "Peace Boat - Jeddah",
-                description: "Curated cultural exchange for 150+ international guests with Saudi folkloric performances and traditional crafts exhibition.",
-                icon: <Globe className="w-6 h-6" />
+                title: "Walk for a Cause",
+                description: "Community-driven initiative promoting social responsibility through organized walks and fundraising events.",
+                icon: "👣"
               },
               {
-                year: "2020",
-                title: "Global Expansion",
-                description: "Expanded operations to multiple countries, establishing Lightgate as an international cultural platform.",
-                icon: <Award className="w-6 h-6" />
+                title: "International Presence",
+                description: "Expanded our cultural events to multiple countries, establishing global recognition and partnerships.",
+                icon: "🌍"
               },
               {
-                year: "2023",
-                title: "Spar Initiative",
-                description: "Launched Saudi sports initiative redefining physical activity as a lifestyle through coast-to-coast events.",
-                icon: <Calendar className="w-6 h-6" />
+                title: "SPAR Initiative",
+                description: "Saudi sports initiative redefining physical activity as a lifestyle through coast-to-coast events.",
+                icon: "🏃‍♂️"
               },
               {
-                year: "2025",
-                title: "Digital Innovation",
-                description: "Integrated advanced technology and digital experiences into all our cultural events.",
-                icon: <Sparkles className="w-6 h-6" />
+                title: "Creative Photography",
+                description: "World-class photography services capturing the essence of cultural events and celebrations.",
+                icon: "📸"
+              },
+              {
+                title: "Event Production",
+                description: "Full-scale event production from concept to execution for corporate and cultural occasions.",
+                icon: "🎪"
+              },
+              {
+                title: "Digital Marketing",
+                description: "Comprehensive social media and digital marketing strategies for event promotion and engagement.",
+                icon: "📱"
+              },
+              {
+                title: "Media Production",
+                description: "High-quality video production, filming, and media content creation for cultural storytelling.",
+                icon: "🎬"
               }
-            ].map((milestone, index) => (
+            ].map((project, index) => (
               <FadeUp key={index}>
                 <div className="relative group h-full">
                   <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
@@ -401,40 +433,29 @@ export default function About() {
                                 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
                                 transition-all duration-500 h-full flex flex-col">
                     
-                    {/* Year Badge */}
-                    <div className="mb-6">
-                      <span className="inline-block px-4 py-2 rounded-full 
-                                    bg-orange-500 text-white text-sm font-bold">
-                        {milestone.year}
-                      </span>
-                    </div>
-
                     {/* Icon */}
-                    <div className="w-14 h-14 rounded-xl mb-6 
+                    <div className="w-20 h-20 rounded-2xl mb-6 
                                   bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                   flex items-center justify-center
                                   group-hover:from-orange-500/30 group-hover:to-orange-500/10
                                   transition-all duration-500">
-                      <div className="text-orange-500">
-                        {milestone.icon}
-                      </div>
+                      <span className="text-3xl">{project.icon}</span>
                     </div>
 
                     <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-                      {milestone.title}
+                      {project.title}
                     </h3>
                     
                     <p className="text-gray-600 dark:text-gray-400 flex-grow">
-                      {milestone.description}
+                      {project.description}
                     </p>
 
-                    {/* Connecting Line (Desktop Only) */}
-                    {index < 3 && (
-                      <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 
-                                    bg-gradient-to-r from-orange-500/30 to-transparent
-                                    group-hover:from-orange-500 group-hover:to-orange-500/30
-                                    transition-all duration-500" />
-                    )}
+                    {/* Learn More Link */}
+                    <div className="mt-6 pt-4 border-t border-gray-200 dark:border-neutral-700">
+                      <span className="text-orange-500 text-sm font-medium group-hover:text-orange-600 transition-colors duration-300">
+                        View Project →
+                      </span>
+                    </div>
                   </div>
                 </div>
               </FadeUp>
@@ -444,7 +465,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= TEAM SNAPSHOT ================= */}
+      {/* ================= CORE TEAM MEMBERS ================= */}
       <section className="relative py-32 bg-white dark:bg-neutral-900">
         <div className="container mx-auto px-6">
           
@@ -468,32 +489,52 @@ export default function About() {
               {
                 name: "AMEER ALRIMAWI",
                 role: "FOUNDER & CEO",
-                image: "/team-ameer.jpg"
+                image: "/team-ameer.png"
               },
               {
                 name: "LUAI HIJAZI",
                 role: "PARTNER & COO",
-                image: "/team-luai.jpg"
+                image: "/team-luai.png"
               },
               {
                 name: "JASSIM ALSAADY",
                 role: "DIRECTOR - FILM & COMMERCIAL",
-                image: "/team-jassim.jpg"
+                image: "/team-jassim.png"
               },
               {
                 name: "AYAH ALRIMAWI",
                 role: "CONTENT DIRECTOR",
-                image: "/team-ayah.jpg"
+                image: "/team-ayah.png"
               },
               {
                 name: "MOIZ REHMAN",
                 role: "MEDIA PRODUCTION HEAD",
-                image: "/team-moiz.jpg"
+                image: "/team-moiz.png"
               },
               {
                 name: "SARA ALGHABRAH",
                 role: "PRODUCER",
-                image: "/team-sara.jpg"
+                image: "/team-sara.png"
+              },
+              {
+                name: "ALAA TAMMAR",
+                role: "CONTENT CREATOR",
+                image: "/team-alaa.png"
+              },
+              {
+                name: "MOHAMAD YAMANI",
+                role: "BUSINESS DEVELOPMENT",
+                image: "/team-yamani.png"
+              },
+              {
+                name: "MOHAMAD TAYYAR",
+                role: "DIGITAL ACTIVATION",
+                image: "/team-tayyar.png"
+              },
+              {
+                name: "WISAM KURDI",
+                role: "BUSINESS OPERATIONS",
+                image: "/team-wisam.png"
               }
             ].map((member, index) => (
               <FadeUp key={index}>
@@ -501,24 +542,34 @@ export default function About() {
                   <div className="relative h-80 rounded-2xl overflow-hidden mb-6
                                 border-2 border-transparent
                                 group-hover:border-orange-500/50
+                                group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
                                 transition-all duration-500">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    
+                    {/* If image exists, show it, otherwise show placeholder */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-500/5 flex items-center justify-center">
+                      <div className="text-center p-6">
+                        <div className="text-6xl font-bold text-gray-800/10 dark:text-gray-200/10 mb-4">
+                          {member.name.split(' ')[0].charAt(0)}
+                        </div>
+                        <div className="relative z-10">
+                          <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                            {member.name}
+                          </h3>
+                          <p className="text-orange-500 font-medium mt-2">{member.role}</p>
+                        </div>
+                      </div>
+                    </div>
                     
                     {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-orange-500/0 group-hover:bg-orange-500/20 
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
+                                  opacity-0 group-hover:opacity-100 
                                   transition-all duration-500 flex items-end p-6">
                       <div className="transform translate-y-4 opacity-0 
                                     group-hover:translate-y-0 group-hover:opacity-100
                                     transition-all duration-500">
                         <div className="text-white">
                           <div className="w-8 h-1 bg-white mb-3" />
-                          <p className="text-sm opacity-90">View Profile</p>
+                          <p className="text-sm opacity-90">Professional Profile</p>
                         </div>
                       </div>
                     </div>
@@ -535,30 +586,121 @@ export default function About() {
             ))}
 
           </div>
-
-          {/* View Full Team Button */}
-          <FadeUp>
-            <div className="text-center mt-16">
-              <Link
-                href="/team"
-                className="inline-flex items-center gap-3 px-8 py-4 
-                         rounded-full bg-transparent border-2 border-orange-500
-                         text-orange-500 font-medium text-lg
-                         hover:bg-orange-500 hover:text-white
-                         hover:shadow-[0_0_30px_rgba(255,115,0,0.5)]
-                         transform hover:-translate-y-1
-                         transition-all duration-300"
-              >
-                Meet The Full Team
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>
-          </FadeUp>
         </div>
       </section>
 
-      {/* ================= STRATEGIC PARTNERS ================= */}
+      {/* ================= PROFESSIONALS WE WORK WITH ================= */}
       <section className="relative py-32 bg-gradient-to-b from-gray-50 to-white dark:from-neutral-950 dark:to-neutral-900">
+        <div className="container mx-auto px-6">
+          
+          <FadeUp>
+            <div className="text-center mb-20 max-w-3xl mx-auto">
+              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
+                COLLABORATORS
+              </span>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                Professionals We <span className="text-orange-500">Work With</span>
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400">
+                Expert collaborators who enhance our creative vision
+              </p>
+            </div>
+          </FadeUp>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            
+            {/* Jassim Alsaady */}
+            <FadeUp>
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                              rounded-3xl opacity-0 group-hover:opacity-100 
+                              transition-opacity duration-500 blur-xl" />
+                
+                <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 
+                              border border-gray-200 dark:border-neutral-700
+                              group-hover:border-orange-500/50
+                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
+                              transition-all duration-500 h-full">
+                  
+                  <div className="flex flex-col items-center text-center">
+                    {/* Profile image or placeholder */}
+                    <div className="w-32 h-32 rounded-full mb-6 
+                                  bg-gradient-to-br from-orange-500/20 to-orange-500/5
+                                  flex items-center justify-center
+                                  group-hover:from-orange-500/30 group-hover:to-orange-500/10
+                                  transition-all duration-500">
+                      <span className="text-4xl font-bold text-orange-500">J</span>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
+                      JASSIM ALSAADY
+                    </h3>
+                    <p className="text-orange-500 font-medium mb-4">DIRECTOR - FILM & COMMERCIAL</p>
+                    
+                    <div className="w-12 h-1 bg-orange-500 mb-4" />
+                    
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                      Award-winning film and commercial director bringing cinematic excellence to our projects.
+                    </p>
+                    
+                    <Link 
+                      href="https://www.jassimalsady.com" 
+                      target="_blank"
+                      className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600
+                               transition-colors duration-300"
+                    >
+                      <span>www.jassimalsady.com</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </FadeUp>
+
+            {/* Emad El Sayed */}
+            <FadeUp>
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                              rounded-3xl opacity-0 group-hover:opacity-100 
+                              transition-opacity duration-500 blur-xl" />
+                
+                <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 
+                              border border-gray-200 dark:border-neutral-700
+                              group-hover:border-orange-500/50
+                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
+                              transition-all duration-500 h-full">
+                  
+                  <div className="flex flex-col items-center text-center">
+                    {/* Profile image or placeholder */}
+                    <div className="w-32 h-32 rounded-full mb-6 
+                                  bg-gradient-to-br from-orange-500/20 to-orange-500/5
+                                  flex items-center justify-center
+                                  group-hover:from-orange-500/30 group-hover:to-orange-500/10
+                                  transition-all duration-500">
+                      <span className="text-4xl font-bold text-orange-500">E</span>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
+                      EMAD EL SAYED
+                    </h3>
+                    <p className="text-orange-500 font-medium mb-4">CREATIVE DIRECTOR</p>
+                    
+                    <div className="w-12 h-1 bg-orange-500 mb-4" />
+                    
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Renowned creative director specializing in brand strategy and visual storytelling.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </FadeUp>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ================= STRATEGIC PARTNERS (7 partners from PDF Page 16) ================= */}
+      <section className="relative py-32 bg-white dark:bg-neutral-900">
         <div className="container mx-auto px-6">
           
           <FadeUp>
@@ -575,9 +717,18 @@ export default function About() {
             </div>
           </FadeUp>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             
-            {Array.from({ length: 12 }).map((_, index) => (
+            {/* 7 Strategic Partners as shown in PDF */}
+            {[
+              "partner-1.png",
+              "partner-2.png",
+              "partner-3.png",
+              "partner-4.png",
+              "partner-5.png",
+              "partner-6.png",
+              "partner-7.png"
+            ].map((logo, index) => (
               <FadeUp key={index}>
                 <div className="group relative">
                   <div className="aspect-square rounded-2xl bg-white dark:bg-neutral-800 
@@ -586,9 +737,9 @@ export default function About() {
                                 group-hover:border-orange-500/50
                                 group-hover:shadow-[0_0_20px_rgba(255,115,0,0.1)]
                                 transition-all duration-500">
-                    <div className="text-2xl font-bold text-gray-400 dark:text-gray-500
+                    <div className="text-gray-400 dark:text-gray-500 text-sm text-center
                                   group-hover:text-orange-500 transition-colors duration-500">
-                      LOGO
+                      Partner {index + 1}
                     </div>
                   </div>
                 </div>
