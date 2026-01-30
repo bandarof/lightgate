@@ -64,9 +64,7 @@ function MissionVisionBackground() {
     };
 
     resizeCanvas();
-    const resizeObserver = new ResizeObserver(() => {
-      resizeCanvas();
-    });
+    const resizeObserver = new ResizeObserver(resizeCanvas);
     resizeObserver.observe(containerRef.current!);
 
     // Particle system with optimized mobile settings
@@ -294,9 +292,7 @@ function TimelineBackground() {
     };
 
     resizeCanvas();
-    const resizeObserver = new ResizeObserver(() => {
-      resizeCanvas();
-    });
+    const resizeObserver = new ResizeObserver(resizeCanvas);
     resizeObserver.observe(containerRef.current!);
 
     // Timeline particles - simplified for mobile
@@ -463,9 +459,7 @@ function TeamMembersBackground() {
     };
 
     resizeCanvas();
-    const resizeObserver = new ResizeObserver(() => {
-      resizeCanvas();
-    });
+    const resizeObserver = new ResizeObserver(resizeCanvas);
     resizeObserver.observe(containerRef.current!);
 
     // Create hexagon grid - simplified for mobile
