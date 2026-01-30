@@ -465,7 +465,7 @@ function TimelineBackground() {
         y: Math.random() * canvas.height,
         size: type === 'spark' ? Math.random() * 2 + 1 : Math.random() * 4 + 2,
         speedX: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
-        speedY: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
+        speedY = (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
         color: colors[Math.floor(Math.random() * colors.length)],
         opacity: type === 'energy' ? 0.4 + Math.random() * 0.4 : 0.2 + Math.random() * 0.3,
         type: type
@@ -2246,17 +2246,43 @@ export default function About() {
             </div>
           </FadeUp>
         </div>
+        
+        {/* ================= SMOOTH BLENDING DIVIDER BETWEEN TEAM AND DIRECTORS ================= */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black via-black/90 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-orange-500/5 via-orange-500/10 to-transparent" />
+        
+        {/* Animated studio equipment particles in the divider */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 overflow-hidden">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute"
+              style={{
+                left: `${Math.random() * 100}%`,
+                bottom: `${Math.random() * 48}px`,
+                animation: `float ${Math.random() * 4 + 3}s infinite ${Math.random() * 2}s`,
+              }}
+            >
+              {i % 3 === 0 ? (
+                <Film className="w-4 h-4 text-orange-500/30" />
+              ) : i % 3 === 1 ? (
+                <Camera className="w-4 h-4 text-orange-400/30" />
+              ) : (
+                <Video className="w-4 h-4 text-amber-400/30" />
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* ================= AWARD-WINNING CREATIVE DIRECTORS ================= */}
-      {/* SEAMLESS TRANSITION: Remove all dividers and background changes */}
       <section className="relative py-32 overflow-hidden">
         
         {/* Abstract Multimedia Production Studio Background */}
         <AbstractStudioBackground />
         
-        {/* SEAMLESS OVERLAY: Only subtle gradient for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/40" />
+        {/* Subtle overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/50" />
 
         <div className="relative z-10 container mx-auto px-6">
           
