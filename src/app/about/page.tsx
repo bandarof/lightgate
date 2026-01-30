@@ -1,4 +1,4 @@
-[200~"use client";
+"use client";
 
 import React from "react";
 import { FadeUp } from "@/components/Motion";
@@ -416,7 +416,7 @@ function MissionVisionBackground() {
   );
 }
 
-// Animated timeline background - ENHANCED for seamless transition
+// Animated timeline background - UPDATED for seamless transition
 function TimelineBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -628,7 +628,7 @@ function TimelineBackground() {
         ctx.stroke();
       }
 
-      // Draw transition energy field at bottom
+      // Draw transition energy field at bottom for seamless connection to next section
       const transitionHeight = canvas.height * 0.2;
       const transitionY = canvas.height - transitionHeight;
       
@@ -690,6 +690,7 @@ function TimelineBackground() {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
       />
+      {/* REMOVED: Yellow gradient overlay - replaced with seamless divider */}
     </div>
   );
 }
@@ -1187,6 +1188,17 @@ function TeamMembersBackground() {
         }
       }
 
+      // Draw top transition fade from timeline section
+      const topFadeHeight = 60;
+      const topFadeGradient = ctx.createLinearGradient(
+        0, 0,
+        0, topFadeHeight
+      );
+      topFadeGradient.addColorStop(0, 'rgba(255, 240, 150, 0.3)');
+      topFadeGradient.addColorStop(1, 'transparent');
+      ctx.fillStyle = topFadeGradient;
+      ctx.fillRect(0, 0, canvas.width, topFadeHeight);
+
       animationId = requestAnimationFrame(animate);
     };
 
@@ -1607,21 +1619,7 @@ export default function About() {
         {/* Enhanced Animated Timeline Background */}
         <TimelineBackground />
         
-        {/* Seamless transition divider - replaces the yellow gradient overlay */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white/90 via-white/50 to-transparent dark:from-neutral-900/90 dark:via-neutral-900/50 dark:to-transparent z-0" />
-        
-        {/* Decorative energy pulse divider line */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent z-10">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-300/20 to-transparent animate-pulse" />
-        </div>
-        <div className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent z-10" />
-        
-        {/* Floating energy particles at the divider */}
-        <div className="absolute bottom-8 left-1/4 w-2 h-2 rounded-full bg-orange-500/40 animate-ping z-10" />
-        <div className="absolute bottom-6 right-1/3 w-1.5 h-1.5 rounded-full bg-orange-500/30 animate-ping delay-300 z-10" />
-        <div className="absolute bottom-10 left-1/3 w-1 h-1 rounded-full bg-amber-500/40 animate-ping delay-700 z-10" />
-
-        <div className="relative z-20 container mx-auto px-6">
+        <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
             <div className="text-center mb-20 max-w-3xl mx-auto">
@@ -1773,12 +1771,19 @@ export default function About() {
             </div>
           </div>
         </div>
+
+        {/* Seamless divider between milestone and team sections */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-orange-50/70 via-orange-50/50 to-transparent dark:from-neutral-900 dark:via-neutral-900/80 dark:to-transparent" />
+        
+        {/* Subtle connection line */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-t from-orange-500/40 via-orange-500/20 to-transparent" />
+        
+        {/* Connection glow effect */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-orange-500/30 animate-pulse" />
       </section>
 
       {/* ================= CORE TEAM MEMBERS with BOLD ELECTRIC HEXAGONAL BACKGROUND ================= */}
-      <section className="relative py-32 overflow-hidden">
-        {/* Top seamless transition - continues from milestone section */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white via-orange-50/30 to-transparent dark:from-neutral-900 dark:via-orange-950/20 dark:to-transparent z-0" />
+      <section className="relative py-32 bg-gradient-to-b from-orange-50/70 via-orange-50/30 to-white dark:from-neutral-900 dark:via-orange-950/20 dark:to-neutral-900 overflow-hidden">
         
         {/* BOLD ELECTRIC Hexagonal Animated Background */}
         <TeamMembersBackground />
@@ -2248,4 +2253,4 @@ export default function About() {
 
     </main>
   );
-}~
+}
