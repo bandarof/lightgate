@@ -6,24 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Users, Target, Eye } from "lucide-react";
 import Head from "next/head";
-
-// Structured data for SEO
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Lightgate",
-  "description": "A global phenomenon redefining entertainment through groundbreaking technology, unparalleled scale, and never-before-seen festive event concepts.",
-  "url": "https://lightgate.com",
-  "logo": "https://lightgate.com/logo.png",
-  "founder": {
-    "@type": "Person",
-    "name": "AMEER ALRIMAWI"
-  },
-  "foundingDate": "2009",
-  "sameAs": [
-    "https://twitter.com/lightgate",
-    "https://linkedin.com/company/lightgate",
-    "https://instagram.com/lightgate"
   ]
 };
 

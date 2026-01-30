@@ -3,58 +3,19 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: "About Lightgate - Redefining Cultural Entertainment Worldwide",
   description: "Discover Lightgate's mission to revolutionize cultural entertainment through innovative technology, global scale, and immersive festive event experiences.",
-  keywords: "Lightgate, cultural entertainment, event technology, festival innovation, global events, immersive experiences, mission, vision, history",
-  
+  keywords: "Lightgate, cultural entertainment, event technology, festival innovation, global events, immersive experiences",
   openGraph: {
     title: "About Lightgate - Illuminating the World Through Culture",
     description: "A global phenomenon redefining entertainment through groundbreaking technology and never-before-seen festive event concepts.",
     type: "website",
-    url: "https://lightgate.com/about",
-    siteName: "Lightgate",
-    images: [
-      {
-        url: "/about-og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Lightgate - Illuminating the World Through Culture",
-      }
-    ],
+    images: ["/about-og.jpg"]
   },
-  
   twitter: {
     card: "summary_large_image",
     title: "About Lightgate - Redefining Cultural Entertainment",
     description: "Discover our journey, team, and vision for global cultural innovation.",
-    images: ["/about-twitter.jpg"],
-    creator: "@lightgate",
-  },
-  
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  
-  alternates: {
-    canonical: "https://lightgate.com/about",
-  },
-  
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
-  
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
+    images: ["/about-twitter.jpg"]
+  }
 }
 
 export default function AboutLayout({
