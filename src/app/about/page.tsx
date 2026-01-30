@@ -1483,8 +1483,8 @@ export default function About() {
         {/* Clean Animated Timeline Background */}
         <TimelineBackground />
         
-        {/* Top fade to connect with Our History section */}
-        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-orange-500/5 via-orange-500/10 to-transparent" />
+        {/* REMOVED: Top fade to connect with Our History section */}
+        {/* <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-orange-500/5 via-orange-500/10 to-transparent" /> */}
         
         <div className="relative z-10 container mx-auto px-6">
           
@@ -1824,7 +1824,7 @@ export default function About() {
                 </p>
                 <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse delay-300" />
               </div>
-          </div>
+            </div>
           </FadeUp>
         </div>
       </section>
