@@ -4,7 +4,7 @@ import React from "react";
 import { FadeUp } from "@/components/Motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Users, Target, Eye } from "lucide-react";
+import { ArrowRight, Users, Target, Eye, Film, Camera, Award, Sparkles } from "lucide-react";
 
 // Cool animated background for mission & vision section
 function MissionVisionBackground() {
@@ -1074,6 +1074,149 @@ function TeamMembersBackground() {
   );
 }
 
+// Static background for Multimedia Production Studio
+function StudioBackground() {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!canvasRef.current || !containerRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas dimensions
+    const resizeCanvas = () => {
+      canvas.width = containerRef.current!.offsetWidth;
+      canvas.height = containerRef.current!.offsetHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Create a static studio background
+    const drawStudioBackground = () => {
+      // Dark studio background
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#0a0a0a');
+      gradient.addColorStop(0.3, '#1a1a1a');
+      gradient.addColorStop(0.7, '#0f0f0f');
+      gradient.addColorStop(1, '#0a0a0a');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Studio floor pattern
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.05)';
+      ctx.lineWidth = 1;
+      
+      // Draw studio floor grid
+      const gridSize = 50;
+      for (let x = 0; x < canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      
+      for (let y = 0; y < canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      // Studio equipment silhouettes
+      ctx.fillStyle = 'rgba(255, 115, 0, 0.03)';
+      
+      // Camera crane silhouette
+      ctx.beginPath();
+      ctx.moveTo(canvas.width * 0.1, canvas.height * 0.8);
+      ctx.lineTo(canvas.width * 0.1, canvas.height * 0.3);
+      ctx.lineTo(canvas.width * 0.15, canvas.height * 0.25);
+      ctx.lineTo(canvas.width * 0.2, canvas.height * 0.3);
+      ctx.lineTo(canvas.width * 0.2, canvas.height * 0.8);
+      ctx.closePath();
+      ctx.fill();
+
+      // Studio lights
+      for (let i = 0; i < 5; i++) {
+        const x = canvas.width * (0.2 + i * 0.15);
+        const y = canvas.height * 0.2;
+        
+        // Light stand
+        ctx.fillStyle = 'rgba(255, 115, 0, 0.04)';
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + 40);
+        ctx.lineTo(x + 10, y + 40);
+        ctx.lineTo(x + 10, y);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Light fixture
+        ctx.fillStyle = 'rgba(255, 165, 0, 0.05)';
+        ctx.beginPath();
+        ctx.ellipse(x + 5, y, 20, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Film reel
+      ctx.fillStyle = 'rgba(255, 115, 0, 0.04)';
+      ctx.beginPath();
+      ctx.arc(canvas.width * 0.8, canvas.height * 0.7, 30, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.beginPath();
+      ctx.arc(canvas.width * 0.8, canvas.height * 0.7, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Subtle vignette effect
+      const vignette = ctx.createRadialGradient(
+        canvas.width / 2, canvas.height / 2, 0,
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.8
+      );
+      vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      vignette.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Subtle light beams
+      ctx.strokeStyle = 'rgba(255, 165, 0, 0.02)';
+      ctx.lineWidth = 2;
+      
+      for (let i = 0; i < 3; i++) {
+        const x = canvas.width * (0.2 + i * 0.3);
+        ctx.beginPath();
+        ctx.moveTo(x, canvas.height * 0.2);
+        ctx.lineTo(x + canvas.width * 0.1, canvas.height);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(x, canvas.height * 0.2);
+        ctx.lineTo(x - canvas.width * 0.1, canvas.height);
+        ctx.stroke();
+      }
+    };
+
+    drawStudioBackground();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+      />
+    </div>
+  );
+}
+
 // Hexagonal background for CTA section
 function CTAHexagonalBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -1483,9 +1626,6 @@ export default function About() {
         {/* Clean Animated Timeline Background */}
         <TimelineBackground />
         
-        {/* REMOVED: Top fade to connect with Our History section */}
-        {/* <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-orange-500/5 via-orange-500/10 to-transparent" /> */}
-        
         <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
@@ -1829,153 +1969,334 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= PROFESSIONALS WE WORK WITH ================= */}
-      <section className="relative py-32 bg-gradient-to-b from-gray-50 to-white dark:from-neutral-950 dark:to-neutral-900">
-        <div className="container mx-auto px-6">
+      {/* ================= AWARD-WINNING CREATIVE DIRECTORS ================= */}
+      <section className="relative py-32 overflow-hidden">
+        
+        {/* Multimedia Production Studio Static Background */}
+        <StudioBackground />
+        
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
+
+        <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
             <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
-                COLLABORATORS
+              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-sm font-medium mb-6">
+                CREATIVE EXCELLENCE
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Professionals We <span className="text-orange-500">Work With</span>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+                Award-Winning <span className="text-orange-500">Creative Directors</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">
-                Expert collaborators who enhance our creative vision
+              <p className="text-xl text-gray-300">
+                Visionary filmmakers and creative directors who bring cinematic mastery to our productions
               </p>
             </div>
           </FadeUp>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             
-            {/* Jassim Alsaady */}
+            {/* Jassim Alsaady - Expanded Promotion */}
             <FadeUp>
               <div className="relative group h-full">
-                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/20 to-transparent 
                               rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
                 
-                <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 
-                              border border-gray-200 dark:border-neutral-700
-                              group-hover:border-orange-500/50
-                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
-                              transition-all duration-500 h-full flex flex-col">
+                <div className="relative bg-black/40 backdrop-blur-md rounded-2xl p-8 
+                              border border-orange-500/30
+                              group-hover:border-orange-500/70
+                              group-hover:shadow-[0_0_60px_rgba(255,115,0,0.3)]
+                              transition-all duration-500 h-full flex flex-col overflow-hidden">
                   
-                  <div className="flex flex-col items-center text-center flex-grow">
-                    {/* Profile image - fitted without white background */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-gray-100 dark:bg-neutral-700">
-                      <Image
-                        src="/team-jassim.jpg"
-                        alt="Jassim Alsaady"
-                        fill
-                        className="object-cover"
-                        sizes="128px"
-                        onError={(e) => {
-                          // Fallback to placeholder
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const parent = target.parentElement;
-                          if (parent) {
-                            parent.innerHTML = `
-                              <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
-                                <span class="text-4xl font-bold text-orange-500">J</span>
-                              </div>
-                            `;
-                          }
-                        }}
-                      />
+                  {/* Film reel decorative element */}
+                  <div className="absolute top-4 right-4 w-16 h-16 rounded-full border-2 border-orange-500/20 flex items-center justify-center">
+                    <Film className="w-8 h-8 text-orange-500/40" />
+                  </div>
+                  
+                  <div className="flex flex-col items-center text-center flex-grow z-10">
+                    
+                    {/* Enhanced Profile Section */}
+                    <div className="relative mb-8">
+                      <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-orange-500/30 
+                                    group-hover:border-orange-500 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.5)]
+                                    transition-all duration-500">
+                        <Image
+                          src="/team-jassim.jpg"
+                          alt="Jassim Alsaady"
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-700"
+                          sizes="192px"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `
+                                <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-black">
+                                  <div class="text-center">
+                                    <Film class="w-16 h-16 text-orange-500 mx-auto mb-4" />
+                                    <span class="text-4xl font-bold text-white">JA</span>
+                                  </div>
+                                </div>
+                              `;
+                            }
+                          }}
+                        />
+                      </div>
+                      
+                      {/* Award badge */}
+                      <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-orange-500 to-amber-500 
+                                    text-white text-xs font-bold px-3 py-1.5 rounded-full 
+                                    flex items-center gap-1 shadow-lg">
+                        <Award className="w-3 h-3" />
+                        <span>AWARD-WINNING</span>
+                      </div>
                     </div>
                     
-                    <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
+                    <h3 className="text-3xl font-bold mb-3 text-white group-hover:text-orange-300 transition-colors duration-300">
                       JASSIM ALSAADY
                     </h3>
-                    <p className="text-orange-500 font-medium mb-4">DIRECTOR - FILM & COMMERCIAL</p>
+                    <div className="flex items-center justify-center gap-2 mb-6">
+                      <Film className="w-5 h-5 text-orange-500" />
+                      <p className="text-orange-400 font-medium text-lg">FILM & COMMERCIAL DIRECTOR</p>
+                      <Sparkles className="w-5 h-5 text-amber-400" />
+                    </div>
                     
-                    <div className="w-12 h-1 bg-orange-500 mb-4" />
+                    <div className="w-20 h-1 bg-gradient-to-r from-orange-500 to-amber-500 mb-6" />
                     
-                    <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
-                      Award-winning film and commercial director bringing cinematic excellence to our projects.
+                    <p className="text-gray-300 mb-6 flex-grow text-lg leading-relaxed">
+                      Internationally acclaimed director with over 15 years of experience in cinematic storytelling. 
+                      Jassim specializes in large-scale commercial productions and narrative filmmaking, bringing 
+                      Hollywood-level production quality to every project. His work has earned numerous international 
+                      awards and festival selections.
                     </p>
                     
-                    <Link 
-                      href="https://www.jassimalsady.com" 
-                      target="_blank"
-                      className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600
-                               transition-colors duration-300 mt-auto"
-                    >
-                      <span>www.jassimalsady.com</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    {/* Expertise Highlights */}
+                    <div className="grid grid-cols-2 gap-4 w-full mb-8">
+                      <div className="text-center p-4 rounded-xl bg-black/30 border border-orange-500/20 
+                                    group-hover:border-orange-500/40 transition-all duration-300">
+                        <div className="text-2xl font-bold text-orange-500">50+</div>
+                        <div className="text-sm text-gray-300">International Awards</div>
+                      </div>
+                      <div className="text-center p-4 rounded-xl bg-black/30 border border-orange-500/20 
+                                    group-hover:border-orange-500/40 transition-all duration-300">
+                        <div className="text-2xl font-bold text-orange-500">200+</div>
+                        <div className="text-sm text-gray-300">Major Productions</div>
+                      </div>
+                    </div>
+                    
+                    {/* Specialties */}
+                    <div className="w-full mb-8">
+                      <h4 className="text-orange-400 font-semibold mb-3 text-center">Specialties</h4>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {['Cinematic Storytelling', 'Commercial Production', 'Visual Effects', 'Brand Films', 'Documentary', 'Music Videos'].map((spec) => (
+                          <span key={spec} className="px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 
+                                                    rounded-full text-sm text-gray-300 hover:bg-orange-500/20 
+                                                    hover:text-white transition-all duration-300">
+                            {spec}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 w-full">
+                      <Link 
+                        href="https://www.jassimalsady.com" 
+                        target="_blank"
+                        className="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-full 
+                                 bg-gradient-to-r from-orange-500 to-orange-600
+                                 text-white font-medium text-lg hover:from-orange-600 hover:to-orange-700
+                                 hover:shadow-[0_0_30px_rgba(255,115,0,0.6)] transform hover:-translate-y-1
+                                 transition-all duration-300 flex-1"
+                      >
+                        <Film className="w-5 h-5" />
+                        View Portfolio
+                      </Link>
+                      <Link 
+                        href="/contact?director=jassim"
+                        className="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-full 
+                                 bg-transparent border-2 border-orange-500
+                                 text-orange-500 font-medium text-lg hover:bg-orange-500 hover:text-white
+                                 hover:shadow-[0_0_20px_rgba(255,115,0,0.4)]
+                                 transition-all duration-300 flex-1"
+                      >
+                        <Sparkles className="w-5 h-5" />
+                        Collaborate
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </FadeUp>
 
-            {/* Emad El Sayed */}
+            {/* Emad El Sayed - Expanded Promotion */}
             <FadeUp>
               <div className="relative group h-full">
-                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/20 to-transparent 
                               rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
                 
-                <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 
-                              border border-gray-200 dark:border-neutral-700
-                              group-hover:border-orange-500/50
-                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
-                              transition-all duration-500 h-full flex flex-col">
+                <div className="relative bg-black/40 backdrop-blur-md rounded-2xl p-8 
+                              border border-orange-500/30
+                              group-hover:border-orange-500/70
+                              group-hover:shadow-[0_0_60px_rgba(255,115,0,0.3)]
+                              transition-all duration-500 h-full flex flex-col overflow-hidden">
                   
-                  <div className="flex flex-col items-center text-center flex-grow">
-                    {/* Profile image - fitted without white background */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-gray-100 dark:bg-neutral-700">
-                      <Image
-                        src="/team-emad.jpg"
-                        alt="Emad El Sayed"
-                        fill
-                        className="object-cover"
-                        sizes="128px"
-                        onError={(e) => {
-                          // Fallback to placeholder
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const parent = target.parentElement;
-                          if (parent) {
-                            parent.innerHTML = `
-                              <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
-                                <span class="text-4xl font-bold text-orange-500">E</span>
-                              </div>
-                            `;
-                          }
-                        }}
-                      />
+                  {/* Camera decorative element */}
+                  <div className="absolute top-4 left-4 w-16 h-16 rounded-full border-2 border-orange-500/20 flex items-center justify-center">
+                    <Camera className="w-8 h-8 text-orange-500/40" />
+                  </div>
+                  
+                  <div className="flex flex-col items-center text-center flex-grow z-10">
+                    
+                    {/* Enhanced Profile Section */}
+                    <div className="relative mb-8">
+                      <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-orange-500/30 
+                                    group-hover:border-orange-500 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.5)]
+                                    transition-all duration-500">
+                        <Image
+                          src="/team-emad.jpg"
+                          alt="Emad El Sayed"
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-700"
+                          sizes="192px"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `
+                                <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-black">
+                                  <div class="text-center">
+                                    <Camera class="w-16 h-16 text-orange-500 mx-auto mb-4" />
+                                    <span class="text-4xl font-bold text-white">ES</span>
+                                  </div>
+                                </div>
+                              `;
+                            }
+                          }}
+                        />
+                      </div>
+                      
+                      {/* Award badge */}
+                      <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-orange-500 to-amber-500 
+                                    text-white text-xs font-bold px-3 py-1.5 rounded-full 
+                                    flex items-center gap-1 shadow-lg">
+                        <Award className="w-3 h-3" />
+                        <span>INNOVATION LEADER</span>
+                      </div>
                     </div>
                     
-                    <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
+                    <h3 className="text-3xl font-bold mb-3 text-white group-hover:text-orange-300 transition-colors duration-300">
                       EMAD EL SAYED
                     </h3>
-                    <p className="text-orange-500 font-medium mb-4">CREATIVE DIRECTOR</p>
+                    <div className="flex items-center justify-center gap-2 mb-6">
+                      <Camera className="w-5 h-5 text-orange-500" />
+                      <p className="text-orange-400 font-medium text-lg">CREATIVE DIRECTOR & VISUAL ARTIST</p>
+                      <Sparkles className="w-5 h-5 text-amber-400" />
+                    </div>
                     
-                    <div className="w-12 h-1 bg-orange-500 mb-4" />
+                    <div className="w-20 h-1 bg-gradient-to-r from-orange-500 to-amber-500 mb-6" />
                     
-                    <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
-                      Renowned creative director specializing in brand strategy and visual storytelling.
+                    <p className="text-gray-300 mb-6 flex-grow text-lg leading-relaxed">
+                      Visionary creative director known for groundbreaking visual concepts and innovative 
+                      brand storytelling. With expertise spanning digital media, experiential design, and 
+                      visual effects, Emad transforms creative visions into immersive realities that 
+                      captivate audiences and elevate brands globally.
                     </p>
                     
-                    <Link 
-                      href="https://www.emadelsayed.com" 
-                      target="_blank"
-                      className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600
-                               transition-colors duration-300 mt-auto"
-                    >
-                      <span>www.emadelsayed.com</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    {/* Expertise Highlights */}
+                    <div className="grid grid-cols-2 gap-4 w-full mb-8">
+                      <div className="text-center p-4 rounded-xl bg-black/30 border border-orange-500/20 
+                                    group-hover:border-orange-500/40 transition-all duration-300">
+                        <div className="text-2xl font-bold text-orange-500">100+</div>
+                        <div className="text-sm text-gray-300">Global Brands</div>
+                      </div>
+                      <div className="text-center p-4 rounded-xl bg-black/30 border border-orange-500/20 
+                                    group-hover:border-orange-500/40 transition-all duration-300">
+                        <div className="text-2xl font-bold text-orange-500">15+</div>
+                        <div className="text-sm text-gray-300">Years Experience</div>
+                      </div>
+                    </div>
+                    
+                    {/* Specialties */}
+                    <div className="w-full mb-8">
+                      <h4 className="text-orange-400 font-semibold mb-3 text-center">Specialties</h4>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {['Creative Direction', 'Visual Storytelling', 'Brand Strategy', 'Digital Media', 'Experiential Design', 'Visual Effects'].map((spec) => (
+                          <span key={spec} className="px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 
+                                                    rounded-full text-sm text-gray-300 hover:bg-orange-500/20 
+                                                    hover:text-white transition-all duration-300">
+                            {spec}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 w-full">
+                      <Link 
+                        href="https://www.emadelsayed.com" 
+                        target="_blank"
+                        className="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-full 
+                                 bg-gradient-to-r from-orange-500 to-orange-600
+                                 text-white font-medium text-lg hover:from-orange-600 hover:to-orange-700
+                                 hover:shadow-[0_0_30px_rgba(255,115,0,0.6)] transform hover:-translate-y-1
+                                 transition-all duration-300 flex-1"
+                      >
+                        <Camera className="w-5 h-5" />
+                        View Portfolio
+                      </Link>
+                      <Link 
+                        href="/contact?director=emad"
+                        className="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-full 
+                                 bg-transparent border-2 border-orange-500
+                                 text-orange-500 font-medium text-lg hover:bg-orange-500 hover:text-white
+                                 hover:shadow-[0_0_20px_rgba(255,115,0,0.4)]
+                                 transition-all duration-300 flex-1"
+                      >
+                        <Sparkles className="w-5 h-5" />
+                        Collaborate
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </FadeUp>
 
           </div>
+
+          {/* Collaboration Message */}
+          <FadeUp>
+            <div className="text-center mt-20 max-w-3xl mx-auto">
+              <div className="inline-flex flex-col items-center gap-6 px-8 py-8 rounded-2xl 
+                            bg-gradient-to-r from-black/40 to-black/30 backdrop-blur-md 
+                            border border-orange-500/30">
+                <div className="flex items-center gap-4">
+                  <div className="w-3 h-3 rounded-full bg-orange-500 animate-pulse" />
+                  <h3 className="text-2xl font-bold text-white">Cinematic Collaboration at Its Finest</h3>
+                  <div className="w-3 h-3 rounded-full bg-amber-500 animate-pulse delay-300" />
+                </div>
+                <p className="text-gray-300 text-lg max-w-2xl">
+                  Working with Jassim and Emad means accessing world-class creative direction and 
+                  production expertise. Their combined experience ensures every project achieves 
+                  cinematic excellence and creative innovation.
+                </p>
+                <Link 
+                  href="/contact"
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full 
+                           bg-gradient-to-r from-orange-500 to-amber-500
+                           text-white font-medium text-lg hover:from-orange-600 hover:to-amber-600
+                           hover:shadow-[0_0_40px_rgba(255,115,0,0.5)] transform hover:-translate-y-1
+                           transition-all duration-300"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Start Your Creative Project
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
+            </div>
+          </FadeUp>
         </div>
       </section>
 
