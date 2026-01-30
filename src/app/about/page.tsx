@@ -540,7 +540,7 @@ function CombinedTimelineTeamBackground() {
     const hexagonGrid: HexagonCell[] = [];
     const hexSize = 60;
     const hexWidth = hexSize * 2;
-    const hexHeight = hexSize * Math.sqrt(3));
+    const hexHeight = hexSize * Math.sqrt(3);
     const teamSectionStart = canvas.height * 0.5;
     
     for (let x = -hexWidth; x < canvas.width + hexWidth; x += hexWidth * 0.85) {
