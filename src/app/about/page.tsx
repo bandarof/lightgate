@@ -1342,7 +1342,7 @@ export default function About() {
       </section>
 
       {/* ================= OUR HISTORY ================= */}
-      <section className="relative py-32 bg-white dark:bg-neutral-950">
+      <section className="relative py-32 bg-white dark:bg-neutral-950 overflow-hidden">
         <div className="container mx-auto px-6">
           
           <FadeUp>
@@ -1454,12 +1454,37 @@ export default function About() {
 
           </div>
         </div>
+        
+        {/* ================= SEAMLESS DIVIDER ================= */}
+        {/* Orange gradient that transitions from white/neutral-950 to timeline orange */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-orange-500/5 via-orange-500/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-neutral-950 via-white/20 dark:via-neutral-950/20 to-transparent" />
+        
+        {/* Animated floating particles in the divider */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 overflow-hidden">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-orange-500/10"
+              style={{
+                left: `${Math.random() * 100}%`,
+                bottom: `${Math.random() * 48}px`,
+                width: `${Math.random() * 6 + 2}px`,
+                height: `${Math.random() * 6 + 2}px`,
+                animation: `float ${Math.random() * 3 + 2}s infinite ${Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
       </section>
 
       {/* ================= MAJOR MILESTONES TIMELINE ================= */}
       <section className="relative py-32 overflow-hidden">
         {/* Clean Animated Timeline Background */}
         <TimelineBackground />
+        
+        {/* Top fade to connect with Our History section */}
+        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-orange-500/5 via-orange-500/10 to-transparent" />
         
         <div className="relative z-10 container mx-auto px-6">
           
@@ -1799,7 +1824,7 @@ export default function About() {
                 </p>
                 <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse delay-300" />
               </div>
-            </div>
+          </div>
           </FadeUp>
         </div>
       </section>
@@ -2089,6 +2114,15 @@ export default function About() {
 
         </div>
       </section>
+
+      {/* Add CSS animation for floating particles */}
+      <style jsx global>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0) translateX(0); }
+          33% { transform: translateY(-10px) translateX(5px); }
+          66% { transform: translateY(5px) translateX(-5px); }
+        }
+      `}</style>
 
     </main>
   );
