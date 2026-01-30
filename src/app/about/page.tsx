@@ -465,7 +465,7 @@ function TimelineBackground() {
         y: Math.random() * canvas.height,
         size: type === 'spark' ? Math.random() * 2 + 1 : Math.random() * 4 + 2,
         speedX: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
-        speedY: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
+        speedY = (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
         color: colors[Math.floor(Math.random() * colors.length)],
         opacity: type === 'energy' ? 0.4 + Math.random() * 0.4 : 0.2 + Math.random() * 0.3,
         type: type
@@ -1613,6 +1613,9 @@ export default function About() {
             </div>
           </div>
         </div>
+        
+        {/* SEAMLESS DIVIDER BETWEEN MILESTONE AND TEAM SECTIONS */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
       </section>
 
       {/* ================= CORE TEAM MEMBERS with BOLD ELECTRIC HEXAGONAL BACKGROUND ================= */}
@@ -1620,6 +1623,9 @@ export default function About() {
         
         {/* BOLD ELECTRIC Hexagonal Animated Background */}
         <TeamMembersBackground />
+        
+        {/* Top fade to connect with milestone section */}
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
 
         <div className="relative z-10 container mx-auto px-6">
           
