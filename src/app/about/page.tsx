@@ -27,608 +27,140 @@ const structuredData = {
   ]
 };
 
-// Cool animated background for mission & vision section
-function MissionVisionBackground() {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    // Check if mobile for performance optimization
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    if (!canvasRef.current || !containerRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas dimensions with performance optimization
-    const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = containerRef.current!.getBoundingClientRect();
-      
-      // Reduce resolution on mobile for better performance
-      canvas.width = rect.width * (isMobile ? dpr * 0.75 : dpr);
-      canvas.height = rect.height * (isMobile ? dpr * 0.75 : dpr);
-      
-      // Scale canvas for crisp rendering
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      ctx.scale(dpr, dpr);
-    };
-
-    resizeCanvas();
-    const resizeObserver = new ResizeObserver(resizeCanvas);
-    resizeObserver.observe(containerRef.current!);
-
-    // Particle system with optimized mobile settings
-    class Particle {
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      color: string;
-      opacity: number;
-      life: number;
-      maxLife: number;
-      waveOffset: number;
-      type: 'orb' | 'spark' | 'trail';
-
-      constructor(x: number, y: number, type: 'orb' | 'spark' | 'trail' = 'orb') {
-        this.x = x;
-        this.y = y;
-        this.type = type;
-        this.waveOffset = Math.random() * Math.PI * 2;
-        
-        // Reduce particle count and complexity on mobile
-        if (type === 'orb') {
-          this.size = isMobile ? Math.random() * 10 + 5 : Math.random() * 20 + 10;
-          this.speedX = (Math.random() - 0.5) * (isMobile ? 0.1 : 0.2);
-          this.speedY = (Math.random() - 0.5) * (isMobile ? 0.1 : 0.2);
-          this.opacity = 0.1 + Math.random() * 0.2;
-          this.life = 1;
-          this.maxLife = 1;
-          this.color = `rgba(${255}, ${100 + Math.random() * 155}, ${50}, ${this.opacity})`;
-        } else if (type === 'spark') {
-          this.size = Math.random() * 2 + 1;
-          this.speedX = (Math.random() - 0.5) * (isMobile ? 0.8 : 1.5);
-          this.speedY = (Math.random() - 0.5) * (isMobile ? 0.8 : 1.5);
-          this.opacity = 0.8 + Math.random() * 0.2;
-          this.life = 0.5 + Math.random() * 0.5;
-          this.maxLife = this.life;
-          this.color = `rgba(${255}, ${200 + Math.random() * 55}, ${100}, ${this.opacity})`;
-        } else {
-          this.size = Math.random() * 1.5 + 0.5;
-          this.speedX = (Math.random() - 0.5) * 0.3;
-          this.speedY = (Math.random() - 0.5) * 0.3;
-          this.opacity = 0.3 + Math.random() * 0.3;
-          this.life = 2 + Math.random() * 3;
-          this.maxLife = this.life;
-          this.color = `rgba(${255}, ${150 + Math.random() * 105}, ${50}, ${this.opacity})`;
-        }
-      }
-
-      update(time: number) {
-        this.life -= 0.002;
-        
-        if (this.type === 'orb') {
-          // Orb floating motion with wave pattern
-          this.x += this.speedX + Math.sin(time + this.waveOffset) * 0.2;
-          this.y += this.speedY + Math.cos(time + this.waveOffset) * 0.2;
-          
-          // Pulsing effect
-          const pulse = Math.sin(time * 2 + this.waveOffset) * 0.3 + 0.7;
-          this.size = (isMobile ? Math.random() * 10 + 5 : Math.random() * 20 + 10) * pulse;
-        } else {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          
-          // Slow down over time
-          this.speedX *= 0.99;
-          this.speedY *= 0.99;
-        }
-
-        // Wrap around edges
-        if (this.x < -50) this.x = canvas.width + 50;
-        if (this.x > canvas.width + 50) this.x = -50;
-        if (this.y < -50) this.y = canvas.height + 50;
-        if (this.y > canvas.height + 50) this.y = -50;
-      }
-
-      draw(ctx: CanvasRenderingContext2D, time: number) {
-        if (this.life <= 0) return;
-
-        const currentOpacity = this.opacity * (this.life / this.maxLife);
-        
-        if (this.type === 'orb') {
-          // Orb with gradient
-          const gradient = ctx.createRadialGradient(
-            this.x, this.y, 0,
-            this.x, this.y, this.size
-          );
-          gradient.addColorStop(0, this.color.replace('0.3', currentOpacity.toString()));
-          gradient.addColorStop(0.5, this.color.replace('0.3', (currentOpacity * 0.5).toString()));
-          gradient.addColorStop(1, this.color.replace('0.3', '0'));
-          
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = gradient;
-          ctx.fill();
-
-          // Orb glow
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2);
-          ctx.fillStyle = this.color.replace('0.3', (currentOpacity * 0.2).toString());
-          ctx.fill();
-        } else {
-          // Spark/trail particle
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = this.color.replace(this.opacity.toString(), currentOpacity.toString());
-          ctx.fill();
-        }
-      }
-    }
-
-    // Create particles - fewer on mobile
-    const particles: Particle[] = [];
-    const particleCount = isMobile ? 15 : 30;
-    
-    for (let i = 0; i < particleCount; i++) {
-      const x = Math.random() * canvas.width;
-      const y = Math.random() * canvas.height;
-      const type = i % 3 === 0 ? 'spark' : i % 3 === 1 ? 'trail' : 'orb';
-      particles.push(new Particle(x, y, type));
-    }
-
-    // Animation loop with performance optimization
-    let animationId: number;
-    let time = 0;
-    let lastTime = 0;
-    const targetFPS = isMobile ? 30 : 60;
-    const frameInterval = 1000 / targetFPS;
-    
-    const animate = (currentTime: number) => {
-      if (currentTime - lastTime < frameInterval) {
-        animationId = requestAnimationFrame(animate);
-        return;
-      }
-      
-      lastTime = currentTime;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.01;
-
-      // Draw gradient background
-      const gradient = ctx.createLinearGradient(
-        0, 0, 
-        canvas.width, canvas.height
-      );
-      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
-      gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.015)');
-      gradient.addColorStop(0.6, 'rgba(255, 200, 0, 0.01)');
-      gradient.addColorStop(1, 'rgba(255, 115, 0, 0.02)');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Update and draw particles
-      particles.forEach((particle, i) => {
-        particle.update(time);
-        particle.draw(ctx, time);
-        
-        // Remove and replace dead particles
-        if (particle.life <= 0) {
-          const x = Math.random() * canvas.width;
-          const y = Math.random() * canvas.height;
-          const type = i % 3 === 0 ? 'spark' : i % 3 === 1 ? 'trail' : 'orb';
-          particles[i] = new Particle(x, y, type);
-        }
-      });
-
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animationId = requestAnimationFrame(animate);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      resizeObserver.disconnect();
-      cancelAnimationFrame(animationId);
-    };
-  }, [isMobile]);
-
+// SIMPLE GUARANTEED WORKING ELECTRIC BACKGROUND
+function SimpleElectricBackground() {
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        aria-hidden="true"
-      />
+    <div className="absolute inset-0 overflow-hidden bg-gradient-to-br from-orange-500/5 via-amber-500/3 to-orange-500/5">
+      {/* Electric grid lines */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent animate-pulse delay-300" />
+        <div className="absolute left-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-orange-500/50 to-transparent animate-pulse delay-150" />
+        <div className="absolute right-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-amber-500/50 to-transparent animate-pulse delay-450" />
+      </div>
+      
+      {/* Hexagonal pattern - SIMPLE CSS VERSION */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `repeating-linear-gradient(60deg, transparent, transparent 20px, rgba(255, 115, 0, 0.3) 20px, rgba(255, 115, 0, 0.3) 21px)`,
+          backgroundSize: '50px 43.3px'
+        }} />
+        <div className="absolute inset-0" style={{
+          backgroundImage: `repeating-linear-gradient(120deg, transparent, transparent 20px, rgba(255, 165, 0, 0.2) 20px, rgba(255, 165, 0, 0.2) 21px)`,
+          backgroundSize: '50px 43.3px'
+        }} />
+      </div>
+      
+      {/* Pulsing energy dots */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-gradient-to-r from-orange-500/20 to-amber-500/20"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 8 + 2}px`,
+              height: `${Math.random() * 8 + 2}px`,
+              animation: `pulse ${Math.random() * 3 + 2}s infinite ${Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Energy bursts */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full border border-orange-500/30"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 200 + 50}px`,
+              height: `${Math.random() * 200 + 50}px`,
+              animation: `energyPulse ${Math.random() * 8 + 4}s infinite ${Math.random() * 4}s`,
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
-// Animated timeline background - OPTIMIZED VERSION
-function TimelineBackground() {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    // Check if mobile for performance optimization
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    if (!canvasRef.current || !containerRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas dimensions with performance optimization
-    const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = containerRef.current!.getBoundingClientRect();
-      
-      // Reduce resolution on mobile for better performance
-      canvas.width = rect.width * (isMobile ? dpr * 0.5 : dpr);
-      canvas.height = rect.height * (isMobile ? dpr * 0.5 : dpr);
-      
-      // Scale canvas for crisp rendering
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      ctx.scale(dpr, dpr);
-    };
-
-    resizeCanvas();
-    const resizeObserver = new ResizeObserver(resizeCanvas);
-    resizeObserver.observe(containerRef.current!);
-
-    // Timeline particles - simplified for mobile
-    const particles: Array<{
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      color: string;
-      opacity: number;
-      type: 'timeline' | 'energy' | 'spark';
-    }> = [];
-
-    const colors = [
-      'rgba(255, 115, 0, 0.4)',
-      'rgba(255, 165, 0, 0.5)',
-      'rgba(255, 200, 50, 0.6)',
-      'rgba(255, 225, 100, 0.7)',
-    ];
-
-    // Create particles along timeline - fewer on mobile
-    const particleCount = isMobile ? 30 : 60;
-    for (let i = 0; i < particleCount; i++) {
-      const type = i % 3 === 0 ? 'energy' : i % 3 === 1 ? 'spark' : 'timeline';
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: type === 'spark' ? Math.random() * 1.5 + 0.5 : Math.random() * 3 + 1,
-        speedX: (Math.random() - 0.5) * (type === 'spark' ? (isMobile ? 0.5 : 0.8) : 0.3),
-        speedY: (Math.random() - 0.5) * (type === 'spark' ? (isMobile ? 0.5 : 0.8) : 0.3),
-        color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: type === 'energy' ? 0.4 + Math.random() * 0.4 : 0.2 + Math.random() * 0.3,
-        type: type
-      });
-    }
-
-    // Animation loop with performance optimization
-    let animationId: number;
-    let time = 0;
-    let lastTime = 0;
-    const targetFPS = isMobile ? 30 : 60;
-    const frameInterval = 1000 / targetFPS;
-    
-    const animate = (currentTime: number) => {
-      if (currentTime - lastTime < frameInterval) {
-        animationId = requestAnimationFrame(animate);
-        return;
-      }
-      
-      lastTime = currentTime;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.01;
-
-      // Draw clean gradient background
-      const gradient = ctx.createLinearGradient(
-        0, 0, 
-        0, canvas.height
-      );
-      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
-      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.025)');
-      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.03)');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw timeline path
-      const timelineY = canvas.height / 2;
-      ctx.beginPath();
-      ctx.moveTo(50, timelineY);
-      ctx.lineTo(canvas.width - 50, timelineY);
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.15)';
-      ctx.lineWidth = isMobile ? 2 : 4;
-      ctx.stroke();
-
-      // Draw pulsing orb on timeline
-      const pulseSize = (isMobile ? 6 : 10) + Math.sin(time * 3) * 2;
-      ctx.beginPath();
-      ctx.arc(canvas.width / 2, timelineY, pulseSize, 0, Math.PI * 2);
-      const pulseGradient = ctx.createRadialGradient(
-        canvas.width / 2, timelineY, 0,
-        canvas.width / 2, timelineY, pulseSize
-      );
-      pulseGradient.addColorStop(0, `rgba(255, 115, 0, ${0.9 + Math.sin(time * 4) * 0.1})`);
-      pulseGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
-      ctx.fillStyle = pulseGradient;
-      ctx.fill();
-
-      // Update and draw particles
-      particles.forEach((p) => {
-        // Update position
-        p.x += p.speedX;
-        p.y += p.speedY;
-        
-        // Wrap around edges
-        if (p.x < -50) p.x = canvas.width + 50;
-        if (p.x > canvas.width + 50) p.x = -50;
-        if (p.y < -50) p.y = canvas.height + 50;
-        if (p.y > canvas.height + 50) p.y = -50;
-
-        // Draw particle
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color.replace('0.4', p.opacity.toString());
-        ctx.fill();
-      });
-
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animationId = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      resizeObserver.disconnect();
-      cancelAnimationFrame(animationId);
-    };
-  }, [isMobile]);
-
+// SIMPLE MISSION/VISION BACKGROUND
+function SimpleMissionBackground() {
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        aria-hidden="true"
-      />
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Orange glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-amber-500/5" />
+      
+      {/* Floating orbs */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/5 blur-sm"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 100 + 50}px`,
+              height: `${Math.random() * 100 + 50}px`,
+              animation: `float ${Math.random() * 20 + 10}s infinite ${Math.random() * 5}s ease-in-out`,
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Particle sparks */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 40 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-gradient-to-r from-orange-400/40 to-amber-400/30"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 4 + 1}px`,
+              height: `${Math.random() * 4 + 1}px`,
+              animation: `sparkle ${Math.random() * 3 + 1}s infinite ${Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
-// BOLD ELECTRIC Hexagonal background for Team Members section - OPTIMIZED
-function TeamMembersBackground() {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    // Check if mobile for performance optimization
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    if (!canvasRef.current || !containerRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas dimensions with performance optimization
-    const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = containerRef.current!.getBoundingClientRect();
-      
-      // Reduce resolution on mobile for better performance
-      canvas.width = rect.width * (isMobile ? dpr * 0.5 : dpr);
-      canvas.height = rect.height * (isMobile ? dpr * 0.5 : dpr);
-      
-      // Scale canvas for crisp rendering
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      ctx.scale(dpr, dpr);
-    };
-
-    resizeCanvas();
-    const resizeObserver = new ResizeObserver(resizeCanvas);
-    resizeObserver.observe(containerRef.current!);
-
-    // Create hexagon grid - simplified for mobile
-    const hexagonGrid: Array<{x: number, y: number, size: number, energy: number}> = [];
-    const hexSize = isMobile ? 40 : 65;
-    const hexWidth = hexSize * 2;
-    const hexHeight = hexSize * Math.sqrt(3);
-    
-    for (let x = -hexWidth; x < canvas.width + hexWidth; x += hexWidth * (isMobile ? 1.2 : 0.8)) {
-      for (let y = -hexHeight; y < canvas.height + hexHeight; y += hexHeight) {
-        const offsetX = (Math.floor(y / hexHeight) % 2 === 0) ? 0 : hexWidth * 0.4;
-        hexagonGrid.push({
-          x: x + offsetX,
-          y: y,
-          size: hexSize,
-          energy: 0.5 + Math.random() * 0.5
-        });
-      }
-    }
-
-    // Animation loop with performance optimization
-    let animationId: number;
-    let time = 0;
-    let lastTime = 0;
-    const targetFPS = isMobile ? 30 : 60;
-    const frameInterval = 1000 / targetFPS;
-    
-    const animate = (currentTime: number) => {
-      if (currentTime - lastTime < frameInterval) {
-        animationId = requestAnimationFrame(animate);
-        return;
-      }
-      
-      lastTime = currentTime;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.01;
-
-      // Draw warm gradient background
-      const gradient = ctx.createLinearGradient(
-        0, 0, 
-        canvas.width, canvas.height
-      );
-      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.08)');
-      gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.1)');
-      gradient.addColorStop(0.6, 'rgba(255, 200, 50, 0.12)');
-      gradient.addColorStop(1, 'rgba(255, 225, 100, 0.1)');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw hexagon grid
-      ctx.strokeStyle = 'rgba(255, 200, 100, 0.08)';
-      ctx.lineWidth = 0.8;
-      hexagonGrid.forEach(hex => {
-        ctx.beginPath();
-        for (let i = 0; i < 6; i++) {
-          const angle = (Math.PI / 3) * i;
-          const hexX = hex.x + hex.size * Math.cos(angle);
-          const hexY = hex.y + hex.size * Math.sin(angle);
-          if (i === 0) {
-            ctx.moveTo(hexX, hexY);
-          } else {
-            ctx.lineTo(hexX, hexY);
-          }
-        }
-        ctx.closePath();
-        ctx.stroke();
-      });
-
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animationId = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      resizeObserver.disconnect();
-      cancelAnimationFrame(animationId);
-    };
-  }, [isMobile]);
-
+// SIMPLE TIMELINE BACKGROUND
+function SimpleTimelineBackground() {
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        aria-hidden="true"
-      />
+    <div className="absolute inset-0 overflow-hidden bg-gradient-to-b from-orange-500/3 via-transparent to-amber-500/2">
+      {/* Timeline line */}
+      <div className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 hidden lg:block">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-orange-500/30 to-transparent animate-pulse" />
+      </div>
+      
+      {/* Energy particles along timeline */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-gradient-to-r from-orange-500/30 to-amber-500/20"
+            style={{
+              left: `${30 + (i * 3.5)}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 6 + 2}px`,
+              height: `${Math.random() * 6 + 2}px`,
+              animation: `timelinePulse ${Math.random() * 4 + 2}s infinite ${Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Main timeline node glow */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/5 blur-xl animate-pulse" />
     </div>
-  );
-}
-
-// Static hexagonal background for CTA section - OPTIMIZED
-function CTAHexagonalBackground() {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    if (!canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const drawPattern = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = canvas.offsetWidth * dpr;
-      canvas.height = canvas.offsetHeight * dpr;
-      
-      ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw subtle gradient background
-      const gradient = ctx.createLinearGradient(
-        0, 0, 
-        canvas.width, canvas.height
-      );
-      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.03)');
-      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.02)');
-      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.01)');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw simplified hexagonal pattern for mobile
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.08)';
-      ctx.lineWidth = 1;
-      
-      const hexSize = isMobile ? 50 : 70;
-      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
-        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
-          ctx.beginPath();
-          for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const hexX = x + hexSize * Math.cos(angle);
-            const hexY = y + hexSize * Math.sin(angle);
-            if (i === 0) {
-              ctx.moveTo(hexX, hexY);
-            } else {
-              ctx.lineTo(hexX, hexY);
-            }
-          }
-          ctx.closePath();
-          ctx.stroke();
-        }
-      }
-    };
-
-    drawPattern();
-    const resizeObserver = new ResizeObserver(drawPattern);
-    resizeObserver.observe(canvas);
-
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      resizeObserver.disconnect();
-    };
-  }, [isMobile]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      aria-hidden="true"
-    />
   );
 }
 
@@ -728,8 +260,8 @@ export default function About() {
       >
         <h2 id="mission-vision-heading" className="sr-only">Our Mission and Vision</h2>
         
-        {/* AMAZING Animated Background */}
-        <MissionVisionBackground />
+        {/* SIMPLE BUT COOL MISSION/VISION BACKGROUND */}
+        <SimpleMissionBackground />
 
         {/* Orange gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 via-transparent to-orange-500/5" />
@@ -1009,8 +541,8 @@ export default function About() {
         className="relative py-16 sm:py-20 md:py-32 overflow-hidden"
         aria-labelledby="milestones-heading"
       >
-        {/* Clean Animated Timeline Background */}
-        <TimelineBackground />
+        {/* SIMPLE TIMELINE BACKGROUND */}
+        <SimpleTimelineBackground />
         
         <div className="relative z-10 container mx-auto px-4 sm:px-6">
           
@@ -1181,8 +713,8 @@ export default function About() {
         aria-labelledby="team-heading"
       >
         
-        {/* BOLD ELECTRIC Hexagonal Animated Background */}
-        <TeamMembersBackground />
+        {/* SIMPLE BUT ELECTRIC HEXAGONAL BACKGROUND - GUARANTEED TO SHOW */}
+        <SimpleElectricBackground />
         
         {/* Top fade to connect with milestone section */}
         <div className="absolute top-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-b from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
@@ -1588,10 +1120,14 @@ export default function About() {
         aria-labelledby="cta-heading"
       >
         {/* Hexagonal Background Pattern */}
-        <CTAHexagonalBackground />
-
-        {/* Orange gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-orange-500/5" />
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-orange-500/5">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `repeating-linear-gradient(60deg, transparent, transparent 25px, rgba(255, 115, 0, 0.2) 25px, rgba(255, 115, 0, 0.2) 26px)`,
+              backgroundSize: '50px 43.3px'
+            }} />
+          </div>
+        </div>
 
         <div className="relative z-10 container mx-auto px-4 sm:px-6">
           
@@ -1649,6 +1185,26 @@ export default function About() {
           0%, 100% { transform: translateY(0) translateX(0); }
           33% { transform: translateY(-8px) translateX(4px); }
           66% { transform: translateY(4px) translateX(-4px); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        @keyframes energyPulse {
+          0%, 100% { opacity: 0; transform: scale(0.8); }
+          50% { opacity: 0.1; transform: scale(1.2); }
+        }
+        
+        @keyframes sparkle {
+          0%, 100% { opacity: 0.1; transform: scale(0.8); }
+          50% { opacity: 0.8; transform: scale(1); }
+        }
+        
+        @keyframes timelinePulse {
+          0%, 100% { opacity: 0.2; transform: translateY(0); }
+          50% { opacity: 0.5; transform: translateY(-5px); }
         }
         
         /* Reduced motion preference */
