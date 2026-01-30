@@ -416,7 +416,7 @@ function MissionVisionBackground() {
   );
 }
 
-// Animated timeline background - UPDATED for seamless transition
+// Animated timeline background - CLEANED UP VERSION
 function TimelineBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -480,20 +480,18 @@ function TimelineBackground() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.01;
 
-      // Draw gradient background that transitions to team section
+      // Draw clean gradient background
       const gradient = ctx.createLinearGradient(
         0, 0, 
         0, canvas.height
       );
       gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
-      gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.025)');
-      gradient.addColorStop(0.6, 'rgba(255, 200, 0, 0.03)');
-      gradient.addColorStop(0.8, 'rgba(255, 225, 100, 0.04)');
-      gradient.addColorStop(1, 'rgba(255, 240, 150, 0.05)'); // Brighter at bottom for transition
+      gradient.addColorStop(0.5, 'rgba(255, 165, 0, 0.025)');
+      gradient.addColorStop(1, 'rgba(255, 200, 0, 0.03)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw timeline path with stronger glow
+      // Draw timeline path
       const timelineY = canvas.height / 2;
       ctx.beginPath();
       ctx.moveTo(100, timelineY);
@@ -521,18 +519,6 @@ function TimelineBackground() {
       pulseGradient.addColorStop(0, `rgba(255, 115, 0, ${0.9 + Math.sin(time * 4) * 0.1})`);
       pulseGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
       ctx.fillStyle = pulseGradient;
-      ctx.fill();
-
-      // Draw additional glow around orb
-      ctx.beginPath();
-      ctx.arc(canvas.width / 2, timelineY, pulseSize * 2, 0, Math.PI * 2);
-      const outerGlow = ctx.createRadialGradient(
-        canvas.width / 2, timelineY, pulseSize,
-        canvas.width / 2, timelineY, pulseSize * 2
-      );
-      outerGlow.addColorStop(0, `rgba(255, 165, 0, ${0.4})`);
-      outerGlow.addColorStop(1, 'rgba(255, 165, 0, 0)');
-      ctx.fillStyle = outerGlow;
       ctx.fill();
 
       // Update and draw particles
@@ -583,95 +569,7 @@ function TimelineBackground() {
             ctx.stroke();
           }
         }
-
-        // Draw connections between nearby energy particles
-        if (p.type === 'energy') {
-          for (let j = i + 1; j < particles.length; j++) {
-            if (particles[j].type === 'energy') {
-              const dx = p.x - particles[j].x;
-              const dy = p.y - particles[j].y;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              
-              if (distance < 100) {
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                const opacity = (1 - distance / 100) * 0.15 * p.opacity * particles[j].opacity;
-                ctx.strokeStyle = `rgba(255, 165, 0, ${opacity})`;
-                ctx.lineWidth = 1;
-                ctx.stroke();
-              }
-            }
-          }
-        }
       });
-
-      // Draw subtle waves with more energy
-      for (let w = 0; w < 3; w++) {
-        const waveOffset = time * 0.5 + (w * Math.PI * 2) / 3;
-        const waveAmplitude = 20;
-        
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(255, 115, 0, ${0.05 + 0.03 * Math.sin(time + w)})`;
-        ctx.lineWidth = 1.5;
-        
-        for (let x = 0; x < canvas.width; x += 20) {
-          const y = timelineY + 
-                    Math.sin(x * 0.015 + waveOffset) * waveAmplitude;
-          
-          if (x === 0) {
-            ctx.moveTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
-        }
-        ctx.stroke();
-      }
-
-      // Draw transition energy field at bottom for seamless connection to next section
-      const transitionHeight = canvas.height * 0.2;
-      const transitionY = canvas.height - transitionHeight;
-      
-      // Draw gradient transition zone
-      const transitionGradient = ctx.createLinearGradient(
-        0, transitionY,
-        0, canvas.height
-      );
-      transitionGradient.addColorStop(0, 'rgba(255, 200, 50, 0.05)');
-      transitionGradient.addColorStop(0.5, 'rgba(255, 225, 100, 0.08)');
-      transitionGradient.addColorStop(1, 'rgba(255, 240, 150, 0.12)');
-      
-      ctx.fillStyle = transitionGradient;
-      ctx.fillRect(0, transitionY, canvas.width, transitionHeight);
-      
-      // Draw energy field lines in transition zone
-      for (let i = 0; i < 8; i++) {
-        const x = (canvas.width / 9) * (i + 1);
-        const startY = transitionY + 10;
-        const endY = canvas.height - 10;
-        
-        ctx.beginPath();
-        ctx.moveTo(x, startY);
-        for (let y = startY; y < endY; y += 10) {
-          const offset = Math.sin(time * 2 + x * 0.01 + y * 0.02) * 8;
-          ctx.lineTo(x + offset, y);
-        }
-        ctx.strokeStyle = `rgba(255, 165, 0, ${0.1 + Math.sin(time * 3 + i) * 0.05})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-
-      // Draw floating transition particles
-      for (let i = 0; i < 15; i++) {
-        const progress = (time * 0.2 + i * 0.1) % 1;
-        const x = Math.random() * canvas.width;
-        const y = transitionY + progress * transitionHeight;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 225, 100, ${0.4 + Math.sin(time * 4 + i) * 0.3})`;
-        ctx.fill();
-      }
 
       animationId = requestAnimationFrame(animate);
     };
@@ -690,7 +588,6 @@ function TimelineBackground() {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
       />
-      {/* REMOVED: Yellow gradient overlay - replaced with seamless divider */}
     </div>
   );
 }
@@ -1066,7 +963,7 @@ function TeamMembersBackground() {
     
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.015; // Slightly faster for more energy
+      time += 0.015;
 
       // Draw warm gradient background with more intensity
       const gradient = ctx.createLinearGradient(
@@ -1085,7 +982,7 @@ function TeamMembersBackground() {
       ctx.lineWidth = 0.8;
       hexagonGrid.forEach(hex => {
         hex.connections.forEach(connection => {
-          if (Math.random() < 0.3) { // Only draw some connections for electric feel
+          if (Math.random() < 0.3) {
             ctx.beginPath();
             ctx.moveTo(hex.x, hex.y);
             ctx.lineTo(connection.x, connection.y);
@@ -1120,41 +1017,9 @@ function TeamMembersBackground() {
           const y = Math.random() * canvas.height;
           particles[i] = new ElectricParticle(x, y);
         }
-
-        // Draw electric arcs between nearby particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particle.x - particles[j].x;
-          const dy = particle.y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 120 && Math.random() < 0.2) {
-            ctx.beginPath();
-            ctx.moveTo(particle.x, particle.y);
-            
-            // Create jagged electric arc
-            const segments = 4;
-            const segmentX = (particles[j].x - particle.x) / segments;
-            const segmentY = (particles[j].y - particle.y) / segments;
-            
-            let currentX = particle.x;
-            let currentY = particle.y;
-            
-            for (let s = 1; s <= segments; s++) {
-              currentX += segmentX + (Math.random() - 0.5) * 25;
-              currentY += segmentY + (Math.random() - 0.5) * 25;
-              ctx.lineTo(currentX, currentY);
-            }
-            ctx.lineTo(particles[j].x, particles[j].y);
-            
-            const arcOpacity = (1 - distance / 120) * 0.4;
-            ctx.strokeStyle = `rgba(255, 225, 100, ${arcOpacity})`;
-            ctx.lineWidth = 1.2;
-            ctx.stroke();
-          }
-        }
       });
 
-      // Draw team grid visualization with more energy
+      // Draw team grid visualization
       const teamGridX = canvas.width / 2;
       const teamGridY = canvas.height / 2;
       const gridSpacing = 90;
@@ -1188,17 +1053,6 @@ function TeamMembersBackground() {
         }
       }
 
-      // Draw top transition fade from timeline section
-      const topFadeHeight = 60;
-      const topFadeGradient = ctx.createLinearGradient(
-        0, 0,
-        0, topFadeHeight
-      );
-      topFadeGradient.addColorStop(0, 'rgba(255, 240, 150, 0.3)');
-      topFadeGradient.addColorStop(1, 'transparent');
-      ctx.fillStyle = topFadeGradient;
-      ctx.fillRect(0, 0, canvas.width, topFadeHeight);
-
       animationId = requestAnimationFrame(animate);
     };
 
@@ -1216,8 +1070,6 @@ function TeamMembersBackground() {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
       />
-      {/* Electric glow overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-amber-500/8 to-yellow-500/5" />
     </div>
   );
 }
@@ -1252,7 +1104,7 @@ function CTAHexagonalBackground() {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw MORE VISIBLE hexagonal pattern
+      // Draw hexagonal pattern
       ctx.strokeStyle = 'rgba(255, 115, 0, 0.08)';
       ctx.lineWidth = 1;
       
@@ -1275,23 +1127,13 @@ function CTAHexagonalBackground() {
         }
       }
 
-      // Draw subtle connecting dots at hexagon centers
+      // Draw connecting dots at hexagon centers
       ctx.fillStyle = 'rgba(255, 115, 0, 0.06)';
       for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
         for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
           ctx.beginPath();
           ctx.arc(x, y, 1.5, 0, Math.PI * 2);
           ctx.fill();
-          
-          // Draw dots at hexagon vertices too
-          for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const hexX = x + hexSize * Math.cos(angle);
-            const hexY = y + hexSize * Math.sin(angle);
-            ctx.beginPath();
-            ctx.arc(hexX, hexY, 1, 0, Math.PI * 2);
-            ctx.fill();
-          }
         }
       }
     };
@@ -1616,7 +1458,7 @@ export default function About() {
 
       {/* ================= MAJOR MILESTONES TIMELINE ================= */}
       <section className="relative py-32 overflow-hidden">
-        {/* Enhanced Animated Timeline Background */}
+        {/* Clean Animated Timeline Background */}
         <TimelineBackground />
         
         <div className="relative z-10 container mx-auto px-6">
@@ -1771,19 +1613,10 @@ export default function About() {
             </div>
           </div>
         </div>
-
-        {/* Seamless divider between milestone and team sections */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-orange-50/70 via-orange-50/50 to-transparent dark:from-neutral-900 dark:via-neutral-900/80 dark:to-transparent" />
-        
-        {/* Subtle connection line */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-t from-orange-500/40 via-orange-500/20 to-transparent" />
-        
-        {/* Connection glow effect */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-orange-500/30 animate-pulse" />
       </section>
 
       {/* ================= CORE TEAM MEMBERS with BOLD ELECTRIC HEXAGONAL BACKGROUND ================= */}
-      <section className="relative py-32 bg-gradient-to-b from-orange-50/70 via-orange-50/30 to-white dark:from-neutral-900 dark:via-orange-950/20 dark:to-neutral-900 overflow-hidden">
+      <section className="relative py-32 bg-white dark:bg-neutral-900 overflow-hidden">
         
         {/* BOLD ELECTRIC Hexagonal Animated Background */}
         <TeamMembersBackground />
