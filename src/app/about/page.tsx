@@ -4,7 +4,7 @@ import React from "react";
 import { FadeUp } from "@/components/Motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Users, Target, Eye, Film, Camera, Award, Sparkles } from "lucide-react";
+import { ArrowRight, Users, Target, Eye, Film, Camera, Award, Sparkles, Video, Mic, Monitor, Zap } from "lucide-react";
 
 // Cool animated background for mission & vision section
 function MissionVisionBackground() {
@@ -1074,8 +1074,8 @@ function TeamMembersBackground() {
   );
 }
 
-// Static background for Multimedia Production Studio
-function StudioBackground() {
+// Abstract Multimedia Production Studio Background
+function AbstractStudioBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -1095,10 +1095,319 @@ function StudioBackground() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Create a static studio background
-    const drawStudioBackground = () => {
-      // Dark studio background
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    // Abstract studio elements
+    class StudioElement {
+      x: number;
+      y: number;
+      size: number;
+      rotation: number;
+      rotationSpeed: number;
+      type: 'screen' | 'audioWave' | 'filmReel' | 'light' | 'controlPanel';
+      opacity: number;
+      color: string;
+
+      constructor(type: 'screen' | 'audioWave' | 'filmReel' | 'light' | 'controlPanel', x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.size = type === 'light' ? 40 + Math.random() * 60 : 60 + Math.random() * 100;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.01;
+        this.opacity = 0.1 + Math.random() * 0.2;
+        
+        // Orange palette colors for studio elements
+        const colors = [
+          'rgba(255, 115, 0, OPACITY)',
+          'rgba(255, 165, 0, OPACITY)',
+          'rgba(255, 200, 50, OPACITY)',
+          'rgba(255, 225, 100, OPACITY)',
+          'rgba(255, 140, 0, OPACITY)',
+          'rgba(255, 180, 30, OPACITY)'
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)].replace('OPACITY', this.opacity.toString());
+      }
+
+      update(time: number) {
+        this.rotation += this.rotationSpeed;
+        
+        // Subtle floating motion
+        if (this.type === 'light') {
+          this.y += Math.sin(time * 2 + this.x * 0.01) * 0.5;
+        }
+      }
+
+      draw(ctx: CanvasRenderingContext2D, time: number) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        
+        switch(this.type) {
+          case 'screen':
+            this.drawScreen(ctx, time);
+            break;
+          case 'audioWave':
+            this.drawAudioWave(ctx, time);
+            break;
+          case 'filmReel':
+            this.drawFilmReel(ctx, time);
+            break;
+          case 'light':
+            this.drawLight(ctx, time);
+            break;
+          case 'controlPanel':
+            this.drawControlPanel(ctx, time);
+            break;
+        }
+        
+        ctx.restore();
+      }
+
+      drawScreen(ctx: CanvasRenderingContext2D, time: number) {
+        // Screen with gradient
+        const gradient = ctx.createLinearGradient(
+          -this.size/2, -this.size/4,
+          this.size/2, this.size/4
+        );
+        gradient.addColorStop(0, this.color.replace('OPACITY', (this.opacity * 0.3).toString()));
+        gradient.addColorStop(0.5, this.color.replace('OPACITY', (this.opacity * 0.6).toString()));
+        gradient.addColorStop(1, this.color.replace('OPACITY', (this.opacity * 0.3).toString()));
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(-this.size/2, -this.size/4, this.size, this.size/2);
+        
+        // Screen border
+        ctx.strokeStyle = this.color.replace('OPACITY', (this.opacity * 0.8).toString());
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-this.size/2, -this.size/4, this.size, this.size/2);
+        
+        // Screen pixels or scan lines
+        ctx.strokeStyle = this.color.replace('OPACITY', (this.opacity * 0.1).toString());
+        ctx.lineWidth = 0.5;
+        for (let i = -this.size/4 + 5; i < this.size/4; i += 10) {
+          ctx.beginPath();
+          ctx.moveTo(-this.size/2 + 5, i);
+          ctx.lineTo(this.size/2 - 5, i);
+          ctx.stroke();
+        }
+      }
+
+      drawAudioWave(ctx: CanvasRenderingContext2D, time: number) {
+        // Audio waveform
+        ctx.beginPath();
+        const waveHeight = this.size * 0.3;
+        const waveWidth = this.size;
+        
+        for (let i = -waveWidth/2; i < waveWidth/2; i += 2) {
+          const wave = Math.sin(time * 4 + i * 0.1 + this.x * 0.01) * 
+                      Math.sin(i * 0.05) * waveHeight;
+          if (i === -waveWidth/2) {
+            ctx.moveTo(i, wave);
+          } else {
+            ctx.lineTo(i, wave);
+          }
+        }
+        
+        ctx.strokeStyle = this.color.replace('OPACITY', (this.opacity * 0.7).toString());
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        // Wave glow
+        ctx.strokeStyle = this.color.replace('OPACITY', (this.opacity * 0.2).toString());
+        ctx.lineWidth = 8;
+        ctx.stroke();
+      }
+
+      drawFilmReel(ctx: CanvasRenderingContext2D, time: number) {
+        // Film reel
+        const segments = 8;
+        const radius = this.size * 0.4;
+        
+        for (let i = 0; i < segments; i++) {
+          const angle = (i * Math.PI * 2) / segments + time * 0.5;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          
+          // Film strip segment
+          ctx.beginPath();
+          ctx.arc(x, y, radius * 0.2, 0, Math.PI * 2);
+          ctx.fillStyle = this.color.replace('OPACITY', (this.opacity * 0.4).toString());
+          ctx.fill();
+          
+          // Perforations
+          ctx.beginPath();
+          ctx.arc(x, y, radius * 0.1, 0, Math.PI * 2);
+          ctx.fillStyle = this.color.replace('OPACITY', (this.opacity * 0.2).toString());
+          ctx.fill();
+        }
+        
+        // Center hub
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.3, 0, Math.PI * 2);
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius * 0.3);
+        gradient.addColorStop(0, this.color.replace('OPACITY', (this.opacity * 0.8).toString()));
+        gradient.addColorStop(1, this.color.replace('OPACITY', '0'));
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+
+      drawLight(ctx: CanvasRenderingContext2D, time: number) {
+        // Studio light with beam
+        const radius = this.size * 0.3;
+        
+        // Light source
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        const lightGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+        lightGradient.addColorStop(0, this.color.replace('OPACITY', (this.opacity * 0.9).toString()));
+        lightGradient.addColorStop(1, this.color.replace('OPACITY', '0'));
+        ctx.fillStyle = lightGradient;
+        ctx.fill();
+        
+        // Light beam
+        const beamLength = this.size * 2;
+        const beamWidth = radius * 3;
+        
+        ctx.beginPath();
+        ctx.moveTo(-beamWidth/2, 0);
+        ctx.lineTo(-beamWidth/4, beamLength);
+        ctx.lineTo(beamWidth/4, beamLength);
+        ctx.lineTo(beamWidth/2, 0);
+        ctx.closePath();
+        
+        const beamGradient = ctx.createLinearGradient(0, 0, 0, beamLength);
+        beamGradient.addColorStop(0, this.color.replace('OPACITY', (this.opacity * 0.3).toString()));
+        beamGradient.addColorStop(1, this.color.replace('OPACITY', '0'));
+        ctx.fillStyle = beamGradient;
+        ctx.fill();
+      }
+
+      drawControlPanel(ctx: CanvasRenderingContext2D, time: number) {
+        // Control panel with knobs and sliders
+        const width = this.size;
+        const height = this.size * 0.6;
+        
+        // Panel base
+        ctx.fillStyle = this.color.replace('OPACITY', (this.opacity * 0.3).toString());
+        ctx.fillRect(-width/2, -height/2, width, height);
+        
+        // Panel border
+        ctx.strokeStyle = this.color.replace('OPACITY', (this.opacity * 0.6).toString());
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-width/2, -height/2, width, height);
+        
+        // Knobs
+        const knobCount = 3;
+        for (let i = 0; i < knobCount; i++) {
+          const x = -width/3 + (width * i) / (knobCount - 1);
+          const y = 0;
+          const knobRadius = height * 0.2;
+          
+          // Knob base
+          ctx.beginPath();
+          ctx.arc(x, y, knobRadius, 0, Math.PI * 2);
+          ctx.fillStyle = this.color.replace('OPACITY', (this.opacity * 0.5).toString());
+          ctx.fill();
+          
+          // Knob indicator
+          const indicatorAngle = time * 2 + i;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(
+            x + Math.cos(indicatorAngle) * knobRadius * 0.8,
+            y + Math.sin(indicatorAngle) * knobRadius * 0.8
+          );
+          ctx.strokeStyle = this.color.replace('OPACITY', (this.opacity * 0.9).toString());
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Create studio elements
+    const elements: StudioElement[] = [];
+    const elementTypes: ('screen' | 'audioWave' | 'filmReel' | 'light' | 'controlPanel')[] = 
+      ['screen', 'audioWave', 'filmReel', 'light', 'controlPanel'];
+    
+    // Create random studio elements
+    for (let i = 0; i < 12; i++) {
+      const type = elementTypes[Math.floor(Math.random() * elementTypes.length)];
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      elements.push(new StudioElement(type, x, y));
+    }
+
+    // Connection lines between elements
+    class Connection {
+      from: StudioElement;
+      to: StudioElement;
+      progress: number;
+      speed: number;
+      opacity: number;
+
+      constructor(from: StudioElement, to: StudioElement) {
+        this.from = from;
+        this.to = to;
+        this.progress = 0;
+        this.speed = 0.3 + Math.random() * 0.4;
+        this.opacity = 0.1 + Math.random() * 0.1;
+      }
+
+      update() {
+        this.progress += this.speed * 0.02;
+        if (this.progress >= 1) this.progress = 0;
+      }
+
+      draw(ctx: CanvasRenderingContext2D, time: number) {
+        const currentX = this.from.x + (this.to.x - this.from.x) * this.progress;
+        const currentY = this.from.y + (this.to.y - this.from.y) * this.progress;
+        
+        // Draw connection line
+        ctx.beginPath();
+        ctx.moveTo(this.from.x, this.from.y);
+        ctx.lineTo(this.to.x, this.to.y);
+        ctx.strokeStyle = `rgba(255, 165, 0, ${this.opacity * 0.3})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Draw moving pulse along connection
+        ctx.beginPath();
+        ctx.arc(currentX, currentY, 3, 0, Math.PI * 2);
+        const pulseGradient = ctx.createRadialGradient(currentX, currentY, 0, currentX, currentY, 6);
+        pulseGradient.addColorStop(0, `rgba(255, 225, 100, ${this.opacity * 0.8})`);
+        pulseGradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
+        ctx.fillStyle = pulseGradient;
+        ctx.fill();
+      }
+    }
+
+    // Create connections between nearby elements
+    const connections: Connection[] = [];
+    elements.forEach((elem1, i) => {
+      elements.forEach((elem2, j) => {
+        if (i < j) {
+          const dx = elem1.x - elem2.x;
+          const dy = elem1.y - elem2.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 300 && Math.random() < 0.3) {
+            connections.push(new Connection(elem1, elem2));
+          }
+        }
+      });
+    });
+
+    // Animation loop
+    let animationId: number;
+    let time = 0;
+    
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 0.01;
+
+      // Draw dark gradient background
+      const gradient = ctx.createLinearGradient(
+        0, 0, 
+        canvas.width, canvas.height
+      );
       gradient.addColorStop(0, '#0a0a0a');
       gradient.addColorStop(0.3, '#1a1a1a');
       gradient.addColorStop(0.7, '#0f0f0f');
@@ -1106,12 +1415,11 @@ function StudioBackground() {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Studio floor pattern
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.05)';
-      ctx.lineWidth = 1;
+      // Draw abstract grid pattern
+      ctx.strokeStyle = 'rgba(255, 115, 0, 0.02)';
+      ctx.lineWidth = 0.5;
       
-      // Draw studio floor grid
-      const gridSize = 50;
+      const gridSize = 80;
       for (let x = 0; x < canvas.width; x += gridSize) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -1126,84 +1434,55 @@ function StudioBackground() {
         ctx.stroke();
       }
 
-      // Studio equipment silhouettes
-      ctx.fillStyle = 'rgba(255, 115, 0, 0.03)';
-      
-      // Camera crane silhouette
-      ctx.beginPath();
-      ctx.moveTo(canvas.width * 0.1, canvas.height * 0.8);
-      ctx.lineTo(canvas.width * 0.1, canvas.height * 0.3);
-      ctx.lineTo(canvas.width * 0.15, canvas.height * 0.25);
-      ctx.lineTo(canvas.width * 0.2, canvas.height * 0.3);
-      ctx.lineTo(canvas.width * 0.2, canvas.height * 0.8);
-      ctx.closePath();
-      ctx.fill();
+      // Draw connections
+      connections.forEach(connection => {
+        connection.update();
+        connection.draw(ctx, time);
+      });
 
-      // Studio lights
-      for (let i = 0; i < 5; i++) {
-        const x = canvas.width * (0.2 + i * 0.15);
-        const y = canvas.height * 0.2;
-        
-        // Light stand
-        ctx.fillStyle = 'rgba(255, 115, 0, 0.04)';
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x, y + 40);
-        ctx.lineTo(x + 10, y + 40);
-        ctx.lineTo(x + 10, y);
-        ctx.closePath();
-        ctx.fill();
-        
-        // Light fixture
-        ctx.fillStyle = 'rgba(255, 165, 0, 0.05)';
-        ctx.beginPath();
-        ctx.ellipse(x + 5, y, 20, 8, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      // Draw studio elements
+      elements.forEach(element => {
+        element.update(time);
+        element.draw(ctx, time);
+      });
 
-      // Film reel
-      ctx.fillStyle = 'rgba(255, 115, 0, 0.04)';
-      ctx.beginPath();
-      ctx.arc(canvas.width * 0.8, canvas.height * 0.7, 30, 0, Math.PI * 2);
-      ctx.fill();
-      
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      ctx.beginPath();
-      ctx.arc(canvas.width * 0.8, canvas.height * 0.7, 10, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Subtle vignette effect
-      const vignette = ctx.createRadialGradient(
-        canvas.width / 2, canvas.height / 2, 0,
-        canvas.width / 2, canvas.height / 2, canvas.width * 0.8
-      );
-      vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
-      vignette.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
-      ctx.fillStyle = vignette;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Subtle light beams
-      ctx.strokeStyle = 'rgba(255, 165, 0, 0.02)';
-      ctx.lineWidth = 2;
+      // Draw data streams
+      ctx.strokeStyle = 'rgba(255, 165, 0, 0.05)';
+      ctx.lineWidth = 1;
       
       for (let i = 0; i < 3; i++) {
-        const x = canvas.width * (0.2 + i * 0.3);
+        const y = canvas.height * (0.2 + i * 0.3);
         ctx.beginPath();
-        ctx.moveTo(x, canvas.height * 0.2);
-        ctx.lineTo(x + canvas.width * 0.1, canvas.height);
-        ctx.stroke();
-        
-        ctx.beginPath();
-        ctx.moveTo(x, canvas.height * 0.2);
-        ctx.lineTo(x - canvas.width * 0.1, canvas.height);
+        for (let x = 0; x < canvas.width; x += 2) {
+          const wave = Math.sin(time * 2 + x * 0.02 + i) * 10;
+          if (x === 0) {
+            ctx.moveTo(x, y + wave);
+          } else {
+            ctx.lineTo(x, y + wave);
+          }
+        }
         ctx.stroke();
       }
+
+      // Draw floating studio equipment icons
+      const icons = ['●', '■', '▲', '◼', '○'];
+      for (let i = 0; i < 15; i++) {
+        const x = (Math.sin(time + i) * 50 + i * 100) % canvas.width;
+        const y = (Math.cos(time * 0.5 + i) * 30 + i * 60) % canvas.height;
+        
+        ctx.font = '20px monospace';
+        ctx.fillStyle = `rgba(255, 165, 0, ${0.1 + Math.sin(time + i) * 0.05})`;
+        ctx.fillText(icons[i % icons.length], x, y);
+      }
+
+      animationId = requestAnimationFrame(animate);
     };
 
-    drawStudioBackground();
+    animate();
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationId);
     };
   }, []);
 
@@ -1970,21 +2249,26 @@ export default function About() {
       </section>
 
       {/* ================= AWARD-WINNING CREATIVE DIRECTORS ================= */}
+      {/* SEAMLESS TRANSITION: Remove all dividers and background changes */}
       <section className="relative py-32 overflow-hidden">
         
-        {/* Multimedia Production Studio Static Background */}
-        <StudioBackground />
+        {/* Abstract Multimedia Production Studio Background */}
+        <AbstractStudioBackground />
         
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
+        {/* SEAMLESS OVERLAY: Only subtle gradient for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/40" />
 
         <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
             <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-sm font-medium mb-6">
-                CREATIVE EXCELLENCE
-              </span>
+              <div className="inline-flex items-center gap-3 mb-6">
+                <Video className="w-6 h-6 text-orange-400" />
+                <span className="px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-sm font-medium">
+                  CREATIVE EXCELLENCE
+                </span>
+                <Film className="w-6 h-6 text-orange-400" />
+              </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
                 Award-Winning <span className="text-orange-500">Creative Directors</span>
               </h2>
@@ -1996,7 +2280,7 @@ export default function About() {
 
           <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             
-            {/* Jassim Alsaady - Expanded Promotion */}
+            {/* Jassim Alsaady - Enhanced Promotion */}
             <FadeUp>
               <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/20 to-transparent 
@@ -2009,9 +2293,11 @@ export default function About() {
                               group-hover:shadow-[0_0_60px_rgba(255,115,0,0.3)]
                               transition-all duration-500 h-full flex flex-col overflow-hidden">
                   
-                  {/* Film reel decorative element */}
-                  <div className="absolute top-4 right-4 w-16 h-16 rounded-full border-2 border-orange-500/20 flex items-center justify-center">
-                    <Film className="w-8 h-8 text-orange-500/40" />
+                  {/* Studio Equipment Icons */}
+                  <div className="absolute top-6 right-6 flex gap-3 opacity-40">
+                    <Monitor className="w-6 h-6 text-orange-500" />
+                    <Mic className="w-6 h-6 text-orange-400" />
+                    <Zap className="w-6 h-6 text-amber-400" />
                   </div>
                   
                   <div className="flex flex-col items-center text-center flex-grow z-10">
@@ -2130,7 +2416,7 @@ export default function About() {
               </div>
             </FadeUp>
 
-            {/* Emad El Sayed - Expanded Promotion */}
+            {/* Emad El Sayed - Enhanced Promotion */}
             <FadeUp>
               <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/20 to-transparent 
@@ -2143,9 +2429,11 @@ export default function About() {
                               group-hover:shadow-[0_0_60px_rgba(255,115,0,0.3)]
                               transition-all duration-500 h-full flex flex-col overflow-hidden">
                   
-                  {/* Camera decorative element */}
-                  <div className="absolute top-4 left-4 w-16 h-16 rounded-full border-2 border-orange-500/20 flex items-center justify-center">
-                    <Camera className="w-8 h-8 text-orange-500/40" />
+                  {/* Studio Equipment Icons */}
+                  <div className="absolute top-6 left-6 flex gap-3 opacity-40">
+                    <Camera className="w-6 h-6 text-orange-500" />
+                    <Video className="w-6 h-6 text-orange-400" />
+                    <Monitor className="w-6 h-6 text-amber-400" />
                   </div>
                   
                   <div className="flex flex-col items-center text-center flex-grow z-10">
@@ -2272,23 +2560,31 @@ export default function About() {
               <div className="inline-flex flex-col items-center gap-6 px-8 py-8 rounded-2xl 
                             bg-gradient-to-r from-black/40 to-black/30 backdrop-blur-md 
                             border border-orange-500/30">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center gap-4 mb-4">
                   <div className="w-3 h-3 rounded-full bg-orange-500 animate-pulse" />
                   <h3 className="text-2xl font-bold text-white">Cinematic Collaboration at Its Finest</h3>
                   <div className="w-3 h-3 rounded-full bg-amber-500 animate-pulse delay-300" />
                 </div>
-                <p className="text-gray-300 text-lg max-w-2xl">
+                <p className="text-gray-300 text-lg max-w-2xl mb-6">
                   Working with Jassim and Emad means accessing world-class creative direction and 
                   production expertise. Their combined experience ensures every project achieves 
                   cinematic excellence and creative innovation.
                 </p>
+                <div className="flex items-center justify-center gap-4 text-gray-400">
+                  <Video className="w-5 h-5" />
+                  <Film className="w-5 h-5" />
+                  <Camera className="w-5 h-5" />
+                  <span className="text-sm">Professional Studio Equipment</span>
+                  <Monitor className="w-5 h-5" />
+                  <Mic className="w-5 h-5" />
+                </div>
                 <Link 
                   href="/contact"
                   className="inline-flex items-center gap-3 px-8 py-4 rounded-full 
                            bg-gradient-to-r from-orange-500 to-amber-500
                            text-white font-medium text-lg hover:from-orange-600 hover:to-amber-600
                            hover:shadow-[0_0_40px_rgba(255,115,0,0.5)] transform hover:-translate-y-1
-                           transition-all duration-300"
+                           transition-all duration-300 mt-4"
                 >
                   <Sparkles className="w-5 h-5" />
                   Start Your Creative Project
