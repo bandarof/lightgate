@@ -6,28 +6,68 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Users, Target, Eye } from "lucide-react";
 
+// SEO Metadata - This should also be added to your layout/head
+export const metadata = {
+  title: "About Lightgate - Redefining Cultural Entertainment Worldwide",
+  description: "Discover Lightgate's mission to revolutionize cultural entertainment through innovative technology, global scale, and immersive festive event experiences.",
+  keywords: "Lightgate, cultural entertainment, event technology, festival innovation, global events, immersive experiences",
+  openGraph: {
+    title: "About Lightgate - Illuminating the World Through Culture",
+    description: "A global phenomenon redefining entertainment through groundbreaking technology and never-before-seen festive event concepts.",
+    type: "website",
+    images: ["/about-og.jpg"]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Lightgate - Redefining Cultural Entertainment",
+    description: "Discover our journey, team, and vision for global cultural innovation.",
+    images: ["/about-twitter.jpg"]
+  }
+};
+
 // Cool animated background for mission & vision section
 function MissionVisionBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
+    // Check if mobile for performance optimization
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     if (!canvasRef.current || !containerRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas dimensions
+    // Set canvas dimensions with performance optimization
     const resizeCanvas = () => {
-      canvas.width = containerRef.current!.offsetWidth;
-      canvas.height = containerRef.current!.offsetHeight;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = containerRef.current!.getBoundingClientRect();
+      
+      // Reduce resolution on mobile for better performance
+      canvas.width = rect.width * (isMobile ? dpr * 0.75 : dpr);
+      canvas.height = rect.height * (isMobile ? dpr * 0.75 : dpr);
+      
+      // Scale canvas for crisp rendering
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+      ctx.scale(dpr, dpr);
     };
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    const resizeObserver = new ResizeObserver(() => {
+      resizeCanvas();
+    });
+    resizeObserver.observe(containerRef.current!);
 
-    // Particle system
+    // Particle system with optimized mobile settings
     class Particle {
       x: number;
       y: number;
@@ -47,26 +87,27 @@ function MissionVisionBackground() {
         this.type = type;
         this.waveOffset = Math.random() * Math.PI * 2;
         
+        // Reduce particle count and complexity on mobile
         if (type === 'orb') {
-          this.size = Math.random() * 20 + 10;
-          this.speedX = (Math.random() - 0.5) * 0.2;
-          this.speedY = (Math.random() - 0.5) * 0.2;
+          this.size = isMobile ? Math.random() * 10 + 5 : Math.random() * 20 + 10;
+          this.speedX = (Math.random() - 0.5) * (isMobile ? 0.1 : 0.2);
+          this.speedY = (Math.random() - 0.5) * (isMobile ? 0.1 : 0.2);
           this.opacity = 0.1 + Math.random() * 0.2;
           this.life = 1;
           this.maxLife = 1;
           this.color = `rgba(${255}, ${100 + Math.random() * 155}, ${50}, ${this.opacity})`;
         } else if (type === 'spark') {
-          this.size = Math.random() * 3 + 1;
-          this.speedX = (Math.random() - 0.5) * 1.5;
-          this.speedY = (Math.random() - 0.5) * 1.5;
+          this.size = Math.random() * 2 + 1;
+          this.speedX = (Math.random() - 0.5) * (isMobile ? 0.8 : 1.5);
+          this.speedY = (Math.random() - 0.5) * (isMobile ? 0.8 : 1.5);
           this.opacity = 0.8 + Math.random() * 0.2;
           this.life = 0.5 + Math.random() * 0.5;
           this.maxLife = this.life;
           this.color = `rgba(${255}, ${200 + Math.random() * 55}, ${100}, ${this.opacity})`;
         } else {
-          this.size = Math.random() * 2 + 1;
-          this.speedX = (Math.random() - 0.5) * 0.5;
-          this.speedY = (Math.random() - 0.5) * 0.5;
+          this.size = Math.random() * 1.5 + 0.5;
+          this.speedX = (Math.random() - 0.5) * 0.3;
+          this.speedY = (Math.random() - 0.5) * 0.3;
           this.opacity = 0.3 + Math.random() * 0.3;
           this.life = 2 + Math.random() * 3;
           this.maxLife = this.life;
@@ -84,7 +125,7 @@ function MissionVisionBackground() {
           
           // Pulsing effect
           const pulse = Math.sin(time * 2 + this.waveOffset) * 0.3 + 0.7;
-          this.size = (Math.random() * 20 + 10) * pulse;
+          this.size = (isMobile ? Math.random() * 10 + 5 : Math.random() * 20 + 10) * pulse;
         } else {
           this.x += this.speedX;
           this.y += this.speedY;
@@ -132,19 +173,13 @@ function MissionVisionBackground() {
           ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
           ctx.fillStyle = this.color.replace(this.opacity.toString(), currentOpacity.toString());
           ctx.fill();
-
-          // Trail effect
-          ctx.beginPath();
-          ctx.arc(this.x - this.speedX * 2, this.y - this.speedY * 2, this.size * 0.5, 0, Math.PI * 2);
-          ctx.fillStyle = this.color.replace(this.opacity.toString(), (currentOpacity * 0.5).toString());
-          ctx.fill();
         }
       }
     }
 
-    // Create particles
+    // Create particles - fewer on mobile
     const particles: Particle[] = [];
-    const particleCount = 30;
+    const particleCount = isMobile ? 15 : 30;
     
     for (let i = 0; i < particleCount; i++) {
       const x = Math.random() * canvas.width;
@@ -153,76 +188,20 @@ function MissionVisionBackground() {
       particles.push(new Particle(x, y, type));
     }
 
-    // Energy waves
-    class EnergyWave {
-      x: number;
-      y: number;
-      radius: number;
-      speed: number;
-      opacity: number;
-      thickness: number;
-      color: string;
-
-      constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-        this.radius = 0;
-        this.speed = 0.5 + Math.random() * 1;
-        this.opacity = 0.5;
-        this.thickness = 2 + Math.random() * 3;
-        this.color = `rgba(${255}, ${100 + Math.random() * 155}, ${50}, ${this.opacity})`;
-      }
-
-      update() {
-        this.radius += this.speed;
-        this.opacity -= 0.005;
-        return this.opacity > 0;
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = this.color.replace(this.opacity.toString(), this.opacity.toString());
-        ctx.lineWidth = this.thickness;
-        ctx.stroke();
-
-        // Inner glow
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = this.color.replace(this.opacity.toString(), (this.opacity * 0.3).toString());
-        ctx.lineWidth = this.thickness * 2;
-        ctx.stroke();
-      }
-    }
-
-    const energyWaves: EnergyWave[] = [];
-    
-    // Create initial energy waves at card positions
-    setTimeout(() => {
-      const leftCardX = canvas.width * 0.25;
-      const rightCardX = canvas.width * 0.75;
-      const cardY = canvas.height * 0.5;
-      
-      for (let i = 0; i < 3; i++) {
-        energyWaves.push(new EnergyWave(leftCardX, cardY));
-        energyWaves.push(new EnergyWave(rightCardX, cardY));
-      }
-    }, 1000);
-
-    // Add new energy waves periodically
-    setInterval(() => {
-      if (energyWaves.length < 10) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        energyWaves.push(new EnergyWave(x, y));
-      }
-    }, 3000);
-
-    // Animation loop
+    // Animation loop with performance optimization
     let animationId: number;
     let time = 0;
+    let lastTime = 0;
+    const targetFPS = isMobile ? 30 : 60;
+    const frameInterval = 1000 / targetFPS;
     
-    const animate = () => {
+    const animate = (currentTime: number) => {
+      if (currentTime - lastTime < frameInterval) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+      
+      lastTime = currentTime;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.01;
 
@@ -238,42 +217,6 @@ function MissionVisionBackground() {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw subtle geometric pattern
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.03)';
-      ctx.lineWidth = 1;
-      
-      // Hexagonal grid
-      const hexSize = 80;
-      for (let x = -hexSize; x < canvas.width + hexSize; x += hexSize * 1.5) {
-        for (let y = -hexSize; y < canvas.height + hexSize; y += hexSize * Math.sqrt(3)) {
-          // Animate hexagons
-          const pulse = Math.sin(time + x * 0.01 + y * 0.01) * 0.5 + 0.5;
-          
-          ctx.beginPath();
-          for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i + time * 0.1;
-            const hexX = x + hexSize * pulse * Math.cos(angle);
-            const hexY = y + hexSize * pulse * Math.sin(angle);
-            if (i === 0) {
-              ctx.moveTo(hexX, hexY);
-            } else {
-              ctx.lineTo(hexX, hexY);
-            }
-          }
-          ctx.closePath();
-          ctx.stroke();
-        }
-      }
-
-      // Update and draw energy waves
-      for (let i = energyWaves.length - 1; i >= 0; i--) {
-        if (!energyWaves[i].update()) {
-          energyWaves.splice(i, 1);
-        } else {
-          energyWaves[i].draw(ctx);
-        }
-      }
-
       // Update and draw particles
       particles.forEach((particle, i) => {
         particle.update(time);
@@ -286,158 +229,75 @@ function MissionVisionBackground() {
           const type = i % 3 === 0 ? 'spark' : i % 3 === 1 ? 'trail' : 'orb';
           particles[i] = new Particle(x, y, type);
         }
-
-        // Draw connections between nearby particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 150) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            const opacity = (1 - distance / 150) * 0.1 * particles[i].opacity * particles[j].opacity;
-            ctx.strokeStyle = `rgba(255, 115, 0, ${opacity})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
       });
-
-      // Draw card connection line
-      const leftCardX = canvas.width * 0.25;
-      const rightCardX = canvas.width * 0.75;
-      const cardY = canvas.height * 0.5;
-      
-      ctx.beginPath();
-      ctx.moveTo(leftCardX, cardY);
-      ctx.bezierCurveTo(
-        canvas.width * 0.4, cardY - 50,
-        canvas.width * 0.6, cardY + 50,
-        rightCardX, cardY
-      );
-      ctx.strokeStyle = `rgba(255, 115, 0, ${0.05 + Math.sin(time) * 0.02})`;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Draw pulsing orbs at card positions
-      const pulseSize = 5 + Math.sin(time * 2) * 2;
-      [leftCardX, rightCardX].forEach((x, i) => {
-        const yOffset = Math.sin(time * 3 + i * Math.PI) * 20;
-        
-        // Main orb
-        ctx.beginPath();
-        ctx.arc(x, cardY + yOffset, pulseSize, 0, Math.PI * 2);
-        const pulseGradient = ctx.createRadialGradient(
-          x, cardY + yOffset, 0,
-          x, cardY + yOffset, pulseSize
-        );
-        pulseGradient.addColorStop(0, `rgba(255, 115, 0, ${0.8 + Math.sin(time * 4) * 0.2})`);
-        pulseGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
-        ctx.fillStyle = pulseGradient;
-        ctx.fill();
-
-        // Orb glow
-        ctx.beginPath();
-        ctx.arc(x, cardY + yOffset, pulseSize * 3, 0, Math.PI * 2);
-        const glowGradient = ctx.createRadialGradient(
-          x, cardY + yOffset, 0,
-          x, cardY + yOffset, pulseSize * 3
-        );
-        glowGradient.addColorStop(0, `rgba(255, 115, 0, ${0.3 + Math.sin(time * 4) * 0.1})`);
-        glowGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
-        ctx.fillStyle = glowGradient;
-        ctx.fill();
-      });
-
-      // Draw floating particles along connection line
-      for (let i = 0; i < 5; i++) {
-        const progress = (time * 0.1 + i * 0.2) % 1;
-        const t = progress * 2 - 1;
-        const x = leftCardX + (rightCardX - leftCardX) * progress;
-        const y = cardY + 50 * Math.sin(t * Math.PI);
-        
-        ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 200, 50, ${0.5 + Math.sin(time * 5 + i) * 0.3})`;
-        ctx.fill();
-      }
-
-      // Draw ambient light beams
-      for (let i = 0; i < 3; i++) {
-        const beamX = canvas.width * 0.5;
-        const beamY = canvas.height;
-        const angle = time * 0.5 + (i * Math.PI * 2) / 3;
-        const length = 300;
-        
-        ctx.beginPath();
-        ctx.moveTo(beamX, beamY);
-        ctx.lineTo(
-          beamX + Math.cos(angle) * length,
-          beamY + Math.sin(angle) * length
-        );
-        
-        const beamGradient = ctx.createLinearGradient(
-          beamX, beamY,
-          beamX + Math.cos(angle) * length,
-          beamY + Math.sin(angle) * length
-        );
-        beamGradient.addColorStop(0, `rgba(255, 115, 0, ${0.1})`);
-        beamGradient.addColorStop(1, 'rgba(255, 115, 0, 0)');
-        
-        ctx.strokeStyle = beamGradient;
-        ctx.lineWidth = 30;
-        ctx.stroke();
-        
-        ctx.strokeStyle = beamGradient;
-        ctx.lineWidth = 10;
-        ctx.stroke();
-      }
 
       animationId = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationId = requestAnimationFrame(animate);
 
+    // Cleanup
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('resize', checkMobile);
+      if (resizeObserver) resizeObserver.disconnect();
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 overflow-hidden">
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
+        aria-hidden="true"
       />
     </div>
   );
 }
 
-// Animated timeline background - CLEANED UP VERSION
+// Animated timeline background - OPTIMIZED VERSION
 function TimelineBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
+    // Check if mobile for performance optimization
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     if (!canvasRef.current || !containerRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas dimensions
+    // Set canvas dimensions with performance optimization
     const resizeCanvas = () => {
-      canvas.width = containerRef.current!.offsetWidth;
-      canvas.height = containerRef.current!.offsetHeight;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = containerRef.current!.getBoundingClientRect();
+      
+      // Reduce resolution on mobile for better performance
+      canvas.width = rect.width * (isMobile ? dpr * 0.5 : dpr);
+      canvas.height = rect.height * (isMobile ? dpr * 0.5 : dpr);
+      
+      // Scale canvas for crisp rendering
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+      ctx.scale(dpr, dpr);
     };
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    const resizeObserver = new ResizeObserver(() => {
+      resizeCanvas();
+    });
+    resizeObserver.observe(containerRef.current!);
 
-    // Timeline particles
+    // Timeline particles - simplified for mobile
     const particles: Array<{
       x: number;
       y: number;
@@ -456,27 +316,36 @@ function TimelineBackground() {
       'rgba(255, 225, 100, 0.7)',
     ];
 
-    // Create particles along timeline
-    const particleCount = 60;
+    // Create particles along timeline - fewer on mobile
+    const particleCount = isMobile ? 30 : 60;
     for (let i = 0; i < particleCount; i++) {
       const type = i % 3 === 0 ? 'energy' : i % 3 === 1 ? 'spark' : 'timeline';
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: type === 'spark' ? Math.random() * 2 + 1 : Math.random() * 4 + 2,
-        speedX: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
-        speedY: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
+        size: type === 'spark' ? Math.random() * 1.5 + 0.5 : Math.random() * 3 + 1,
+        speedX: (Math.random() - 0.5) * (type === 'spark' ? (isMobile ? 0.5 : 0.8) : 0.3),
+        speedY: (Math.random() - 0.5) * (type === 'spark' ? (isMobile ? 0.5 : 0.8) : 0.3),
         color: colors[Math.floor(Math.random() * colors.length)],
         opacity: type === 'energy' ? 0.4 + Math.random() * 0.4 : 0.2 + Math.random() * 0.3,
         type: type
       });
     }
 
-    // Animation loop
+    // Animation loop with performance optimization
     let animationId: number;
     let time = 0;
+    let lastTime = 0;
+    const targetFPS = isMobile ? 30 : 60;
+    const frameInterval = 1000 / targetFPS;
     
-    const animate = () => {
+    const animate = (currentTime: number) => {
+      if (currentTime - lastTime < frameInterval) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+      
+      lastTime = currentTime;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.01;
 
@@ -494,22 +363,14 @@ function TimelineBackground() {
       // Draw timeline path
       const timelineY = canvas.height / 2;
       ctx.beginPath();
-      ctx.moveTo(100, timelineY);
-      ctx.lineTo(canvas.width - 100, timelineY);
+      ctx.moveTo(50, timelineY);
+      ctx.lineTo(canvas.width - 50, timelineY);
       ctx.strokeStyle = 'rgba(255, 115, 0, 0.15)';
-      ctx.lineWidth = 4;
-      ctx.stroke();
-
-      // Draw timeline glow
-      ctx.beginPath();
-      ctx.moveTo(100, timelineY);
-      ctx.lineTo(canvas.width - 100, timelineY);
-      ctx.strokeStyle = 'rgba(255, 115, 0, 0.08)';
-      ctx.lineWidth = 12;
+      ctx.lineWidth = isMobile ? 2 : 4;
       ctx.stroke();
 
       // Draw pulsing orb on timeline
-      const pulseSize = 10 + Math.sin(time * 3) * 3;
+      const pulseSize = (isMobile ? 6 : 10) + Math.sin(time * 3) * 2;
       ctx.beginPath();
       ctx.arc(canvas.width / 2, timelineY, pulseSize, 0, Math.PI * 2);
       const pulseGradient = ctx.createRadialGradient(
@@ -522,16 +383,10 @@ function TimelineBackground() {
       ctx.fill();
 
       // Update and draw particles
-      particles.forEach((p, i) => {
+      particles.forEach((p) => {
         // Update position
         p.x += p.speedX;
         p.y += p.speedY;
-        
-        // Pulsing effect for energy particles
-        if (p.type === 'energy') {
-          const pulse = Math.sin(time * 4 + i) * 0.5 + 0.5;
-          p.size = (Math.random() * 4 + 2) * pulse;
-        }
         
         // Wrap around edges
         if (p.x < -50) p.x = canvas.width + 50;
@@ -542,430 +397,111 @@ function TimelineBackground() {
         // Draw particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        
-        if (p.type === 'energy') {
-          const gradient = ctx.createRadialGradient(
-            p.x, p.y, 0,
-            p.x, p.y, p.size * 2
-          );
-          gradient.addColorStop(0, p.color.replace('0.5', (p.opacity * 0.8).toString()));
-          gradient.addColorStop(1, p.color.replace('0.5', '0'));
-          ctx.fillStyle = gradient;
-        } else {
-          ctx.fillStyle = p.color.replace('0.4', (p.opacity * (p.type === 'spark' ? 0.7 : 1)).toString());
-        }
-        
+        ctx.fillStyle = p.color.replace('0.4', p.opacity.toString());
         ctx.fill();
-
-        // Draw connection to timeline for timeline particles
-        if (p.type === 'timeline') {
-          const distanceToTimeline = Math.abs(p.y - timelineY);
-          if (distanceToTimeline < 150) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p.x, timelineY);
-            ctx.strokeStyle = `rgba(255, 115, 0, ${0.08 * (1 - distanceToTimeline / 150) * p.opacity})`;
-            ctx.lineWidth = 0.8;
-            ctx.stroke();
-          }
-        }
       });
 
       animationId = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationId = requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('resize', checkMobile);
+      if (resizeObserver) resizeObserver.disconnect();
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 overflow-hidden">
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
+        aria-hidden="true"
       />
     </div>
   );
 }
 
-// BOLD ELECTRIC Hexagonal background for Team Members section
+// BOLD ELECTRIC Hexagonal background for Team Members section - OPTIMIZED
 function TeamMembersBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
+    // Check if mobile for performance optimization
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     if (!canvasRef.current || !containerRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas dimensions
+    // Set canvas dimensions with performance optimization
     const resizeCanvas = () => {
-      canvas.width = containerRef.current!.offsetWidth;
-      canvas.height = containerRef.current!.offsetHeight;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = containerRef.current!.getBoundingClientRect();
+      
+      // Reduce resolution on mobile for better performance
+      canvas.width = rect.width * (isMobile ? dpr * 0.5 : dpr);
+      canvas.height = rect.height * (isMobile ? dpr * 0.5 : dpr);
+      
+      // Scale canvas for crisp rendering
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+      ctx.scale(dpr, dpr);
     };
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    const resizeObserver = new ResizeObserver(() => {
+      resizeCanvas();
+    });
+    resizeObserver.observe(containerRef.current!);
 
-    // Electric particle system - BOLD but within orange palette
-    class ElectricParticle {
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      opacity: number;
-      life: number;
-      maxLife: number;
-      waveOffset: number;
-      pulseSpeed: number;
-      trail: Array<{x: number, y: number, size: number}>;
-
-      constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-        this.size = 1.5 + Math.random() * 3;
-        this.speedX = (Math.random() - 0.5) * 0.8;
-        this.speedY = (Math.random() - 0.5) * 0.8;
-        this.opacity = 0.6 + Math.random() * 0.4;
-        this.life = 4 + Math.random() * 8;
-        this.maxLife = this.life;
-        this.waveOffset = Math.random() * Math.PI * 2;
-        this.pulseSpeed = 3 + Math.random() * 4;
-        this.trail = [];
-      }
-
-      update(time: number) {
-        this.life -= 0.003;
-        
-        // Electric movement with wave pattern
-        this.x += this.speedX + Math.sin(time * this.pulseSpeed + this.waveOffset) * 0.5;
-        this.y += this.speedY + Math.cos(time * this.pulseSpeed + this.waveOffset) * 0.5;
-        
-        // Add to trail
-        this.trail.push({
-          x: this.x,
-          y: this.y,
-          size: this.size * (0.3 + Math.sin(time * this.pulseSpeed) * 0.2)
-        });
-        if (this.trail.length > 8) {
-          this.trail.shift();
-        }
-        
-        // Wrap around edges
-        if (this.x < -30) this.x = canvas.width + 30;
-        if (this.x > canvas.width + 30) this.x = -30;
-        if (this.y < -30) this.y = canvas.height + 30;
-        if (this.y > canvas.height + 30) this.y = -30;
-      }
-
-      draw(ctx: CanvasRenderingContext2D, time: number) {
-        if (this.life <= 0) return;
-
-        const currentOpacity = this.opacity * (this.life / this.maxLife);
-        const pulse = Math.sin(time * this.pulseSpeed) * 0.4 + 0.6;
-        const currentSize = this.size * pulse;
-        
-        // Draw trail
-        this.trail.forEach((point, i) => {
-          const trailOpacity = currentOpacity * (i / this.trail.length) * 0.4;
-          const trailSize = point.size * (i / this.trail.length);
-          
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
-          
-          const gradient = ctx.createRadialGradient(
-            point.x, point.y, 0,
-            point.x, point.y, trailSize
-          );
-          gradient.addColorStop(0, `rgba(255, ${180 + Math.random() * 40}, ${80}, ${trailOpacity})`);
-          gradient.addColorStop(1, `rgba(255, 140, 40, 0)`);
-          ctx.fillStyle = gradient;
-          ctx.fill();
-        });
-        
-        // Draw main particle
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, currentSize, 0, Math.PI * 2);
-        
-        const gradient = ctx.createRadialGradient(
-          this.x, this.y, 0,
-          this.x, this.y, currentSize * 2
-        );
-        gradient.addColorStop(0, `rgba(255, 200, 100, ${currentOpacity})`);
-        gradient.addColorStop(0.5, `rgba(255, 165, 0, ${currentOpacity * 0.6})`);
-        gradient.addColorStop(1, `rgba(255, 115, 0, 0)`);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        
-        // Draw electric aura
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, currentSize * 2.5, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255, 200, 100, ${currentOpacity * 0.2})`;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-    }
-
-    // Create electric particles
-    const particles: ElectricParticle[] = [];
-    const particleCount = 35;
-    
-    for (let i = 0; i < particleCount; i++) {
-      const x = Math.random() * canvas.width;
-      const y = Math.random() * canvas.height;
-      particles.push(new ElectricParticle(x, y));
-    }
-
-    // Hexagon grid with ELECTRIC energy
-    class HexagonCell {
-      x: number;
-      y: number;
-      size: number;
-      energy: number;
-      maxEnergy: number;
-      pulsePhase: number;
-      connections: Array<{x: number, y: number}>;
-      isActive: boolean;
-      activationTime: number;
-      rotation: number;
-      rotationSpeed: number;
-
-      constructor(x: number, y: number, size: number) {
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.energy = 0;
-        this.maxEnergy = 0.5 + Math.random() * 0.5;
-        this.pulsePhase = Math.random() * Math.PI * 2;
-        this.connections = [];
-        this.isActive = false;
-        this.activationTime = 0;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
-      }
-
-      update(time: number) {
-        this.rotation += this.rotationSpeed;
-        
-        // Energy pulse
-        this.energy = this.maxEnergy * (Math.sin(time * 2 + this.pulsePhase) * 0.4 + 0.6);
-        
-        // Random activation for electric effects
-        if (!this.isActive && Math.random() < 0.02) {
-          this.isActive = true;
-          this.activationTime = time;
-        }
-        
-        if (this.isActive && time - this.activationTime > 0.8) {
-          this.isActive = false;
-        }
-      }
-
-      draw(ctx: CanvasRenderingContext2D, time: number) {
-        // Draw hexagon with electric energy
-        ctx.beginPath();
-        for (let i = 0; i < 6; i++) {
-          const angle = (Math.PI / 3) * i + this.rotation;
-          const hexX = this.x + this.size * Math.cos(angle);
-          const hexY = this.y + this.size * Math.sin(angle);
-          if (i === 0) {
-            ctx.moveTo(hexX, hexY);
-          } else {
-            ctx.lineTo(hexX, hexY);
-          }
-        }
-        ctx.closePath();
-        
-        // Electric glow effect when active
-        if (this.isActive) {
-          const pulse = Math.sin(time * 15) * 0.5 + 0.5;
-          const gradient = ctx.createRadialGradient(
-            this.x, this.y, 0,
-            this.x, this.y, this.size * 2.5
-          );
-          gradient.addColorStop(0, `rgba(255, 225, 100, ${0.4 * pulse})`);
-          gradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
-          ctx.fillStyle = gradient;
-          ctx.fill();
-          
-          // Draw electric arcs from vertices
-          for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i + this.rotation;
-            const hexX = this.x + this.size * Math.cos(angle);
-            const hexY = this.y + this.size * Math.sin(angle);
-            
-            if (Math.random() < 0.3) {
-              ctx.beginPath();
-              ctx.moveTo(hexX, hexY);
-              const arcX = hexX + (Math.random() - 0.5) * 25;
-              const arcY = hexY + (Math.random() - 0.5) * 25;
-              ctx.lineTo(arcX, arcY);
-              ctx.strokeStyle = `rgba(255, 225, 100, ${0.6 * pulse})`;
-              ctx.lineWidth = 1.2;
-              ctx.stroke();
-            }
-          }
-        }
-        
-        // Draw hexagon outline with energy-based color
-        const energyColor = Math.floor(this.energy * 200);
-        ctx.strokeStyle = `rgba(255, ${150 + energyColor}, ${50 + energyColor}, ${0.15 + this.energy * 0.25})`;
-        ctx.lineWidth = 1.5 + this.energy * 2;
-        ctx.stroke();
-        
-        // Draw electric center energy dot
-        if (this.energy > 0.3) {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, 2 + this.energy * 4, 0, Math.PI * 2);
-          const centerGradient = ctx.createRadialGradient(
-            this.x, this.y, 0,
-            this.x, this.y, 2 + this.energy * 4
-          );
-          centerGradient.addColorStop(0, `rgba(255, 225, 100, ${0.7 + this.energy * 0.3})`);
-          centerGradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
-          ctx.fillStyle = centerGradient;
-          ctx.fill();
-        }
-      }
-    }
-
-    // Create hexagon grid
-    const hexagonGrid: HexagonCell[] = [];
-    const hexSize = 65;
+    // Create hexagon grid - simplified for mobile
+    const hexagonGrid: Array<{x: number, y: number, size: number, energy: number}> = [];
+    const hexSize = isMobile ? 40 : 65;
     const hexWidth = hexSize * 2;
     const hexHeight = hexSize * Math.sqrt(3);
     
-    for (let x = -hexWidth; x < canvas.width + hexWidth; x += hexWidth * 0.8) {
+    for (let x = -hexWidth; x < canvas.width + hexWidth; x += hexWidth * (isMobile ? 1.2 : 0.8)) {
       for (let y = -hexHeight; y < canvas.height + hexHeight; y += hexHeight) {
         const offsetX = (Math.floor(y / hexHeight) % 2 === 0) ? 0 : hexWidth * 0.4;
-        hexagonGrid.push(new HexagonCell(x + offsetX, y, hexSize));
+        hexagonGrid.push({
+          x: x + offsetX,
+          y: y,
+          size: hexSize,
+          energy: 0.5 + Math.random() * 0.5
+        });
       }
     }
 
-    // Create connections between nearby hexagons
-    hexagonGrid.forEach((hex, i) => {
-      hex.connections = [];
-      hexagonGrid.forEach((otherHex, j) => {
-        if (i !== j) {
-          const dx = hex.x - otherHex.x;
-          const dy = hex.y - otherHex.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < hexSize * 2.8) {
-            hex.connections.push({x: otherHex.x, y: otherHex.y});
-          }
-        }
-      });
-    });
-
-    // Electric pulse system
-    class ElectricPulse {
-      x: number;
-      y: number;
-      targetX: number;
-      targetY: number;
-      progress: number;
-      speed: number;
-      opacity: number;
-      points: Array<{x: number, y: number}>;
-
-      constructor(startX: number, startY: number, endX: number, endY: number) {
-        this.x = startX;
-        this.y = startY;
-        this.targetX = endX;
-        this.targetY = endY;
-        this.progress = 0;
-        this.speed = 0.8 + Math.random() * 0.4;
-        this.opacity = 0.8 + Math.random() * 0.2;
-        this.points = this.generatePulsePath(startX, startY, endX, endY);
-      }
-
-      generatePulsePath(startX: number, startY: number, endX: number, endY: number): Array<{x: number, y: number}> {
-        const points = [{x: startX, y: startY}];
-        const segments = 6;
-        
-        for (let i = 1; i <= segments; i++) {
-          const t = i / segments;
-          const x = startX + (endX - startX) * t + (Math.random() - 0.5) * 20;
-          const y = startY + (endY - startY) * t + (Math.random() - 0.5) * 20;
-          points.push({x, y});
-        }
-        
-        points.push({x: endX, y: endY});
-        return points;
-      }
-
-      update() {
-        this.progress += this.speed * 0.02;
-        this.opacity -= 0.01;
-        return this.progress < 1 && this.opacity > 0;
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        const currentProgress = this.progress;
-        const segmentIndex = Math.floor(currentProgress * (this.points.length - 1));
-        const segmentProgress = (currentProgress * (this.points.length - 1)) % 1;
-        
-        if (segmentIndex >= this.points.length - 1) return;
-        
-        const startPoint = this.points[segmentIndex];
-        const endPoint = this.points[segmentIndex + 1];
-        const currentX = startPoint.x + (endPoint.x - startPoint.x) * segmentProgress;
-        const currentY = startPoint.y + (endPoint.y - startPoint.y) * segmentProgress;
-        
-        // Draw pulse head
-        ctx.beginPath();
-        ctx.arc(currentX, currentY, 3, 0, Math.PI * 2);
-        const headGradient = ctx.createRadialGradient(
-          currentX, currentY, 0,
-          currentX, currentY, 6
-        );
-        headGradient.addColorStop(0, `rgba(255, 225, 100, ${this.opacity})`);
-        headGradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
-        ctx.fillStyle = headGradient;
-        ctx.fill();
-        
-        // Draw pulse trail
-        for (let i = 0; i <= segmentIndex; i++) {
-          const point = this.points[i];
-          const trailOpacity = this.opacity * (i / this.points.length);
-          
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, 1.5, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 200, 80, ${trailOpacity})`;
-          ctx.fill();
-        }
-      }
-    }
-
-    const electricPulses: ElectricPulse[] = [];
-
-    // Create occasional electric pulses between hexagons
-    setInterval(() => {
-      if (electricPulses.length < 8 && hexagonGrid.length >= 2) {
-        const hex1 = hexagonGrid[Math.floor(Math.random() * hexagonGrid.length)];
-        const hex2 = hexagonGrid[Math.floor(Math.random() * hexagonGrid.length)];
-        if (hex1 !== hex2 && Math.random() < 0.5) {
-          electricPulses.push(new ElectricPulse(hex1.x, hex1.y, hex2.x, hex2.y));
-        }
-      }
-    }, 800);
-
-    // Animation loop
+    // Animation loop with performance optimization
     let animationId: number;
     let time = 0;
+    let lastTime = 0;
+    const targetFPS = isMobile ? 30 : 60;
+    const frameInterval = 1000 / targetFPS;
     
-    const animate = () => {
+    const animate = (currentTime: number) => {
+      if (currentTime - lastTime < frameInterval) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+      
+      lastTime = currentTime;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.015;
+      time += 0.01;
 
-      // Draw warm gradient background with more intensity
+      // Draw warm gradient background
       const gradient = ctx.createLinearGradient(
         0, 0, 
         canvas.width, canvas.height
@@ -977,120 +513,73 @@ function TeamMembersBackground() {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw electric connections between hexagons
+      // Draw hexagon grid
       ctx.strokeStyle = 'rgba(255, 200, 100, 0.08)';
       ctx.lineWidth = 0.8;
       hexagonGrid.forEach(hex => {
-        hex.connections.forEach(connection => {
-          if (Math.random() < 0.3) {
-            ctx.beginPath();
-            ctx.moveTo(hex.x, hex.y);
-            ctx.lineTo(connection.x, connection.y);
-            ctx.stroke();
-          }
-        });
-      });
-
-      // Update and draw hexagon grid
-      hexagonGrid.forEach(hex => {
-        hex.update(time);
-        hex.draw(ctx, time);
-      });
-
-      // Update and draw electric pulses
-      for (let i = electricPulses.length - 1; i >= 0; i--) {
-        if (!electricPulses[i].update()) {
-          electricPulses.splice(i, 1);
-        } else {
-          electricPulses[i].draw(ctx);
-        }
-      }
-
-      // Update and draw electric particles
-      particles.forEach((particle, i) => {
-        particle.update(time);
-        particle.draw(ctx, time);
-        
-        // Remove and replace dead particles
-        if (particle.life <= 0) {
-          const x = Math.random() * canvas.width;
-          const y = Math.random() * canvas.height;
-          particles[i] = new ElectricParticle(x, y);
-        }
-      });
-
-      // Draw team grid visualization
-      const teamGridX = canvas.width / 2;
-      const teamGridY = canvas.height / 2;
-      const gridSpacing = 90;
-      
-      for (let i = -2; i <= 2; i++) {
-        for (let j = -1; j <= 1; j++) {
-          const nodeX = teamGridX + i * gridSpacing;
-          const nodeY = teamGridY + j * gridSpacing * 1.5;
-          
-          // Draw energetic team node
-          ctx.beginPath();
-          ctx.arc(nodeX, nodeY, 4, 0, Math.PI * 2);
-          const nodeGradient = ctx.createRadialGradient(
-            nodeX, nodeY, 0,
-            nodeX, nodeY, 8
-          );
-          nodeGradient.addColorStop(0, `rgba(255, 225, 100, ${0.8 + Math.sin(time * 5 + i + j) * 0.2})`);
-          nodeGradient.addColorStop(1, `rgba(255, 165, 0, 0)`);
-          ctx.fillStyle = nodeGradient;
-          ctx.fill();
-          
-          // Connect to nearby nodes
-          if (i < 2) {
-            ctx.beginPath();
-            ctx.moveTo(nodeX, nodeY);
-            ctx.lineTo(nodeX + gridSpacing, nodeY);
-            ctx.strokeStyle = `rgba(255, 200, 100, ${0.15 + Math.sin(time * 3 + i) * 0.1})`;
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const angle = (Math.PI / 3) * i;
+          const hexX = hex.x + hex.size * Math.cos(angle);
+          const hexY = hex.y + hex.size * Math.sin(angle);
+          if (i === 0) {
+            ctx.moveTo(hexX, hexY);
+          } else {
+            ctx.lineTo(hexX, hexY);
           }
         }
-      }
+        ctx.closePath();
+        ctx.stroke();
+      });
 
       animationId = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationId = requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('resize', checkMobile);
+      if (resizeObserver) resizeObserver.disconnect();
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 overflow-hidden">
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
+        aria-hidden="true"
       />
     </div>
   );
 }
 
-// Hexagonal background for CTA section
+// Static hexagonal background for CTA section - OPTIMIZED
 function CTAHexagonalBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas dimensions
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+    const drawPattern = () => {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
       
-      // Clear and draw static pattern
+      ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       // Draw subtle gradient background
@@ -1104,11 +593,11 @@ function CTAHexagonalBackground() {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw hexagonal pattern
+      // Draw simplified hexagonal pattern for mobile
       ctx.strokeStyle = 'rgba(255, 115, 0, 0.08)';
       ctx.lineWidth = 1;
       
-      const hexSize = 70;
+      const hexSize = isMobile ? 50 : 70;
       for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
         for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
           ctx.beginPath();
@@ -1126,85 +615,112 @@ function CTAHexagonalBackground() {
           ctx.stroke();
         }
       }
-
-      // Draw connecting dots at hexagon centers
-      ctx.fillStyle = 'rgba(255, 115, 0, 0.06)';
-      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
-        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
-          ctx.beginPath();
-          ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
     };
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    drawPattern();
+    const resizeObserver = new ResizeObserver(drawPattern);
+    resizeObserver.observe(canvas);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('resize', checkMobile);
+      if (resizeObserver) resizeObserver.disconnect();
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full"
+      aria-hidden="true"
     />
   );
 }
 
 export default function About() {
-  return (
-    <main className="bg-white dark:bg-neutral-950">
+  // Structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Lightgate",
+    "description": "A global phenomenon redefining entertainment through groundbreaking technology, unparalleled scale, and never-before-seen festive event concepts.",
+    "url": "https://lightgate.com",
+    "logo": "https://lightgate.com/logo.png",
+    "founder": {
+      "@type": "Person",
+      "name": "AMEER ALRIMAWI"
+    },
+    "foundingDate": "2009",
+    "sameAs": [
+      "https://twitter.com/lightgate",
+      "https://linkedin.com/company/lightgate",
+      "https://instagram.com/lightgate"
+    ]
+  };
 
-      {/* ================= HERO ================= */}
+  return (
+    <main className="bg-white dark:bg-neutral-950" id="main-content">
+      {/* Structured data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      
+      {/* ================= HERO SECTION ================= */}
       <section
         className="relative min-h-screen flex items-center bg-cover bg-center"
         style={{ backgroundImage: "url(/about.jpg)" }}
+        role="banner"
+        aria-label="About Lightgate Hero Section"
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
-
-        <div className="relative z-10 container mx-auto px-6 text-white">
+        
+        {/* Lazy loading for background */}
+        <link rel="preload" href="/about.jpg" as="image" />
+        
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 text-white">
           <FadeUp>
             <div className="max-w-3xl">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-sm font-medium mb-6">
+              <span className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-sm font-medium mb-4 sm:mb-6">
                 ABOUT LIGHTGATE
               </span>
               
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-4 sm:mb-6">
                 Illuminating the World
-                <br />
+                <br className="hidden sm:block" />
                 Through <span className="text-orange-500">Culture</span>
               </h1>
 
-              <p className="mt-8 max-w-2xl text-xl opacity-90">
+              <p className="mt-4 sm:mt-8 max-w-2xl text-lg sm:text-xl opacity-90">
                 A global phenomenon redefining entertainment through groundbreaking technology, 
                 unparalleled scale, and never-before-seen festive event concepts.
               </p>
 
-              <div className="mt-12 flex items-center gap-6">
+              <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                 <Link
                   href="/portfolio"
-                  className="inline-flex items-center gap-3 px-8 py-4 
+                  className="inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 sm:px-8 sm:py-4 
                            rounded-full bg-gradient-to-r from-orange-500 to-orange-600
-                           text-white font-medium text-lg
+                           text-white font-medium text-base sm:text-lg
                            hover:from-orange-600 hover:to-orange-700
                            hover:shadow-[0_0_30px_rgba(255,115,0,0.5)]
                            transform hover:-translate-y-1
-                           transition-all duration-300"
+                           transition-all duration-300
+                           w-full sm:w-auto text-center"
+                  aria-label="View our portfolio of work"
                 >
                   View Our Work
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-3 px-8 py-4 
+                  className="inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 sm:px-8 sm:py-4 
                            rounded-full bg-transparent border-2 border-white/30
-                           text-white font-medium text-lg
+                           text-white font-medium text-base sm:text-lg
                            hover:border-orange-500 hover:text-orange-500
                            hover:shadow-[0_0_30px_rgba(255,115,0,0.3)]
-                           transition-all duration-300"
+                           transition-all duration-300
+                           w-full sm:w-auto text-center"
+                  aria-label="Get in touch with Lightgate"
                 >
                   Get In Touch
                 </Link>
@@ -1215,7 +731,11 @@ export default function About() {
       </section>
 
       {/* ================= MISSION & VISION ================= */}
-      <section className="relative py-32 bg-white dark:bg-neutral-900 overflow-hidden">
+      <section 
+        className="relative py-16 sm:py-20 md:py-32 bg-white dark:bg-neutral-900 overflow-hidden"
+        aria-labelledby="mission-vision-heading"
+      >
+        <h2 id="mission-vision-heading" className="sr-only">Our Mission and Vision</h2>
         
         {/* AMAZING Animated Background */}
         <MissionVisionBackground />
@@ -1223,44 +743,44 @@ export default function About() {
         {/* Orange gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 via-transparent to-orange-500/5" />
 
-        <div className="relative z-10 container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
 
             {/* MISSION */}
             <FadeUp>
-              <div className="relative group">
-                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                              rounded-3xl opacity-0 group-hover:opacity-100 
+              <article className="relative group" role="article" aria-label="Our Mission">
+                <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                              rounded-xl sm:rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
                 
-                <div className="relative bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-2xl p-10 
+                <div className="relative bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 
                               border border-gray-200/50 dark:border-neutral-700/50
                               group-hover:border-orange-500/50
-                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.25)]
+                              group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
                               transition-all duration-500 h-full">
                   
                   {/* Animated Icon */}
-                  <div className="relative w-20 h-20 rounded-2xl mb-8 
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl mb-6 sm:mb-8
                                 bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                 flex items-center justify-center
                                 group-hover:from-orange-500/30 group-hover:to-orange-500/10
                                 transition-all duration-500
                                 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent animate-pulse" />
-                    <Target className="w-10 h-10 text-orange-500 relative z-10" />
+                    <Target className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500 relative z-10" aria-hidden="true" />
                   </div>
 
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="relative w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center overflow-hidden">
+                  <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 animate-pulse" />
-                      <span className="text-white font-bold text-lg relative z-10">01</span>
+                      <span className="text-white font-bold text-base sm:text-lg relative z-10">01</span>
                     </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white">
                       Our <span className="text-orange-500">Mission</span>
-                    </h2>
+                    </h3>
                   </div>
 
-                  <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
                     To revolutionize cultural entertainment by uniting the world's most iconic 
                     festivals into one immersive, technology-driven event experience—celebrating 
                     global diversity, inspiring connection, and creating unforgettable moments 
@@ -1268,73 +788,73 @@ export default function About() {
                   </p>
 
                   {/* Corner accents */}
-                  <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-orange-500/0 
+                  <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-3 h-3 sm:w-4 sm:h-4 border-t-2 border-l-2 border-orange-500/0 
                                 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)]
                                 transition-all duration-500" />
-                  <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-orange-500/0 
+                  <div className="absolute top-3 right-3 sm:top-4 sm:right-4 w-3 h-3 sm:w-4 sm:h-4 border-t-2 border-r-2 border-orange-500/0 
                                 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)]
                                 transition-all duration-500" />
                   
                   {/* Floating particles effect */}
-                  <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-orange-500/20 animate-ping" />
-                  <div className="absolute -bottom-2 -left-2 w-3 h-3 rounded-full bg-orange-500/20 animate-ping delay-300" />
+                  <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-orange-500/20 animate-ping" />
+                  <div className="absolute -bottom-1 -left-1 sm:-bottom-2 sm:-left-2 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-orange-500/20 animate-ping delay-300" />
                 </div>
-              </div>
+              </article>
             </FadeUp>
 
             {/* VISION */}
             <FadeUp>
-              <div className="relative group">
-                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                              rounded-3xl opacity-0 group-hover:opacity-100 
+              <article className="relative group" role="article" aria-label="Our Vision">
+                <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                              rounded-xl sm:rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
                 
-                <div className="relative bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-2xl p-10 
+                <div className="relative bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 
                               border border-gray-200/50 dark:border-neutral-700/50
                               group-hover:border-orange-500/50
-                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.25)]
+                              group-hover:shadow-[0_0_30px_rgba(255,115,0,0.2)]
                               transition-all duration-500 h-full">
                   
                   {/* Animated Icon */}
-                  <div className="relative w-20 h-20 rounded-2xl mb-8 
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl mb-6 sm:mb-8
                                 bg-gradient-to-br from-orange-500/20 to-orange-500/5
                                 flex items-center justify-center
                                 group-hover:from-orange-500/30 group-hover:to-orange-500/10
                                 transition-all duration-500
                                 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent animate-pulse" />
-                    <Eye className="w-10 h-10 text-orange-500 relative z-10" />
+                    <Eye className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500 relative z-10" aria-hidden="true" />
                   </div>
 
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="relative w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center overflow-hidden">
+                  <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 animate-pulse" />
-                      <span className="text-white font-bold text-lg relative z-10">02</span>
+                      <span className="text-white font-bold text-base sm:text-lg relative z-10">02</span>
                     </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white">
                       Our <span className="text-orange-500">Vision</span>
-                    </h2>
+                    </h3>
                   </div>
 
-                  <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
                     To become the world's leading cultural event platform, transforming how 
                     people engage with art, music, and heritage by blending innovation, scale, 
                     and unity into a single, extraordinary global celebration.
                   </p>
 
                   {/* Corner accents */}
-                  <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-orange-500/0 
+                  <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-3 h-3 sm:w-4 sm:h-4 border-t-2 border-l-2 border-orange-500/0 
                                 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)]
                                 transition-all duration-500" />
-                  <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-orange-500/0 
+                  <div className="absolute top-3 right-3 sm:top-4 sm:right-4 w-3 h-3 sm:w-4 sm:h-4 border-t-2 border-r-2 border-orange-500/0 
                                 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)]
                                 transition-all duration-500" />
                   
                   {/* Floating particles effect */}
-                  <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-orange-500/20 animate-ping" />
-                  <div className="absolute -bottom-2 -left-2 w-3 h-3 rounded-full bg-orange-500/20 animate-ping delay-300" />
+                  <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-orange-500/20 animate-ping" />
+                  <div className="absolute -bottom-1 -left-1 sm:-bottom-2 sm:-left-2 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-orange-500/20 animate-ping delay-300" />
                 </div>
-              </div>
+              </article>
             </FadeUp>
 
           </div>
@@ -1342,113 +862,129 @@ export default function About() {
       </section>
 
       {/* ================= OUR HISTORY ================= */}
-      <section className="relative py-32 bg-white dark:bg-neutral-950 overflow-hidden">
-        <div className="container mx-auto px-6">
+      <section 
+        className="relative py-16 sm:py-20 md:py-32 bg-white dark:bg-neutral-950 overflow-hidden"
+        aria-labelledby="history-heading"
+      >
+        <div className="container mx-auto px-4 sm:px-6">
           
           <FadeUp>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
+            <header className="text-center mb-12 sm:mb-16 md:mb-20 max-w-3xl mx-auto">
+              <span className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-4 sm:mb-6">
                 OUR JOURNEY
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <h2 id="history-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
                 Our <span className="text-orange-500">History</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
                 From a bold vision to a global cultural phenomenon
               </p>
-            </div>
+            </header>
           </FadeUp>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16 items-center">
             
             {/* Image Column */}
             <FadeUp>
-              <div className="relative group">
-                <div className="relative h-[600px] rounded-3xl overflow-hidden
-                              border-4 border-transparent
+              <figure className="relative group" role="figure" aria-label="Lightgate History Image">
+                <div className="relative h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden
+                              border-2 sm:border-4 border-transparent
                               group-hover:border-orange-500/30
                               transition-all duration-500">
                   <Image
                     src="/culture.jpg"
-                    alt="Lightgate History"
+                    alt="Lightgate cultural event showing global festival celebration with diverse audience"
                     fill
                     className="object-cover group-hover:scale-105 transition duration-700"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                    priority={false}
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                   
                   {/* Floating info box */}
-                  <div className="absolute bottom-8 left-8 right-8 p-6 rounded-xl 
+                  <figcaption className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 sm:left-6 md:left-8 right-4 sm:right-6 md:right-8 p-4 sm:p-5 md:p-6 rounded-lg sm:rounded-xl 
                                 bg-white/10 backdrop-blur-md border border-white/20
                                 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
                                 transition-all duration-500">
-                    <h4 className="text-white text-lg font-semibold mb-2">Since 2025</h4>
-                    <p className="text-gray-300">Redefining cultural entertainment worldwide</p>
-                  </div>
+                    <h4 className="text-white text-base sm:text-lg font-semibold mb-1 sm:mb-2">Since 2025</h4>
+                    <p className="text-gray-300 text-sm sm:text-base">Redefining cultural entertainment worldwide</p>
+                  </figcaption>
                 </div>
-              </div>
+              </figure>
             </FadeUp>
 
             {/* Content Column with Hover Animations */}
             <FadeUp>
-              <div className="space-y-8">
-                <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
+              <div className="space-y-4 sm:space-y-6 md:space-y-8">
+                <article className="relative group p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
                               border border-orange-500/10
                               hover:border-orange-500/50
-                              hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                              transition-all duration-500">
-                  <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                                rounded-2xl opacity-0 group-hover:opacity-100 
+                              hover:shadow-[0_0_20px_rgba(255,115,0,0.15)]
+                              transition-all duration-500"
+                              role="article"
+                              aria-label="The Beginning of Lightgate">
+                  <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                                rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 
                                 transition-opacity duration-500 blur-xl" />
                   
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white relative z-10">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 text-gray-800 dark:text-white relative z-10">
                     The Beginning
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 relative z-10">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 relative z-10">
                     Lightgate began with a bold vision to redefine cultural entertainment by 
                     uniting the world's most iconic festivals under one groundbreaking platform. 
                     What started as a creative concept has grown into a powerful brand known 
                     for blending innovation, technology, and immersive storytelling.
                   </p>
-                </div>
+                </article>
 
-                <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
+                <article className="relative group p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
                               border border-orange-500/10
                               hover:border-orange-500/50
-                              hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                              transition-all duration-500">
-                  <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                                rounded-2xl opacity-0 group-hover:opacity-100 
+                              hover:shadow-[0_0_20px_rgba(255,115,0,0.15)]
+                              transition-all duration-500"
+                              role="article"
+                              aria-label="Evolution and Growth of Lightgate">
+                  <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                                rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 
                                 transition-opacity duration-500 blur-xl" />
                   
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white relative z-10">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 text-gray-800 dark:text-white relative z-10">
                     Evolution & Growth
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 relative z-10">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 relative z-10">
                     As we expanded, Lightgate evolved into a full-service experience company, 
                     offering world-class photography, creative design, and festive event execution. 
                     We've consistently pushed boundaries while maintaining our core focus on 
                     cultural innovation.
                   </p>
-                </div>
+                </article>
 
-                <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
+                <article className="relative group p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-transparent 
                               border border-orange-500/10
                               hover:border-orange-500/50
-                              hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
-                              transition-all duration-500">
-                  <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                                rounded-2xl opacity-0 group-hover:opacity-100 
+                              hover:shadow-[0_0_20px_rgba(255,115,0,0.15)]
+                              transition-all duration-500"
+                              role="article"
+                              aria-label="Lightgate Today and Future Vision">
+                  <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                                rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 
                                 transition-opacity duration-500 blur-xl" />
                   
-                  <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white relative z-10">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 text-gray-800 dark:text-white relative z-10">
                     Today & Beyond
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 relative z-10">
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 relative z-10">
                     Today, we continue to push boundaries, creating unforgettable moments that 
                     connect people, cultures, and ideas across the globe. Lightgate stands as a 
                     testament to what's possible when creativity meets execution at scale.
                   </p>
-                </div>
+                </article>
               </div>
             </FadeUp>
 
@@ -1456,21 +992,20 @@ export default function About() {
         </div>
         
         {/* ================= SEAMLESS DIVIDER ================= */}
-        {/* Orange gradient that transitions from white/neutral-950 to timeline orange */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-orange-500/5 via-orange-500/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-neutral-950 via-white/20 dark:via-neutral-950/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-48 bg-gradient-to-t from-orange-500/5 via-orange-500/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-t from-white dark:from-neutral-950 via-white/20 dark:via-neutral-950/20 to-transparent" />
         
         {/* Animated floating particles in the divider */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 overflow-hidden">
-          {[...Array(8)].map((_, i) => (
+        <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-48 overflow-hidden" aria-hidden="true">
+          {[...Array(6)].map((_, i) => (
             <div
               key={i}
               className="absolute rounded-full bg-orange-500/10"
               style={{
                 left: `${Math.random() * 100}%`,
                 bottom: `${Math.random() * 48}px`,
-                width: `${Math.random() * 6 + 2}px`,
-                height: `${Math.random() * 6 + 2}px`,
+                width: `${Math.random() * 4 + 1}px`,
+                height: `${Math.random() * 4 + 1}px`,
                 animation: `float ${Math.random() * 3 + 2}s infinite ${Math.random() * 2}s`,
               }}
             />
@@ -1479,36 +1014,36 @@ export default function About() {
       </section>
 
       {/* ================= MAJOR MILESTONES TIMELINE ================= */}
-      <section className="relative py-32 overflow-hidden">
+      <section 
+        className="relative py-16 sm:py-20 md:py-32 overflow-hidden"
+        aria-labelledby="milestones-heading"
+      >
         {/* Clean Animated Timeline Background */}
         <TimelineBackground />
         
-        {/* REMOVED: Top fade to connect with Our History section */}
-        {/* <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-orange-500/5 via-orange-500/10 to-transparent" /> */}
-        
-        <div className="relative z-10 container mx-auto px-6">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6">
           
           <FadeUp>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
+            <header className="text-center mb-12 sm:mb-16 md:mb-20 max-w-3xl mx-auto">
+              <span className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-4 sm:mb-6">
                 OUR JOURNEY
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <h2 id="milestones-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
                 Major <span className="text-orange-500">Milestones</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
                 Significant moments that defined our growth
               </p>
-            </div>
+            </header>
           </FadeUp>
 
           {/* Timeline Container */}
           <div className="relative">
             {/* Main Timeline Line */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500/20 via-orange-500/40 to-orange-500/20 -translate-x-1/2 hidden lg:block" />
+            <div className="absolute left-1/2 top-0 bottom-0 w-0.5 sm:w-1 bg-gradient-to-b from-orange-500/20 via-orange-500/40 to-orange-500/20 -translate-x-1/2 hidden lg:block" />
             
-            {/* Timeline Items - Reduced spacing */}
-            <div className="space-y-16 lg:space-y-20">
+            {/* Timeline Items */}
+            <div className="space-y-12 sm:space-y-16 lg:space-y-20">
               {[
                 {
                   year: "2009",
@@ -1561,54 +1096,60 @@ export default function About() {
                 }
               ].map((milestone, index) => (
                 <FadeUp key={index}>
-                  <div className={`relative flex flex-col lg:flex-row items-center ${milestone.align === "left" ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
+                  <article 
+                    className={`relative flex flex-col lg:flex-row items-center ${milestone.align === "left" ? "lg:flex-row" : "lg:flex-row-reverse"}`}
+                    role="article"
+                    aria-label={`${milestone.year}: ${milestone.title}`}
+                  >
                     
                     {/* Timeline Node */}
                     <div className="relative z-10 lg:absolute left-1/2 -translate-x-1/2">
-                      <div className="w-6 h-6 rounded-full bg-orange-500 border-4 border-white dark:border-neutral-900 shadow-lg shadow-orange-500/30" />
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 rounded-full bg-orange-500 border-2 sm:border-3 lg:border-4 border-white dark:border-neutral-900 shadow-lg shadow-orange-500/30" />
                       <div className="absolute inset-0 rounded-full bg-orange-500 animate-ping opacity-20" />
                     </div>
 
                     {/* Content Card */}
-                    <div className={`lg:w-5/12 mt-8 lg:mt-0 ${milestone.align === "left" ? "lg:pr-12 lg:text-right" : "lg:pl-12"}`}>
+                    <div className={`lg:w-5/12 mt-6 sm:mt-8 lg:mt-0 ${milestone.align === "left" ? "lg:pr-4 lg:text-right" : "lg:pl-4"}`}>
                       <div className="relative group">
-                        <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                                      rounded-2xl opacity-0 group-hover:opacity-100 
+                        <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                                      rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 
                                       transition-opacity duration-500 blur-xl" />
                         
-                        <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-6 
+                        <div className="relative bg-white dark:bg-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 
                                       border border-gray-200 dark:border-neutral-700
                                       group-hover:border-orange-500/50
-                                      group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
+                                      group-hover:shadow-[0_0_20px_rgba(255,115,0,0.15)]
                                       transition-all duration-500 h-full flex flex-col">
                           
                           {/* Year Badge */}
-                          <div className={`mb-4 ${milestone.align === "left" ? "lg:flex lg:justify-end" : ""}`}>
-                            <span className={`inline-block px-3 py-1.5 rounded-full 
+                          <div className={`mb-3 ${milestone.align === "left" ? "lg:flex lg:justify-end" : ""}`}>
+                            <time className={`inline-block px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full 
                                           ${milestone.year === "Coming Soon" ? "bg-gradient-to-r from-orange-500 to-orange-600" : "bg-orange-500"} 
-                                          text-white text-sm font-bold`}>
+                                          text-white text-xs sm:text-sm font-bold`}
+                                  dateTime={milestone.year === "Coming Soon" ? "" : milestone.year}>
                               {milestone.year}
-                            </span>
+                            </time>
                           </div>
 
-                          <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-white">
+                          <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">
                             {milestone.title}
                           </h3>
                           
-                          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
+                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4 flex-grow">
                             {milestone.description}
                           </p>
 
-                          {/* Image Preview - FITTED TO CARD WITHOUT WHITE BACKGROUND */}
-                          <div className="rounded-xl overflow-hidden h-40 relative">
+                          {/* Image Preview */}
+                          <div className="rounded-lg sm:rounded-xl overflow-hidden h-28 sm:h-32 md:h-40 relative">
                             <div className="absolute inset-0">
                               <Image
                                 src={milestone.image}
-                                alt={milestone.title}
+                                alt={`${milestone.year}: ${milestone.title}`}
                                 fill
                                 className="object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+                                loading="lazy"
                                 onError={(e) => {
-                                  // Fallback if image doesn't exist
                                   const target = e.target as HTMLImageElement;
                                   target.style.display = 'none';
                                   const parent = target.parentElement;
@@ -1616,8 +1157,8 @@ export default function About() {
                                     parent.innerHTML = `
                                       <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-orange-500/5">
                                         <div class="text-center">
-                                          <div class="text-3xl font-bold text-gray-300 mb-2">${milestone.year}</div>
-                                          <div class="text-md text-gray-400">${milestone.title}</div>
+                                          <div class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-300 mb-1 sm:mb-2">${milestone.year}</div>
+                                          <div class="text-sm sm:text-base text-gray-400">${milestone.title}</div>
                                         </div>
                                       </div>
                                     `;
@@ -1632,7 +1173,7 @@ export default function About() {
 
                     {/* Spacer for desktop */}
                     <div className="lg:w-2/12" />
-                  </div>
+                  </article>
                 </FadeUp>
               ))}
             </div>
@@ -1640,35 +1181,38 @@ export default function About() {
         </div>
         
         {/* SEAMLESS DIVIDER BETWEEN MILESTONE AND TEAM SECTIONS */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-t from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
       </section>
 
-      {/* ================= CORE TEAM MEMBERS with BOLD ELECTRIC HEXAGONAL BACKGROUND ================= */}
-      <section className="relative py-32 bg-white dark:bg-neutral-900 overflow-hidden">
+      {/* ================= CORE TEAM MEMBERS ================= */}
+      <section 
+        className="relative py-16 sm:py-20 md:py-32 bg-white dark:bg-neutral-900 overflow-hidden"
+        aria-labelledby="team-heading"
+      >
         
         {/* BOLD ELECTRIC Hexagonal Animated Background */}
         <TeamMembersBackground />
         
         {/* Top fade to connect with milestone section */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-b from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
 
-        <div className="relative z-10 container mx-auto px-6">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6">
           
           <FadeUp>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/30 text-orange-500 text-sm font-medium mb-6">
+            <header className="text-center mb-12 sm:mb-16 md:mb-20 max-w-3xl mx-auto">
+              <span className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/30 text-orange-500 text-sm font-medium mb-4 sm:mb-6">
                 OUR PEOPLE
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <h2 id="team-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
                 Leadership <span className="text-orange-500">Team</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
                 Visionaries driving cultural innovation forward
               </p>
-            </div>
+            </header>
           </FadeUp>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             
             {[
               {
@@ -1718,37 +1262,37 @@ export default function About() {
               }
             ].map((member, index) => (
               <FadeUp key={index}>
-                <div className="group relative">
-                  <div className="relative h-80 rounded-2xl overflow-hidden mb-6
-                                border-2 border-transparent
+                <article className="group relative" role="article" aria-label={`Team member: ${member.name}, ${member.role}`}>
+                  <div className="relative h-60 sm:h-72 md:h-80 rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-6
+                                border border-transparent
                                 group-hover:border-orange-500/70
-                                group-hover:shadow-[0_0_40px_rgba(255,115,0,0.4)]
+                                group-hover:shadow-[0_0_30px_rgba(255,115,0,0.4)]
                                 transition-all duration-500
                                 bg-gradient-to-br from-gray-50 to-white dark:from-neutral-800 dark:to-neutral-900">
                     
-                    {/* Team Member Photo - FIT TO FRAME (no white background) */}
+                    {/* Team Member Photo */}
                     <div className="relative h-full w-full">
                       <div className="absolute inset-0">
                         <Image
                           src={member.image}
-                          alt={member.name}
+                          alt={`${member.name}, ${member.role}`}
                           fill
                           className="object-cover"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          loading="lazy"
                           onError={(e) => {
-                            // Fallback to placeholder if image doesn't exist
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                             const container = target.parentElement;
                             if (container) {
                               container.innerHTML = `
                                 <div class="flex flex-col items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/10 to-amber-500/5">
-                                  <div class="text-5xl font-bold text-orange-400 mb-4">
+                                  <div class="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-400 mb-3 sm:mb-4">
                                     ${member.name.split(' ')[0].charAt(0)}
                                   </div>
                                   <div class="text-center">
-                                    <div class="text-lg font-semibold text-gray-800 dark:text-white">${member.name.split(' ')[0]}</div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-400">${member.role.split(' ')[0]}</div>
+                                    <div class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">${member.name.split(' ')[0]}</div>
+                                    <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">${member.role.split(' ')[0]}</div>
                                   </div>
                                 </div>
                               `;
@@ -1757,58 +1301,34 @@ export default function About() {
                         />
                       </div>
                       
-                      {/* Electric border effect on hover */}
-                      <div className="absolute inset-0 border-2 border-transparent group-hover:border-orange-400/40 transition-all duration-500" />
-                      
-                      {/* Electric pulse effect */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-400 to-transparent animate-pulse" />
-                        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-400 to-transparent animate-pulse delay-300" />
-                        <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-orange-400 to-transparent animate-pulse delay-150" />
-                        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-orange-400 to-transparent animate-pulse delay-450" />
-                      </div>
-                    </div>
-                    
-                    {/* Hover overlay with electric theme */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
-                                  opacity-0 group-hover:opacity-100 
-                                  transition-all duration-500 flex items-end p-6">
-                      <div className="transform translate-y-4 opacity-0 
-                                    group-hover:translate-y-0 group-hover:opacity-100
-                                    transition-all duration-500">
-                        <div className="text-white">
-                          <div className="w-8 h-1 bg-gradient-to-r from-orange-400 to-amber-400 mb-3" />
-                          <p className="text-sm opacity-90 flex items-center gap-2">
-                            <span className="text-orange-300">View Profile</span>
-                            <ArrowRight className="w-3 h-3 text-orange-300" />
-                          </p>
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
+                                    opacity-0 group-hover:opacity-100 
+                                    transition-all duration-500 flex items-end p-4 sm:p-6">
+                        <div className="transform translate-y-4 opacity-0 
+                                      group-hover:translate-y-0 group-hover:opacity-100
+                                      transition-all duration-500">
+                          <div className="text-white">
+                            <div className="w-6 sm:w-8 h-0.5 sm:h-1 bg-gradient-to-r from-orange-400 to-amber-400 mb-2 sm:mb-3" />
+                            <p className="text-xs sm:text-sm opacity-90 flex items-center gap-1 sm:gap-2">
+                              <span className="text-orange-300">View Profile</span>
+                              <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-orange-300" aria-hidden="true" />
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   
                   <div className="text-center">
-                    <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white group-hover:text-orange-500 transition-colors duration-300">
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2 text-gray-800 dark:text-white group-hover:text-orange-500 transition-colors duration-300">
                       {member.name}
                     </h3>
-                    <p className="text-orange-500 font-medium bg-gradient-to-r from-orange-500/20 to-amber-500/20 px-4 py-1 rounded-full inline-block">
+                    <p className="text-orange-500 font-medium text-xs sm:text-sm bg-gradient-to-r from-orange-500/20 to-amber-500/20 px-3 py-1 rounded-full inline-block">
                       {member.role}
                     </p>
-                    
-                    {/* Electric connection dots */}
-                    <div className="flex justify-center gap-1 mt-4">
-                      {[1, 2, 3].map((dot) => (
-                        <div 
-                          key={dot}
-                          className="w-1.5 h-1.5 rounded-full bg-orange-400/60 group-hover:bg-orange-400 transition-colors duration-300"
-                          style={{
-                            animation: `pulse 1.5s infinite ${dot * 0.2}s`
-                          }}
-                        />
-                      ))}
-                    </div>
                   </div>
-                </div>
+                </article>
               </FadeUp>
             ))}
 
@@ -1816,13 +1336,13 @@ export default function About() {
           
           {/* Team synergy message */}
           <FadeUp>
-            <div className="text-center mt-20 max-w-2xl mx-auto">
-              <div className="inline-flex items-center gap-4 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 backdrop-blur-sm">
-                <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                <p className="text-gray-700 dark:text-gray-300">
+            <div className="text-center mt-12 sm:mt-16 md:mt-20 max-w-2xl mx-auto">
+              <div className="inline-flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 backdrop-blur-sm">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-orange-500 animate-pulse" aria-hidden="true" />
+                <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">
                   <span className="text-orange-500 font-semibold">Electric Synergy:</span> Our team collaborates with dynamic energy and precision
                 </p>
-                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse delay-300" />
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-500 animate-pulse delay-300" aria-hidden="true" />
               </div>
             </div>
           </FadeUp>
@@ -1830,56 +1350,59 @@ export default function About() {
       </section>
 
       {/* ================= PROFESSIONALS WE WORK WITH ================= */}
-      <section className="relative py-32 bg-gradient-to-b from-gray-50 to-white dark:from-neutral-950 dark:to-neutral-900">
-        <div className="container mx-auto px-6">
+      <section 
+        className="relative py-16 sm:py-20 md:py-32 bg-gradient-to-b from-gray-50 to-white dark:from-neutral-950 dark:to-neutral-900"
+        aria-labelledby="collaborators-heading"
+      >
+        <div className="container mx-auto px-4 sm:px-6">
           
           <FadeUp>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
+            <header className="text-center mb-12 sm:mb-16 md:mb-20 max-w-3xl mx-auto">
+              <span className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-4 sm:mb-6">
                 COLLABORATORS
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <h2 id="collaborators-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
                 Professionals We <span className="text-orange-500">Work With</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
                 Expert collaborators who enhance our creative vision
               </p>
-            </div>
+            </header>
           </FadeUp>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
             
             {/* Jassim Alsaady */}
             <FadeUp>
-              <div className="relative group h-full">
-                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                              rounded-3xl opacity-0 group-hover:opacity-100 
+              <article className="relative group h-full" role="article" aria-label="Collaborator: Jassim Alsaady">
+                <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                              rounded-xl sm:rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
                 
-                <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 
+                <div className="relative bg-white dark:bg-neutral-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 
                               border border-gray-200 dark:border-neutral-700
                               group-hover:border-orange-500/50
-                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
+                              group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
                               transition-all duration-500 h-full flex flex-col">
                   
                   <div className="flex flex-col items-center text-center flex-grow">
-                    {/* Profile image - fitted without white background */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-gray-100 dark:bg-neutral-700">
+                    {/* Profile image */}
+                    <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full mb-4 sm:mb-6 overflow-hidden bg-gray-100 dark:bg-neutral-700">
                       <Image
                         src="/team-jassim.jpg"
-                        alt="Jassim Alsaady"
+                        alt="Jassim Alsaady, Director - Film & Commercial"
                         fill
                         className="object-cover"
-                        sizes="128px"
+                        sizes="(max-width: 768px) 96px, 128px"
+                        loading="lazy"
                         onError={(e) => {
-                          // Fallback to placeholder
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
                           const parent = target.parentElement;
                           if (parent) {
                             parent.innerHTML = `
                               <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
-                                <span class="text-4xl font-bold text-orange-500">J</span>
+                                <span class="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-500">J</span>
                               </div>
                             `;
                           }
@@ -1887,62 +1410,64 @@ export default function About() {
                       />
                     </div>
                     
-                    <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2 text-gray-800 dark:text-white">
                       JASSIM ALSAADY
                     </h3>
-                    <p className="text-orange-500 font-medium mb-4">DIRECTOR - FILM & COMMERCIAL</p>
+                    <p className="text-orange-500 font-medium text-sm sm:text-base mb-3 sm:mb-4">DIRECTOR - FILM & COMMERCIAL</p>
                     
-                    <div className="w-12 h-1 bg-orange-500 mb-4" />
+                    <div className="w-8 sm:w-10 md:w-12 h-0.5 sm:h-1 bg-orange-500 mb-3 sm:mb-4" aria-hidden="true" />
                     
-                    <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 flex-grow">
                       Award-winning film and commercial director bringing cinematic excellence to our projects.
                     </p>
                     
                     <Link 
                       href="https://www.jassimalsady.com" 
                       target="_blank"
-                      className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600
-                               transition-colors duration-300 mt-auto"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 sm:gap-2 text-orange-500 hover:text-orange-600
+                               transition-colors duration-300 mt-auto text-sm sm:text-base"
+                      aria-label="Visit Jassim Alsaady's website"
                     >
                       <span>www.jassimalsady.com</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
-              </div>
+              </article>
             </FadeUp>
 
             {/* Emad El Sayed */}
             <FadeUp>
-              <div className="relative group h-full">
-                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
-                              rounded-3xl opacity-0 group-hover:opacity-100 
+              <article className="relative group h-full" role="article" aria-label="Collaborator: Emad El Sayed">
+                <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-br from-orange-500/10 to-transparent 
+                              rounded-xl sm:rounded-3xl opacity-0 group-hover:opacity-100 
                               transition-opacity duration-500 blur-xl" />
                 
-                <div className="relative bg-white dark:bg-neutral-800 rounded-2xl p-8 
+                <div className="relative bg-white dark:bg-neutral-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 
                               border border-gray-200 dark:border-neutral-700
                               group-hover:border-orange-500/50
-                              group-hover:shadow-[0_0_40px_rgba(255,115,0,0.15)]
+                              group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)]
                               transition-all duration-500 h-full flex flex-col">
                   
                   <div className="flex flex-col items-center text-center flex-grow">
-                    {/* Profile image - fitted without white background */}
-                    <div className="relative w-32 h-32 rounded-full mb-6 overflow-hidden bg-gray-100 dark:bg-neutral-700">
+                    {/* Profile image */}
+                    <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full mb-4 sm:mb-6 overflow-hidden bg-gray-100 dark:bg-neutral-700">
                       <Image
                         src="/team-emad.jpg"
-                        alt="Emad El Sayed"
+                        alt="Emad El Sayed, Creative Director"
                         fill
                         className="object-cover"
-                        sizes="128px"
+                        sizes="(max-width: 768px) 96px, 128px"
+                        loading="lazy"
                         onError={(e) => {
-                          // Fallback to placeholder
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
                           const parent = target.parentElement;
                           if (parent) {
                             parent.innerHTML = `
                               <div class="flex items-center justify-center h-full w-full bg-gradient-to-br from-orange-500/20 to-orange-500/5">
-                                <span class="text-4xl font-bold text-orange-500">E</span>
+                                <span class="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-500">E</span>
                               </div>
                             `;
                           }
@@ -1950,56 +1475,61 @@ export default function About() {
                       />
                     </div>
                     
-                    <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-white">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2 text-gray-800 dark:text-white">
                       EMAD EL SAYED
                     </h3>
-                    <p className="text-orange-500 font-medium mb-4">CREATIVE DIRECTOR</p>
+                    <p className="text-orange-500 font-medium text-sm sm:text-base mb-3 sm:mb-4">CREATIVE DIRECTOR</p>
                     
-                    <div className="w-12 h-1 bg-orange-500 mb-4" />
+                    <div className="w-8 sm:w-10 md:w-12 h-0.5 sm:h-1 bg-orange-500 mb-3 sm:mb-4" aria-hidden="true" />
                     
-                    <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 flex-grow">
                       Renowned creative director specializing in brand strategy and visual storytelling.
                     </p>
                     
                     <Link 
                       href="https://www.emadelsayed.com" 
                       target="_blank"
-                      className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600
-                               transition-colors duration-300 mt-auto"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 sm:gap-2 text-orange-500 hover:text-orange-600
+                               transition-colors duration-300 mt-auto text-sm sm:text-base"
+                      aria-label="Visit Emad El Sayed's website"
                     >
                       <span>www.emadelsayed.com</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
-              </div>
+              </article>
             </FadeUp>
 
           </div>
         </div>
       </section>
 
-      {/* ================= STRATEGIC PARTNERS (7 partners from PDF Page 16) ================= */}
-      <section className="relative py-32 bg-white dark:bg-neutral-900">
-        <div className="container mx-auto px-6">
+      {/* ================= STRATEGIC PARTNERS ================= */}
+      <section 
+        className="relative py-16 sm:py-20 md:py-32 bg-white dark:bg-neutral-900"
+        aria-labelledby="partners-heading"
+      >
+        <div className="container mx-auto px-4 sm:px-6">
           
           <FadeUp>
-            <div className="text-center mb-20 max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
+            <header className="text-center mb-12 sm:mb-16 md:mb-20 max-w-3xl mx-auto">
+              <span className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-4 sm:mb-6">
                 COLLABORATIONS
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <h2 id="partners-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
                 Strategic <span className="text-orange-500">Partners</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
                 Trusted by industry leaders worldwide
               </p>
-            </div>
+            </header>
           </FadeUp>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             
-            {/* 7 Strategic Partners as shown in PDF */}
+            {/* Strategic Partners */}
             {[
               { name: "Partner 1", logo: "/partner-1.png" },
               { name: "Partner 2", logo: "/partner-2.png" },
@@ -2011,29 +1541,29 @@ export default function About() {
             ].map((partner, index) => (
               <FadeUp key={index}>
                 <div className="group relative">
-                  <div className="aspect-square rounded-2xl bg-white dark:bg-neutral-800 
+                  <div className="aspect-square rounded-lg sm:rounded-xl md:rounded-2xl bg-white dark:bg-neutral-800 
                                 border border-gray-200 dark:border-neutral-700
-                                flex items-center justify-center p-8
+                                flex items-center justify-center p-4 sm:p-6 md:p-8
                                 group-hover:border-orange-500/50
-                                group-hover:shadow-[0_0_20px_rgba(255,115,0,0.1)]
+                                group-hover:shadow-[0_0_15px_rgba(255,115,0,0.1)]
                                 transition-all duration-500">
                     <div className="relative w-full h-full flex items-center justify-center">
                       <Image
                         src={partner.logo}
-                        alt={partner.name}
-                        width={120}
-                        height={60}
-                        className="object-contain max-h-16"
-                        sizes="(max-width: 768px) 100px, 120px"
+                        alt={`${partner.name} - Strategic Partner`}
+                        width={80}
+                        height={40}
+                        className="object-contain max-h-10 sm:max-h-12 md:max-h-16"
+                        sizes="(max-width: 640px) 40px, (max-width: 768px) 50px, 60px"
+                        loading="lazy"
                         onError={(e) => {
-                          // Fallback to text if logo doesn't exist
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
                           const container = target.parentElement;
                           if (container) {
                             container.innerHTML = `
                               <div class="flex items-center justify-center h-full w-full">
-                                <div class="text-gray-400 dark:text-gray-500 text-sm text-center
+                                <div class="text-gray-400 dark:text-gray-500 text-xs sm:text-sm text-center
                                           group-hover:text-orange-500 transition-colors duration-500">
                                   ${partner.name}
                                 </div>
@@ -2051,8 +1581,8 @@ export default function About() {
           </div>
 
           <FadeUp>
-            <div className="text-center mt-16">
-              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <div className="text-center mt-12 sm:mt-16">
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
                 We collaborate with leading brands, cultural institutions, and technology 
                 partners to create groundbreaking experiences that redefine entertainment.
               </p>
@@ -2061,55 +1591,62 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= CTA SECTION with Hexagonal Background ================= */}
-      <section className="relative py-32 overflow-hidden">
+      {/* ================= CTA SECTION ================= */}
+      <section 
+        className="relative py-16 sm:py-20 md:py-32 overflow-hidden"
+        aria-labelledby="cta-heading"
+      >
         {/* Hexagonal Background Pattern */}
         <CTAHexagonalBackground />
 
         {/* Orange gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-orange-500/5" />
 
-        <div className="relative z-10 container mx-auto px-6">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6">
           
           <FadeUp>
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-800 dark:text-white">
+            <header className="max-w-4xl mx-auto text-center">
+              <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-white">
                 Ready to Illuminate Your <span className="text-orange-500">Vision</span>?
               </h2>
               
-              <p className="text-xl text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto">
                 Let's collaborate to create unforgettable cultural experiences that 
                 resonate with audiences worldwide.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center gap-3 px-10 py-5 
+                  className="inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 
                            rounded-full bg-gradient-to-r from-orange-500 to-orange-600
-                           text-white font-medium text-lg
+                           text-white font-medium text-base sm:text-lg
                            hover:from-orange-600 hover:to-orange-700
-                           hover:shadow-[0_0_40px_rgba(255,115,0,0.6)]
+                           hover:shadow-[0_0_30px_rgba(255,115,0,0.6)]
                            transform hover:-translate-y-1
-                           transition-all duration-300"
+                           transition-all duration-300
+                           w-full sm:w-auto text-center"
+                  aria-label="Start a project with Lightgate"
                 >
                   Start a Project
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                 </Link>
                 
                 <Link
                   href="/portfolio"
-                  className="inline-flex items-center justify-center gap-3 px-10 py-5 
+                  className="inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 
                            rounded-full bg-transparent border-2 border-orange-500
-                           text-orange-500 font-medium text-lg
+                           text-orange-500 font-medium text-base sm:text-lg
                            hover:bg-orange-500 hover:text-white
-                           hover:shadow-[0_0_30px_rgba(255,115,0,0.4)]
-                           transition-all duration-300"
+                           hover:shadow-[0_0_20px_rgba(255,115,0,0.4)]
+                           transition-all duration-300
+                           w-full sm:w-auto text-center"
+                  aria-label="View our portfolio of work"
                 >
                   View Our Portfolio
                 </Link>
               </div>
-            </div>
+            </header>
           </FadeUp>
 
         </div>
@@ -2119,8 +1656,24 @@ export default function About() {
       <style jsx global>{`
         @keyframes float {
           0%, 100% { transform: translateY(0) translateX(0); }
-          33% { transform: translateY(-10px) translateX(5px); }
-          66% { transform: translateY(5px) translateX(-5px); }
+          33% { transform: translateY(-8px) translateX(4px); }
+          66% { transform: translateY(4px) translateX(-4px); }
+        }
+        
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+          .animate-ping,
+          .animate-pulse,
+          [class*="animate-"] {
+            animation: none !important;
+          }
+        }
+        
+        /* Performance optimizations */
+        @media (max-width: 768px) {
+          .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+          }
         }
       `}</style>
 
