@@ -5,7 +5,46 @@ import { FadeUp } from "@/components/Motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Users, Target, Eye } from "lucide-react";
+import Head from "next/head";
 
+// Structured data for SEO
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Lightgate",
+  "description": "A global phenomenon redefining entertainment through groundbreaking technology, unparalleled scale, and never-before-seen festive event concepts.",
+  "url": "https://lightgate.com",
+  "logo": "https://lightgate.com/logo.png",
+  "founder": {
+    "@type": "Person",
+    "name": "AMEER ALRIMAWI"
+  },
+  "foundingDate": "2009",
+  "sameAs": [
+    "https://twitter.com/lightgate",
+    "https://linkedin.com/company/lightgate",
+    "https://instagram.com/lightgate"
+  ]
+};
+
+// Cool animated background for mission & vision section
+function MissionVisionBackground() {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    // Check if mobile for performance optimization
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    if (!canvasRef.current || !containerRef.current) return;
+
+    const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -202,7 +241,7 @@ import { ArrowRight, Users, Target, Eye } from "lucide-react";
     // Cleanup
     return () => {
       window.removeEventListener('resize', checkMobile);
-      if (resizeObserver) resizeObserver.disconnect();
+      resizeObserver.disconnect();
       cancelAnimationFrame(animationId);
     };
   }, [isMobile]);
@@ -371,7 +410,7 @@ function TimelineBackground() {
 
     return () => {
       window.removeEventListener('resize', checkMobile);
-      if (resizeObserver) resizeObserver.disconnect();
+      resizeObserver.disconnect();
       cancelAnimationFrame(animationId);
     };
   }, [isMobile]);
@@ -502,7 +541,7 @@ function TeamMembersBackground() {
 
     return () => {
       window.removeEventListener('resize', checkMobile);
-      if (resizeObserver) resizeObserver.disconnect();
+      resizeObserver.disconnect();
       cancelAnimationFrame(animationId);
     };
   }, [isMobile]);
@@ -586,7 +625,7 @@ function CTAHexagonalBackground() {
 
     return () => {
       window.removeEventListener('resize', checkMobile);
-      if (resizeObserver) resizeObserver.disconnect();
+      resizeObserver.disconnect();
     };
   }, [isMobile]);
 
@@ -600,28 +639,23 @@ function CTAHexagonalBackground() {
 }
 
 export default function About() {
-  // Structured data for SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Lightgate",
-    "description": "A global phenomenon redefining entertainment through groundbreaking technology, unparalleled scale, and never-before-seen festive event concepts.",
-    "url": "https://lightgate.com",
-    "logo": "https://lightgate.com/logo.png",
-    "founder": {
-      "@type": "Person",
-      "name": "AMEER ALRIMAWI"
-    },
-    "foundingDate": "2009",
-    "sameAs": [
-      "https://twitter.com/lightgate",
-      "https://linkedin.com/company/lightgate",
-      "https://instagram.com/lightgate"
-    ]
-  };
-
   return (
     <main className="bg-white dark:bg-neutral-950" id="main-content">
+      {/* SEO Head content - using next/head for client components */}
+      <Head>
+        <title>About Lightgate - Redefining Cultural Entertainment Worldwide</title>
+        <meta name="description" content="Discover Lightgate's mission to revolutionize cultural entertainment through innovative technology, global scale, and immersive festive event experiences." />
+        <meta name="keywords" content="Lightgate, cultural entertainment, event technology, festival innovation, global events, immersive experiences" />
+        <meta property="og:title" content="About Lightgate - Illuminating the World Through Culture" />
+        <meta property="og:description" content="A global phenomenon redefining entertainment through groundbreaking technology and never-before-seen festive event concepts." />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="/about-og.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="About Lightgate - Redefining Cultural Entertainment" />
+        <meta name="twitter:description" content="Discover our journey, team, and vision for global cultural innovation." />
+        <meta name="twitter:image" content="/about-twitter.jpg" />
+      </Head>
+      
       {/* Structured data for SEO */}
       <script
         type="application/ld+json"
