@@ -3,15 +3,23 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 
+interface FadeUpProps {
+  children: React.ReactNode;
+  delay?: number;
+  duration?: number;
+  className?: string;
+}
+
 /* ================= FADE UP ================= */
 
-export function FadeUp({ children }: { children: React.ReactNode }) {
+export function FadeUp({ children, delay = 0, duration = 0.9, className = "" }: FadeUpProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.9, ease: "easeOut" }}
+      transition={{ duration, delay, ease: "easeOut" }}
       viewport={{ once: true }}
+      className={className}
     >
       {children}
     </motion.div>

@@ -1957,7 +1957,7 @@ export default function About() {
                   align: "left"
                 }
               ].map((milestone, index) => (
-                <FadeUp key={index}>
+                <FadeUp key={index} delay={index * 0.1}>
                   <div className={`relative flex flex-col lg:flex-row items-center ${milestone.align === "left" ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
                     
                     {/* Timeline Node */}
@@ -2108,7 +2108,7 @@ export default function About() {
                 image: "/team-wisam.png"
               }
             ].map((member, index) => (
-              <FadeUp key={index}>
+              <FadeUp key={index} delay={index * 0.05}>
                 <div className="group relative">
                   <div className="relative h-80 rounded-2xl overflow-hidden mb-6
                                 border-2 border-transparent
@@ -2252,7 +2252,7 @@ export default function About() {
           <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             
             {/* Jassim Alsaady - Enhanced Promotion */}
-            <FadeUp>
+            <FadeUp delay={0.1}>
               <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/20 to-transparent 
                               rounded-3xl opacity-0 group-hover:opacity-100 
@@ -2388,7 +2388,7 @@ export default function About() {
             </FadeUp>
 
             {/* Emad El Sayed - Enhanced Promotion */}
-            <FadeUp>
+            <FadeUp delay={0.2}>
               <div className="relative group h-full">
                 <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/20 to-transparent 
                               rounded-3xl opacity-0 group-hover:opacity-100 
@@ -2641,13 +2641,13 @@ export default function About() {
 
             {/* Partner Logos in Circle */}
             {[
-              { name: "Partner 1", logo: "/partner-1.png", delay: 0 },
-              { name: "Partner 2", logo: "/partner-2.png", delay: 100 },
-              { name: "Partner 3", logo: "/partner-3.png", delay: 200 },
-              { name: "Partner 4", logo: "/partner-4.png", delay: 300 },
-              { name: "Partner 5", logo: "/partner-5.png", delay: 400 },
-              { name: "Partner 6", logo: "/partner-6.png", delay: 500 },
-              { name: "Partner 7", logo: "/partner-7.png", delay: 600 }
+              { name: "Partner 1", logo: "/partner-1.png" },
+              { name: "Partner 2", logo: "/partner-2.png" },
+              { name: "Partner 3", logo: "/partner-3.png" },
+              { name: "Partner 4", logo: "/partner-4.png" },
+              { name: "Partner 5", logo: "/partner-5.png" },
+              { name: "Partner 6", logo: "/partner-6.png" },
+              { name: "Partner 7", logo: "/partner-7.png" }
             ].map((partner, index) => {
               const angle = (index * (360 / 7)) * (Math.PI / 180);
               const radius = 280;
@@ -2655,7 +2655,7 @@ export default function About() {
               const y = Math.sin(angle) * radius;
               
               return (
-                <FadeUp key={index} delay={partner.delay}>
+                <FadeUp key={index} delay={index * 0.1}>
                   <div 
                     className="absolute z-10 w-32 h-32 md:w-40 md:h-40 flex items-center justify-center group"
                     style={{
