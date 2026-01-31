@@ -465,7 +465,7 @@ function TimelineBackground() {
         y: Math.random() * canvas.height,
         size: type === 'spark' ? Math.random() * 2 + 1 : Math.random() * 4 + 2,
         speedX: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
-        speedY = (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
+        speedY: (Math.random() - 0.5) * (type === 'spark' ? 0.8 : 0.3),
         color: colors[Math.floor(Math.random() * colors.length)],
         opacity: type === 'energy' ? 0.4 + Math.random() * 0.4 : 0.2 + Math.random() * 0.3,
         type: type
