@@ -6,311 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Users, Target, Eye, Film, Camera, Award, Sparkles, Video, Mic, Monitor, Zap, Activity } from "lucide-react";
 
-// ================== ELECTRIC ORANGE FLOW DIVIDER ==================
-function ElectricFlowDivider() {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas dimensions
-    const resizeCanvas = () => {
-      canvas.width = containerRef.current!.offsetWidth;
-      canvas.height = containerRef.current!.offsetHeight;
-    };
-
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Electric current particles
-    class ElectricCurrent {
-      x: number;
-      y: number;
-      speed: number;
-      amplitude: number;
-      frequency: number;
-      opacity: number;
-      trail: Array<{x: number, y: number, opacity: number}>;
-      phase: number;
-
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = 0;
-        this.speed = 1 + Math.random() * 2;
-        this.amplitude = 30 + Math.random() * 40;
-        this.frequency = 0.02 + Math.random() * 0.03;
-        this.opacity = 0.6 + Math.random() * 0.4;
-        this.trail = [];
-        this.phase = Math.random() * Math.PI * 2;
-      }
-
-      update(time: number) {
-        // Move downward with wave motion
-        this.y += this.speed;
-        this.x += Math.sin(time * 2 + this.phase) * 2;
-        
-        // Add to trail
-        this.trail.push({
-          x: this.x,
-          y: this.y,
-          opacity: this.opacity
-        });
-        
-        // Keep trail length manageable
-        if (this.trail.length > 15) {
-          this.trail.shift();
-        }
-        
-        // Reset if out of bounds
-        if (this.y > canvas.height + 50 || this.x < -50 || this.x > canvas.width + 50) {
-          this.reset();
-        }
-      }
-
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = -20;
-        this.opacity = 0.6 + Math.random() * 0.4;
-        this.trail = [];
-        this.phase = Math.random() * Math.PI * 2;
-      }
-
-      draw(ctx: CanvasRenderingContext2D, time: number) {
-        // Draw trail
-        this.trail.forEach((point, i) => {
-          const progress = i / this.trail.length;
-          const trailOpacity = this.opacity * progress;
-          const trailSize = 3 * (1 - progress);
-          
-          // Electric glow effect
-          const gradient = ctx.createRadialGradient(
-            point.x, point.y, 0,
-            point.x, point.y, trailSize * 3
-          );
-          
-          // Orange to amber gradient
-          gradient.addColorStop(0, `rgba(255, 165, 0, ${trailOpacity})`);
-          gradient.addColorStop(0.5, `rgba(255, 200, 50, ${trailOpacity * 0.6})`);
-          gradient.addColorStop(1, `rgba(255, 115, 0, 0)`);
-          
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
-          ctx.fillStyle = gradient;
-          ctx.fill();
-          
-          // Sparkle effect
-          if (Math.random() < 0.3) {
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, trailSize * 0.5, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 225, 100, ${trailOpacity * 0.8})`;
-            ctx.fill();
-          }
-        });
-        
-        // Draw main particle
-        const pulse = Math.sin(time * 5) * 0.3 + 0.7;
-        const size = 4 * pulse;
-        
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
-        
-        const gradient = ctx.createRadialGradient(
-          this.x, this.y, 0,
-          this.x, this.y, size * 2
-        );
-        gradient.addColorStop(0, `rgba(255, 225, 100, ${this.opacity})`);
-        gradient.addColorStop(0.7, `rgba(255, 165, 0, ${this.opacity * 0.6})`);
-        gradient.addColorStop(1, `rgba(255, 115, 0, 0)`);
-        
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        
-        // Draw electric arcs
-        if (Math.random() < 0.2) {
-          const arcLength = 15 + Math.random() * 20;
-          const arcAngle = Math.random() * Math.PI * 2;
-          
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(
-            this.x + Math.cos(arcAngle) * arcLength,
-            this.y + Math.sin(arcAngle) * arcLength
-          );
-          ctx.strokeStyle = `rgba(255, 200, 50, ${this.opacity * 0.4})`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-      }
-    }
-
-    // Create electric currents
-    const currents: ElectricCurrent[] = [];
-    for (let i = 0; i < 12; i++) {
-      currents.push(new ElectricCurrent());
-    }
-
-    // Main current path
-    const mainPathPoints: Array<{x: number, y: number}> = [];
-    const pathSegments = 20;
-    for (let i = 0; i <= pathSegments; i++) {
-      const y = (canvas.height / pathSegments) * i;
-      const x = canvas.width / 2 + Math.sin(y * 0.01) * 100;
-      mainPathPoints.push({ x, y });
-    }
-
-    // Animation loop
-    let animationId: number;
-    let time = 0;
-    
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.016;
-
-      // Draw gradient background
-      const gradient = ctx.createLinearGradient(
-        0, 0, 0, canvas.height
-      );
-      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
-      gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.04)');
-      gradient.addColorStop(0.7, 'rgba(255, 200, 50, 0.06)');
-      gradient.addColorStop(1, 'rgba(255, 225, 100, 0.03)');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw main electric path
-      ctx.beginPath();
-      ctx.moveTo(mainPathPoints[0].x, mainPathPoints[0].y);
-      
-      for (let i = 1; i < mainPathPoints.length; i++) {
-        const point = mainPathPoints[i];
-        const prevPoint = mainPathPoints[i-1];
-        
-        // Animate path with wave
-        const waveX = Math.sin(time * 2 + i * 0.3) * 15;
-        const cp1x = prevPoint.x + waveX;
-        const cp1y = prevPoint.y + 20;
-        const cp2x = point.x - waveX;
-        const cp2y = point.y - 20;
-        
-        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, point.x, point.y);
-      }
-      
-      // Path glow
-      ctx.lineWidth = 8;
-      ctx.strokeStyle = `rgba(255, 165, 0, ${0.1 + Math.sin(time * 2) * 0.05})`;
-      ctx.stroke();
-      
-      // Path core
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = `rgba(255, 225, 100, ${0.3 + Math.sin(time * 3) * 0.2})`;
-      ctx.stroke();
-
-      // Draw floating energy nodes along path
-      mainPathPoints.forEach((point, i) => {
-        if (i % 4 === 0) {
-          const nodeTime = time + i * 0.2;
-          const pulse = Math.sin(nodeTime * 3) * 0.5 + 0.5;
-          const nodeSize = 8 * pulse;
-          
-          // Node glow
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, nodeSize * 1.5, 0, Math.PI * 2);
-          const glowGradient = ctx.createRadialGradient(
-            point.x, point.y, 0,
-            point.x, point.y, nodeSize * 1.5
-          );
-          glowGradient.addColorStop(0, `rgba(255, 165, 0, ${0.3 * pulse})`);
-          glowGradient.addColorStop(1, 'rgba(255, 165, 0, 0)');
-          ctx.fillStyle = glowGradient;
-          ctx.fill();
-          
-          // Node core
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, nodeSize, 0, Math.PI * 2);
-          const coreGradient = ctx.createRadialGradient(
-            point.x, point.y, 0,
-            point.x, point.y, nodeSize
-          );
-          coreGradient.addColorStop(0, `rgba(255, 225, 100, ${0.8 * pulse})`);
-          coreGradient.addColorStop(1, 'rgba(255, 165, 0, 0)');
-          ctx.fillStyle = coreGradient;
-          ctx.fill();
-          
-          // Draw electric connections between nodes
-          if (i < mainPathPoints.length - 4) {
-            const nextPoint = mainPathPoints[i + 4];
-            ctx.beginPath();
-            ctx.moveTo(point.x, point.y);
-            
-            // Wavy connection
-            for (let j = 0; j <= 10; j++) {
-              const t = j / 10;
-              const x = point.x + (nextPoint.x - point.x) * t;
-              const y = point.y + (nextPoint.y - point.y) * t;
-              const wave = Math.sin(t * Math.PI * 2 + time * 3) * 5;
-              
-              if (j === 0) {
-                ctx.moveTo(x + wave, y);
-              } else {
-                ctx.lineTo(x + wave, y);
-              }
-            }
-            
-            ctx.strokeStyle = `rgba(255, 200, 50, ${0.15 + Math.sin(time * 4) * 0.1})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        }
-      });
-
-      // Update and draw electric currents
-      currents.forEach(current => {
-        current.update(time);
-        current.draw(ctx, time);
-      });
-
-      // Draw ambient energy particles
-      for (let i = 0; i < 20; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        const size = 1 + Math.random() * 2;
-        const opacity = 0.1 + Math.random() * 0.2;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 165, 0, ${opacity})`;
-        ctx.fill();
-      }
-
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      cancelAnimationFrame(animationId);
-    };
-  }, []);
-
-  return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-      />
-      {/* Overlay gradient for smooth transition */}
-      <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-neutral-900 via-transparent to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-b from-white dark:from-neutral-900 via-transparent to-transparent" />
-    </div>
-  );
-}
-
 // Cool animated background for mission & vision section
 function MissionVisionBackground() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -2181,11 +1876,6 @@ export default function About() {
 
           </div>
         </div>
-        
-        {/* ================= ELECTRIC ORANGE FLOW DIVIDER ================= */}
-        <div className="absolute bottom-0 left-0 right-0 h-64">
-          <ElectricFlowDivider />
-        </div>
       </section>
 
       {/* ================= MAJOR MILESTONES TIMELINE ================= */}
@@ -2345,11 +2035,6 @@ export default function About() {
             </div>
           </div>
         </div>
-        
-        {/* ================= ELECTRIC ORANGE FLOW DIVIDER ================= */}
-        <div className="absolute bottom-0 left-0 right-0 h-64">
-          <ElectricFlowDivider />
-        </div>
       </section>
 
       {/* ================= CORE TEAM MEMBERS with BOLD ELECTRIC HEXAGONAL BACKGROUND ================= */}
@@ -2357,7 +2042,7 @@ export default function About() {
         
         {/* BOLD ELECTRIC Hexagonal Animated Background */}
         <TeamMembersBackground />
-        
+
         <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
@@ -2530,13 +2215,7 @@ export default function About() {
                 </p>
                 <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse delay-300" />
               </div>
-            </div>
           </FadeUp>
-        </div>
-        
-        {/* ================= ELECTRIC ORANGE FLOW DIVIDER ================= */}
-        <div className="absolute bottom-0 left-0 right-0 h-64">
-          <ElectricFlowDivider />
         </div>
       </section>
 
@@ -2885,90 +2564,234 @@ export default function About() {
             </div>
           </FadeUp>
         </div>
-        
-        {/* ================= ELECTRIC ORANGE FLOW DIVIDER ================= */}
-        <div className="absolute bottom-0 left-0 right-0 h-64">
-          <ElectricFlowDivider />
-        </div>
       </section>
 
-      {/* ================= STRATEGIC PARTNERS (7 partners from PDF Page 16) ================= */}
+      {/* ================= STRATEGIC PARTNERS (CIRCULAR DESIGN) ================= */}
       <section className="relative py-32 bg-white dark:bg-neutral-900">
         <div className="container mx-auto px-6">
           
           <FadeUp>
             <div className="text-center mb-20 max-w-3xl mx-auto">
               <span className="inline-block px-4 py-2 rounded-full bg-orange-500/10 text-orange-500 text-sm font-medium mb-6">
-                COLLABORATIONS
+                STRATEGIC PARTNERS
               </span>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Strategic <span className="text-orange-500">Partners</span>
+                Powering <span className="text-orange-500">Innovation</span> Together
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-400">
-                Trusted by industry leaders worldwide
+                Global collaborations that drive cultural transformation
               </p>
             </div>
           </FadeUp>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {/* Circular Partner Layout */}
+          <div className="relative h-[600px] md:h-[800px] flex items-center justify-center">
             
-            {/* 7 Strategic Partners as shown in PDF */}
-            {[
-              { name: "Partner 1", logo: "/partner-1.png" },
-              { name: "Partner 2", logo: "/partner-2.png" },
-              { name: "Partner 3", logo: "/partner-3.png" },
-              { name: "Partner 4", logo: "/partner-4.png" },
-              { name: "Partner 5", logo: "/partner-5.png" },
-              { name: "Partner 6", logo: "/partner-6.png" },
-              { name: "Partner 7", logo: "/partner-7.png" }
-            ].map((partner, index) => (
-              <FadeUp key={index}>
-                <div className="group relative">
-                  <div className="aspect-square rounded-2xl bg-white dark:bg-neutral-800 
-                                border border-gray-200 dark:border-neutral-700
-                                flex items-center justify-center p-8
-                                group-hover:border-orange-500/50
-                                group-hover:shadow-[0_0_20px_rgba(255,115,0,0.1)]
-                                transition-all duration-500">
-                    <div className="relative w-full h-full flex items-center justify-center">
-                      <Image
-                        src={partner.logo}
-                        alt={partner.name}
-                        width={120}
-                        height={60}
-                        className="object-contain max-h-16"
-                        sizes="(max-width: 768px) 100px, 120px"
-                        onError={(e) => {
-                          // Fallback to text if logo doesn't exist
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const container = target.parentElement;
-                          if (container) {
-                            container.innerHTML = `
-                              <div class="flex items-center justify-center h-full w-full">
-                                <div class="text-gray-400 dark:text-gray-500 text-sm text-center
-                                          group-hover:text-orange-500 transition-colors duration-500">
-                                  ${partner.name}
-                                </div>
-                              </div>
-                            `;
-                          }
-                        }}
-                      />
+            {/* Center Lightgate Logo */}
+            <div className="absolute z-20 w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+              <div className="relative w-full h-full">
+                {/* Glow effect */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 blur-xl opacity-30 animate-pulse" />
+                
+                {/* Logo container */}
+                <div className="relative w-full h-full rounded-full bg-gradient-to-br from-orange-500/10 to-orange-500/5 
+                              border-2 border-orange-500/30 backdrop-blur-sm flex items-center justify-center
+                              group hover:border-orange-500 hover:shadow-[0_0_60px_rgba(255,115,0,0.4)]
+                              transition-all duration-500">
+                  
+                  {/* Inner glow ring */}
+                  <div className="absolute inset-4 rounded-full border border-orange-500/20 group-hover:border-orange-500/40 
+                                transition-all duration-500" />
+                  
+                  {/* Lightgate Logo */}
+                  <div className="relative z-10 text-center">
+                    <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-500 to-amber-500 
+                                  bg-clip-text text-transparent mb-2">
+                      LIGHTGATE
                     </div>
+                    <p className="text-xs md:text-sm text-orange-500/70 font-medium">CULTURAL INNOVATION</p>
+                  </div>
+                  
+                  {/* Rotating particles */}
+                  <div className="absolute inset-0">
+                    {[...Array(8)].map((_, i) => {
+                      const angle = (i * 45 * Math.PI) / 180;
+                      const radius = 90;
+                      const x = 50 + radius * Math.cos(angle);
+                      const y = 50 + radius * Math.sin(angle);
+                      
+                      return (
+                        <div
+                          key={i}
+                          className="absolute w-2 h-2 rounded-full bg-orange-500/50 animate-ping"
+                          style={{
+                            left: `${x}%`,
+                            top: `${y}%`,
+                            animationDelay: `${i * 0.2}s`,
+                            transform: 'translate(-50%, -50%)'
+                          }}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
-              </FadeUp>
-            ))}
+              </div>
+            </div>
 
+            {/* Partner Logos in Circle */}
+            {[
+              { name: "Partner 1", logo: "/partner-1.png", delay: 0 },
+              { name: "Partner 2", logo: "/partner-2.png", delay: 100 },
+              { name: "Partner 3", logo: "/partner-3.png", delay: 200 },
+              { name: "Partner 4", logo: "/partner-4.png", delay: 300 },
+              { name: "Partner 5", logo: "/partner-5.png", delay: 400 },
+              { name: "Partner 6", logo: "/partner-6.png", delay: 500 },
+              { name: "Partner 7", logo: "/partner-7.png", delay: 600 }
+            ].map((partner, index) => {
+              const angle = (index * (360 / 7)) * (Math.PI / 180);
+              const radius = 280;
+              const x = Math.cos(angle) * radius;
+              const y = Math.sin(angle) * radius;
+              
+              return (
+                <FadeUp key={index} delay={partner.delay}>
+                  <div 
+                    className="absolute z-10 w-32 h-32 md:w-40 md:h-40 flex items-center justify-center group"
+                    style={{
+                      transform: `translate(${x}px, ${y}px)`,
+                      transition: 'transform 0.5s ease-out'
+                    }}
+                  >
+                    {/* Connection line to center */}
+                    <div 
+                      className="absolute top-1/2 left-1/2 w-full h-0.5 bg-gradient-to-r from-transparent via-orange-500/30 to-transparent 
+                                origin-left -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100
+                                transition-opacity duration-500"
+                      style={{
+                        width: `${radius}px`,
+                        transform: `translate(-50%, -50%) rotate(${angle}rad)`,
+                        transformOrigin: '0 0'
+                      }}
+                    />
+                    
+                    {/* Partner Logo Card */}
+                    <div className="relative w-full h-full">
+                      {/* Hover glow */}
+                      <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/20 to-transparent 
+                                    rounded-2xl opacity-0 group-hover:opacity-100 
+                                    transition-opacity duration-500 blur-xl" />
+                      
+                      {/* Logo container */}
+                      <div className="relative w-full h-full rounded-2xl bg-white dark:bg-neutral-800 
+                                    border border-gray-200 dark:border-neutral-700
+                                    flex items-center justify-center p-6
+                                    group-hover:border-orange-500/50
+                                    group-hover:shadow-[0_0_30px_rgba(255,115,0,0.3)]
+                                    group-hover:-translate-y-2
+                                    transition-all duration-500">
+                        
+                        {/* Logo image */}
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          <Image
+                            src={partner.logo}
+                            alt={partner.name}
+                            width={120}
+                            height={60}
+                            className="object-contain max-h-16 opacity-80 group-hover:opacity-100 
+                                     group-hover:scale-110 transition-all duration-500"
+                            sizes="(max-width: 768px) 80px, 120px"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const container = target.parentElement;
+                              if (container) {
+                                container.innerHTML = `
+                                  <div class="flex items-center justify-center h-full w-full">
+                                    <div class="text-gray-400 dark:text-gray-500 text-sm text-center
+                                              group-hover:text-orange-500 transition-colors duration-500">
+                                      ${partner.name}
+                                    </div>
+                                  </div>
+                                `;
+                              }
+                            }}
+                          />
+                        </div>
+                        
+                        {/* Floating indicator */}
+                        <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-orange-500 
+                                      opacity-0 group-hover:opacity-100 animate-ping
+                                      transition-opacity duration-500" />
+                      </div>
+                      
+                      {/* Partner name tooltip */}
+                      <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2
+                                    opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0
+                                    transition-all duration-300">
+                        <div className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 
+                                      text-white text-xs font-medium rounded-full whitespace-nowrap">
+                          {partner.name}
+                        </div>
+                        <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 
+                                      bg-gradient-to-r from-orange-500 to-amber-500 rotate-45" />
+                      </div>
+                    </div>
+                  </div>
+                </FadeUp>
+              );
+            })}
+
+            {/* Animated connection circles */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative w-96 h-96 md:w-[600px] md:h-[600px]">
+                {/* Outer circle */}
+                <div className="absolute inset-0 rounded-full border border-orange-500/10 animate-pulse" />
+                
+                {/* Middle circle */}
+                <div className="absolute inset-12 rounded-full border border-orange-500/15 animate-pulse delay-300" />
+                
+                {/* Inner circle */}
+                <div className="absolute inset-24 rounded-full border border-orange-500/20 animate-pulse delay-600" />
+                
+                {/* Floating particles along circles */}
+                {[...Array(24)].map((_, i) => {
+                  const angle = (i * 15) * (Math.PI / 180);
+                  const radius = 190;
+                  const x = 50 + radius * Math.cos(angle);
+                  const y = 50 + radius * Math.sin(angle);
+                  
+                  return (
+                    <div
+                      key={i}
+                      className="absolute w-1 h-1 rounded-full bg-orange-500/30"
+                      style={{
+                        left: `${x}%`,
+                        top: `${y}%`,
+                        transform: 'translate(-50%, -50%)',
+                        animation: `float 3s infinite ${i * 0.1}s`
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           <FadeUp>
-            <div className="text-center mt-16">
-              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <div className="text-center mt-20 max-w-2xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-lg">
                 We collaborate with leading brands, cultural institutions, and technology 
-                partners to create groundbreaking experiences that redefine entertainment.
+                partners worldwide to create groundbreaking experiences that redefine entertainment 
+                and cultural innovation.
               </p>
+              <div className="mt-8 inline-flex items-center gap-4 px-6 py-3 rounded-full 
+                            bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20">
+                <Activity className="w-4 h-4 text-orange-500 animate-pulse" />
+                <span className="text-sm text-orange-600 dark:text-orange-400 font-medium">
+                  Strategic partnerships driving global cultural transformation
+                </span>
+                <Activity className="w-4 h-4 text-amber-500 animate-pulse delay-300" />
+              </div>
             </div>
           </FadeUp>
         </div>
@@ -3031,30 +2854,14 @@ export default function About() {
       {/* Add CSS animation for floating particles */}
       <style jsx global>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          33% { transform: translateY(-10px) translateX(5px); }
-          66% { transform: translateY(5px) translateX(-5px); }
+          0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.3; }
+          33% { transform: translateY(-5px) translateX(3px) scale(1.1); opacity: 0.6; }
+          66% { transform: translateY(3px) translateX(-3px) scale(0.9); opacity: 0.3; }
         }
         
-        @keyframes electric-pulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.8; }
-        }
-        
-        .electric-flow {
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .electric-flow::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(90deg, transparent, rgba(255, 165, 0, 0.1), transparent);
-          animation: electric-pulse 2s infinite;
+        @keyframes orbit {
+          from { transform: rotate(0deg) translateX(140px) rotate(0deg); }
+          to { transform: rotate(360deg) translateX(140px) rotate(-360deg); }
         }
       `}</style>
 
