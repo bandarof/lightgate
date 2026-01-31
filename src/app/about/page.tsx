@@ -4,7 +4,312 @@ import React from "react";
 import { FadeUp } from "@/components/Motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Users, Target, Eye, Film, Camera, Award, Sparkles, Video, Mic, Monitor, Zap } from "lucide-react";
+import { ArrowRight, Users, Target, Eye, Film, Camera, Award, Sparkles, Video, Mic, Monitor, Zap, Activity } from "lucide-react";
+
+// ================== ELECTRIC ORANGE FLOW DIVIDER ==================
+function ElectricFlowDivider() {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!canvasRef.current || !containerRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas dimensions
+    const resizeCanvas = () => {
+      canvas.width = containerRef.current!.offsetWidth;
+      canvas.height = containerRef.current!.offsetHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Electric current particles
+    class ElectricCurrent {
+      x: number;
+      y: number;
+      speed: number;
+      amplitude: number;
+      frequency: number;
+      opacity: number;
+      trail: Array<{x: number, y: number, opacity: number}>;
+      phase: number;
+
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = 0;
+        this.speed = 1 + Math.random() * 2;
+        this.amplitude = 30 + Math.random() * 40;
+        this.frequency = 0.02 + Math.random() * 0.03;
+        this.opacity = 0.6 + Math.random() * 0.4;
+        this.trail = [];
+        this.phase = Math.random() * Math.PI * 2;
+      }
+
+      update(time: number) {
+        // Move downward with wave motion
+        this.y += this.speed;
+        this.x += Math.sin(time * 2 + this.phase) * 2;
+        
+        // Add to trail
+        this.trail.push({
+          x: this.x,
+          y: this.y,
+          opacity: this.opacity
+        });
+        
+        // Keep trail length manageable
+        if (this.trail.length > 15) {
+          this.trail.shift();
+        }
+        
+        // Reset if out of bounds
+        if (this.y > canvas.height + 50 || this.x < -50 || this.x > canvas.width + 50) {
+          this.reset();
+        }
+      }
+
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = -20;
+        this.opacity = 0.6 + Math.random() * 0.4;
+        this.trail = [];
+        this.phase = Math.random() * Math.PI * 2;
+      }
+
+      draw(ctx: CanvasRenderingContext2D, time: number) {
+        // Draw trail
+        this.trail.forEach((point, i) => {
+          const progress = i / this.trail.length;
+          const trailOpacity = this.opacity * progress;
+          const trailSize = 3 * (1 - progress);
+          
+          // Electric glow effect
+          const gradient = ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, trailSize * 3
+          );
+          
+          // Orange to amber gradient
+          gradient.addColorStop(0, `rgba(255, 165, 0, ${trailOpacity})`);
+          gradient.addColorStop(0.5, `rgba(255, 200, 50, ${trailOpacity * 0.6})`);
+          gradient.addColorStop(1, `rgba(255, 115, 0, 0)`);
+          
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, trailSize, 0, Math.PI * 2);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+          
+          // Sparkle effect
+          if (Math.random() < 0.3) {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, trailSize * 0.5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 225, 100, ${trailOpacity * 0.8})`;
+            ctx.fill();
+          }
+        });
+        
+        // Draw main particle
+        const pulse = Math.sin(time * 5) * 0.3 + 0.7;
+        const size = 4 * pulse;
+        
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+        
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, size * 2
+        );
+        gradient.addColorStop(0, `rgba(255, 225, 100, ${this.opacity})`);
+        gradient.addColorStop(0.7, `rgba(255, 165, 0, ${this.opacity * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 115, 0, 0)`);
+        
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Draw electric arcs
+        if (Math.random() < 0.2) {
+          const arcLength = 15 + Math.random() * 20;
+          const arcAngle = Math.random() * Math.PI * 2;
+          
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(
+            this.x + Math.cos(arcAngle) * arcLength,
+            this.y + Math.sin(arcAngle) * arcLength
+          );
+          ctx.strokeStyle = `rgba(255, 200, 50, ${this.opacity * 0.4})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Create electric currents
+    const currents: ElectricCurrent[] = [];
+    for (let i = 0; i < 12; i++) {
+      currents.push(new ElectricCurrent());
+    }
+
+    // Main current path
+    const mainPathPoints: Array<{x: number, y: number}> = [];
+    const pathSegments = 20;
+    for (let i = 0; i <= pathSegments; i++) {
+      const y = (canvas.height / pathSegments) * i;
+      const x = canvas.width / 2 + Math.sin(y * 0.01) * 100;
+      mainPathPoints.push({ x, y });
+    }
+
+    // Animation loop
+    let animationId: number;
+    let time = 0;
+    
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 0.016;
+
+      // Draw gradient background
+      const gradient = ctx.createLinearGradient(
+        0, 0, 0, canvas.height
+      );
+      gradient.addColorStop(0, 'rgba(255, 115, 0, 0.02)');
+      gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.04)');
+      gradient.addColorStop(0.7, 'rgba(255, 200, 50, 0.06)');
+      gradient.addColorStop(1, 'rgba(255, 225, 100, 0.03)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw main electric path
+      ctx.beginPath();
+      ctx.moveTo(mainPathPoints[0].x, mainPathPoints[0].y);
+      
+      for (let i = 1; i < mainPathPoints.length; i++) {
+        const point = mainPathPoints[i];
+        const prevPoint = mainPathPoints[i-1];
+        
+        // Animate path with wave
+        const waveX = Math.sin(time * 2 + i * 0.3) * 15;
+        const cp1x = prevPoint.x + waveX;
+        const cp1y = prevPoint.y + 20;
+        const cp2x = point.x - waveX;
+        const cp2y = point.y - 20;
+        
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, point.x, point.y);
+      }
+      
+      // Path glow
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = `rgba(255, 165, 0, ${0.1 + Math.sin(time * 2) * 0.05})`;
+      ctx.stroke();
+      
+      // Path core
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = `rgba(255, 225, 100, ${0.3 + Math.sin(time * 3) * 0.2})`;
+      ctx.stroke();
+
+      // Draw floating energy nodes along path
+      mainPathPoints.forEach((point, i) => {
+        if (i % 4 === 0) {
+          const nodeTime = time + i * 0.2;
+          const pulse = Math.sin(nodeTime * 3) * 0.5 + 0.5;
+          const nodeSize = 8 * pulse;
+          
+          // Node glow
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, nodeSize * 1.5, 0, Math.PI * 2);
+          const glowGradient = ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, nodeSize * 1.5
+          );
+          glowGradient.addColorStop(0, `rgba(255, 165, 0, ${0.3 * pulse})`);
+          glowGradient.addColorStop(1, 'rgba(255, 165, 0, 0)');
+          ctx.fillStyle = glowGradient;
+          ctx.fill();
+          
+          // Node core
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, nodeSize, 0, Math.PI * 2);
+          const coreGradient = ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, nodeSize
+          );
+          coreGradient.addColorStop(0, `rgba(255, 225, 100, ${0.8 * pulse})`);
+          coreGradient.addColorStop(1, 'rgba(255, 165, 0, 0)');
+          ctx.fillStyle = coreGradient;
+          ctx.fill();
+          
+          // Draw electric connections between nodes
+          if (i < mainPathPoints.length - 4) {
+            const nextPoint = mainPathPoints[i + 4];
+            ctx.beginPath();
+            ctx.moveTo(point.x, point.y);
+            
+            // Wavy connection
+            for (let j = 0; j <= 10; j++) {
+              const t = j / 10;
+              const x = point.x + (nextPoint.x - point.x) * t;
+              const y = point.y + (nextPoint.y - point.y) * t;
+              const wave = Math.sin(t * Math.PI * 2 + time * 3) * 5;
+              
+              if (j === 0) {
+                ctx.moveTo(x + wave, y);
+              } else {
+                ctx.lineTo(x + wave, y);
+              }
+            }
+            
+            ctx.strokeStyle = `rgba(255, 200, 50, ${0.15 + Math.sin(time * 4) * 0.1})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      });
+
+      // Update and draw electric currents
+      currents.forEach(current => {
+        current.update(time);
+        current.draw(ctx, time);
+      });
+
+      // Draw ambient energy particles
+      for (let i = 0; i < 20; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = 1 + Math.random() * 2;
+        const opacity = 0.1 + Math.random() * 0.2;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 165, 0, ${opacity})`;
+        ctx.fill();
+      }
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationId);
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+      />
+      {/* Overlay gradient for smooth transition */}
+      <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-neutral-900 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white dark:from-neutral-900 via-transparent to-transparent" />
+    </div>
+  );
+}
 
 // Cool animated background for mission & vision section
 function MissionVisionBackground() {
@@ -1877,26 +2182,9 @@ export default function About() {
           </div>
         </div>
         
-        {/* ================= SEAMLESS DIVIDER ================= */}
-        {/* Orange gradient that transitions from white/neutral-950 to timeline orange */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-orange-500/5 via-orange-500/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-neutral-950 via-white/20 dark:via-neutral-950/20 to-transparent" />
-        
-        {/* Animated floating particles in the divider */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 overflow-hidden">
-          {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full bg-orange-500/10"
-              style={{
-                left: `${Math.random() * 100}%`,
-                bottom: `${Math.random() * 48}px`,
-                width: `${Math.random() * 6 + 2}px`,
-                height: `${Math.random() * 6 + 2}px`,
-                animation: `float ${Math.random() * 3 + 2}s infinite ${Math.random() * 2}s`,
-              }}
-            />
-          ))}
+        {/* ================= ELECTRIC ORANGE FLOW DIVIDER ================= */}
+        <div className="absolute bottom-0 left-0 right-0 h-64">
+          <ElectricFlowDivider />
         </div>
       </section>
 
@@ -2058,8 +2346,10 @@ export default function About() {
           </div>
         </div>
         
-        {/* SEAMLESS DIVIDER BETWEEN MILESTONE AND TEAM SECTIONS */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
+        {/* ================= ELECTRIC ORANGE FLOW DIVIDER ================= */}
+        <div className="absolute bottom-0 left-0 right-0 h-64">
+          <ElectricFlowDivider />
+        </div>
       </section>
 
       {/* ================= CORE TEAM MEMBERS with BOLD ELECTRIC HEXAGONAL BACKGROUND ================= */}
@@ -2068,9 +2358,6 @@ export default function About() {
         {/* BOLD ELECTRIC Hexagonal Animated Background */}
         <TeamMembersBackground />
         
-        {/* Top fade to connect with milestone section */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white dark:from-neutral-900 via-white/80 dark:via-neutral-900/80 to-transparent" />
-
         <div className="relative z-10 container mx-auto px-6">
           
           <FadeUp>
@@ -2247,31 +2534,9 @@ export default function About() {
           </FadeUp>
         </div>
         
-        {/* ================= SMOOTH BLENDING DIVIDER BETWEEN TEAM AND DIRECTORS ================= */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black via-black/90 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-orange-500/5 via-orange-500/10 to-transparent" />
-        
-        {/* Animated studio equipment particles in the divider */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 overflow-hidden">
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute"
-              style={{
-                left: `${Math.random() * 100}%`,
-                bottom: `${Math.random() * 48}px`,
-                animation: `float ${Math.random() * 4 + 3}s infinite ${Math.random() * 2}s`,
-              }}
-            >
-              {i % 3 === 0 ? (
-                <Film className="w-4 h-4 text-orange-500/30" />
-              ) : i % 3 === 1 ? (
-                <Camera className="w-4 h-4 text-orange-400/30" />
-              ) : (
-                <Video className="w-4 h-4 text-amber-400/30" />
-              )}
-            </div>
-          ))}
+        {/* ================= ELECTRIC ORANGE FLOW DIVIDER ================= */}
+        <div className="absolute bottom-0 left-0 right-0 h-64">
+          <ElectricFlowDivider />
         </div>
       </section>
 
@@ -2620,6 +2885,11 @@ export default function About() {
             </div>
           </FadeUp>
         </div>
+        
+        {/* ================= ELECTRIC ORANGE FLOW DIVIDER ================= */}
+        <div className="absolute bottom-0 left-0 right-0 h-64">
+          <ElectricFlowDivider />
+        </div>
       </section>
 
       {/* ================= STRATEGIC PARTNERS (7 partners from PDF Page 16) ================= */}
@@ -2764,6 +3034,27 @@ export default function About() {
           0%, 100% { transform: translateY(0) translateX(0); }
           33% { transform: translateY(-10px) translateX(5px); }
           66% { transform: translateY(5px) translateX(-5px); }
+        }
+        
+        @keyframes electric-pulse {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.8; }
+        }
+        
+        .electric-flow {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .electric-flow::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(90deg, transparent, rgba(255, 165, 0, 0.1), transparent);
+          animation: electric-pulse 2s infinite;
         }
       `}</style>
 
