@@ -1,277 +1,60 @@
-"use client";
-
-import { FadeUp, useCounters } from "@/components/Motion";
+import { FadeUp } from "@/components/Motion";
+import Hero from "@/components/Hero";
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { ArrowRight } from "lucide-react";
 
-// Background animation component for flagship experiences
-function FlagshipBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const ركائز = [
+  {
+    title: "ثقافة عالمية",
+    description: "نحتفي بالتنوع ونصمم منصات تجمع المجتمعات عبر الفنون.",
+  },
+  {
+    title: "تجارب غامرة",
+    description: "تجارب متعددة الحواس مدعومة بالتقنية والقصص المحلية.",
+  },
+  {
+    title: "تشغيل احترافي",
+    description: "منهجيات إنتاج تضمن جودة التنفيذ والاستدامة طويلة الأمد.",
+  },
+];
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    const particles: Array<{
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      color: string;
-      opacity: number;
-      pulseSpeed: number;
-      pulsePhase: number;
-    }> = [];
-
-    const colors = [
-      "rgba(255, 115, 0, 0.8)",
-      "rgba(255, 165, 0, 0.6)",
-      "rgba(255, 200, 50, 0.5)",
-      "rgba(255, 100, 0, 0.7)",
-    ];
-
-    const particleCount = Math.min(30, Math.floor(canvas.width / 50));
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 4 + 2,
-        speedX: (Math.random() - 0.5) * 0.3,
-        speedY: (Math.random() - 0.5) * 0.3,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: 0.3 + Math.random() * 0.5,
-        pulseSpeed: 0.02 + Math.random() * 0.03,
-        pulsePhase: Math.random() * Math.PI * 2,
-      });
-    }
-
-    let animationId: number;
-    let time = 0;
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.01;
-
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, "rgba(255, 115, 0, 0.02)");
-      gradient.addColorStop(0.5, "rgba(255, 165, 0, 0.01)");
-      gradient.addColorStop(1, "rgba(255, 200, 0, 0.005)");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach((p, i) => {
-        p.x += p.speedX + Math.sin(time + i) * 0.1;
-        p.y += p.speedY + Math.cos(time * 0.7 + i) * 0.1;
-        p.pulsePhase += p.pulseSpeed;
-
-        const pulse = 0.5 + 0.5 * Math.sin(p.pulsePhase);
-        const currentSize = p.size * (0.8 + 0.4 * pulse);
-        const currentOpacity = p.opacity * (0.7 + 0.3 * pulse);
-
-        if (p.x < -50) p.x = canvas.width + 50;
-        if (p.x > canvas.width + 50) p.x = -50;
-        if (p.y < -50) p.y = canvas.height + 50;
-        if (p.y > canvas.height + 50) p.y = -50;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, currentSize * 3, 0, Math.PI * 2);
-        const glowGradient = ctx.createRadialGradient(
-          p.x,
-          p.y,
-          0,
-          p.x,
-          p.y,
-          currentSize * 3
-        );
-        glowGradient.addColorStop(0, p.color.replace("0.8", "0.3"));
-        glowGradient.addColorStop(1, p.color.replace("0.8", "0"));
-        ctx.fillStyle = glowGradient;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2);
-        ctx.fillStyle = p.color.replace("0.8", currentOpacity.toString());
-        ctx.fill();
-
-        particles.forEach((p2, j) => {
-          if (i >= j) return;
-
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 150) {
-            const connectionOpacity = 0.1 * (1 - distance / 150) * currentOpacity;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(255, 115, 0, ${connectionOpacity})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        });
-      });
-
-      const waveCount = 3;
-      for (let w = 0; w < waveCount; w++) {
-        const waveOffset = time * 0.5 + (w * Math.PI * 2) / waveCount;
-        const waveAmplitude = 20;
-        const waveFrequency = 0.01;
-
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(255, 115, 0, ${0.05 + 0.05 * Math.sin(time + w)})`;
-        ctx.lineWidth = 2;
-
-        for (let x = 0; x < canvas.width; x += 10) {
-          const y =
-            canvas.height / 2 +
-            Math.sin(x * waveFrequency + waveOffset) * waveAmplitude +
-            Math.cos(x * waveFrequency * 0.7 + waveOffset * 1.3) * waveAmplitude * 0.5;
-
-          if (x === 0) {
-            ctx.moveTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
-        }
-        ctx.stroke();
-      }
-
-      ctx.strokeStyle = "rgba(255, 115, 0, 0.03)";
-      ctx.lineWidth = 0.5;
-
-      const hexSize = 60;
-      for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
-        for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
-          ctx.beginPath();
-          for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const hexX = x + hexSize * Math.cos(angle);
-            const hexY = y + hexSize * Math.sin(angle);
-            if (i === 0) {
-              ctx.moveTo(hexX, hexY);
-            } else {
-              ctx.lineTo(hexX, hexY);
-            }
-          }
-          ctx.closePath();
-          ctx.stroke();
-        }
-      }
-
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      cancelAnimationFrame(animationId);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-40" />;
-}
-
-function StaticHexagonalBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    if (!canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    ctx.strokeStyle = "rgba(255, 115, 0, 0.12)";
-    ctx.lineWidth = 1.2;
-
-    const hexSize = 50;
-    for (let x = 0; x < canvas.width; x += hexSize * 1.5) {
-      for (let y = 0; y < canvas.height; y += hexSize * Math.sqrt(3)) {
-        ctx.beginPath();
-        for (let i = 0; i < 6; i++) {
-          const angle = (Math.PI / 3) * i;
-          const hexX = x + hexSize * Math.cos(angle);
-          const hexY = y + hexSize * Math.sin(angle);
-          if (i === 0) {
-            ctx.moveTo(hexX, hexY);
-          } else {
-            ctx.lineTo(hexX, hexY);
-          }
-        }
-        ctx.closePath();
-        ctx.stroke();
-      }
-    }
-
-    return () => {
-      window.removeEventListener("resize", resizeCanvas);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
-}
+const برامج = [
+  {
+    title: "المنصة العالمية",
+    description: "شبكة مهرجانات مترابطة بسردية واحدة.",
+    image: "/global.jpg",
+  },
+  {
+    title: "مسارات التراث",
+    description: "رحلات ثقافية تعيد إحياء الفنون والحرف التقليدية.",
+    image: "/culture.jpg",
+  },
+  {
+    title: "ليالي الضوء",
+    description: "عروض ليلية تجمع الإبداع البصري بالموسيقى الحية.",
+    image: "/milestone-walk.jpg",
+  },
+];
 
 export default function ArabicHome() {
   useCounters();
 
   return (
-    <main className="bg-white dark:bg-neutral-950" dir="rtl">
-      {/* ================= HERO ================= */}
-      <section
-        className="relative min-h-screen flex items-center bg-cover bg-center"
-        style={{ backgroundImage: "url(/home.jpg)" }}
-      >
-        <div className="absolute inset-0 bg-black/60" />
+    <main dir="rtl">
+      <Hero
+        title="نضيء العالم من خلال الثقافة"
+        subtitle="لايتجيت منصة ثقافية عالمية تجمع الناس عبر تجارب احتفالية غير مسبوقة."
+        image="/home.jpg"
+      />
 
-        <div className="relative z-10 container mx-auto px-6 text-white text-right">
-          <FadeUp>
-            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-              نضيء العالم <br />
-              من خلال <span className="text-orange-500">الثقافة</span>
-            </h1>
+      <div className="h-32"></div>
 
-            <p className="mt-6 max-w-xl text-lg opacity-90">
-              لايتجيت منصة ثقافية عالمية تقود تجارب احتفالية غير مسبوقة.
-            </p>
-          </FadeUp>
-        </div>
-      </section>
-
-      {/* ================= INTRO ================= */}
-      <section className="relative py-28 bg-white dark:bg-neutral-900 overflow-hidden">
-        <StaticHexagonalBackground />
-
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-orange-500/10" />
-
-        <div className="relative z-10 container mx-auto px-6 text-center max-w-4xl">
-          <FadeUp>
-            <p className="text-2xl md:text-3xl font-light">
-              لايتجيت ليست مجرد صانعة فعاليات، بل ظاهرة عالمية ستُعيد{" "}
-              <span className="text-orange-500">تعريف الترفيه</span>.
+      <section className="manifesto">
+        <FadeUp>
+          <div className="container text-right">
+            <h2>الثقافة هي البنية التحتية</h2>
+            <p>
+              نصمم أنظمة ثقافية تشكل طريقة تواصل الناس وتجربتهم وتخيلهم للمستقبل. نعمل مع المدن
+              والمؤسسات لإطلاق وجهات تعكس الهوية وتخلق أثرًا اقتصاديًا واجتماعيًا.
             </p>
 
             <p className="mt-10 text-xl text-gray-600 dark:text-gray-400">
@@ -472,63 +255,94 @@ export default function ArabicHome() {
         </div>
       </section>
 
-      {/* ================= SERVICES SNAPSHOT ================= */}
-      <section className="relative py-32">
-        <Image src="/global.jpg" alt="عالمي" fill className="object-cover" />
-
-        <div className="absolute inset-0 bg-black/80" />
-
-        <div className="relative z-10 container mx-auto px-6 text-white">
+      <section>
+        <div className="container">
           <FadeUp>
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold">
-                خدماتنا <span className="text-orange-500">الرئيسية</span>
+            <div className="grid gap-10 lg:grid-cols-3">
+              {ركائز.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm text-right dark:border-neutral-800 dark:bg-neutral-950"
+                >
+                  <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                    {item.title}
+                  </h3>
+                  <p className="mt-4 text-gray-600 dark:text-gray-300">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      <section className="bg-neutral-50 dark:bg-neutral-900/60">
+        <div className="container">
+          <FadeUp>
+            <div className="max-w-3xl text-right">
+              <span className="text-sm uppercase tracking-[0.3em] text-orange-500">
+                برامج مميزة
+              </span>
+              <h2 className="mt-4 text-4xl font-bold text-gray-900 dark:text-white">
+                تجارب تتنقل بين القارات بروح واحدة
               </h2>
-              <p className="mt-4 max-w-2xl mx-auto text-gray-300">
-                حلول شاملة لصناعة تجارب ثقافية لا تُنسى بدقة وابتكار.
+              <p className="mt-6 text-lg text-gray-600 dark:text-gray-300">
+                نبني منصات ثقافية قابلة للتوسع، تجمع بين التراث والابتكار في كل مدينة.
               </p>
             </div>
           </FadeUp>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
-            {[
-              "إنتاج الفعاليات",
-              "الإخراج الإبداعي",
-              "تصميم المسارح",
-              "الإعلام والبث",
-              "التسويق التجريبي",
-              "العمليات التقنية",
-            ].map((service) => (
-              <FadeUp key={service}>
-                <div className="p-10 rounded-xl bg-white/5 backdrop-blur border border-orange-500/30 hover:border-orange-500/70 hover:shadow-[0_0_30px_rgba(255,115,0,0.3)] transition-all duration-500 relative group">
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/0 via-orange-500/10 to-orange-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-orange-500/0 via-orange-500/50 to-orange-500/0 opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
-
-                  <div className="relative z-10 text-right">
-                    <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-orange-300 transition-colors">
-                      {service}
+          <div className="mt-16 grid gap-10 lg:grid-cols-3">
+            {برامج.map((program) => (
+              <FadeUp key={program.title}>
+                <div className="h-full overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm text-right dark:border-neutral-800 dark:bg-neutral-950">
+                  <div className="relative h-52">
+                    <Image
+                      src={program.image}
+                      alt={program.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      {program.title}
                     </h3>
-                    <div className="w-10 h-1 bg-orange-500 mb-6 group-hover:w-16 group-hover:bg-orange-400 transition-all duration-500" />
-                    <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
-                      تنفيذ عالي التأثير مصمم للحجم والدقة والتجارب الاستثنائية.
+                    <p className="mt-3 text-gray-600 dark:text-gray-300">
+                      {program.description}
                     </p>
                   </div>
                 </div>
               </FadeUp>
             ))}
           </div>
+        </div>
+      </section>
 
+      <section>
+        <div className="container">
           <FadeUp>
-            <div className="text-center">
-              <Link
-                href="/ar/services"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-transparent border-2 border-orange-500 text-orange-500 font-medium text-lg hover:bg-orange-500 hover:text-white hover:shadow-[0_0_30px_rgba(255,115,0,0.5)] transform hover:-translate-y-1 transition-all duration-300"
-              >
-                عرض كل الخدمات
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <p className="mt-4 text-gray-300">اكتشف كامل خدماتنا الاحترافية</p>
+            <div className="rounded-3xl border border-orange-200 bg-gradient-to-r from-orange-50 via-white to-orange-100 p-12 text-right shadow-sm dark:border-neutral-800 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900">
+              <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
+                هل ترغب في إطلاق تجربة ثقافية جديدة؟
+              </h2>
+              <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                فريق لايتجيت جاهز لدعمك في التخطيط والإنتاج والتنفيذ.
+              </p>
+              <div className="mt-8 flex flex-col justify-end gap-4 sm:flex-row">
+                <a
+                  href="/ar/contact"
+                  className="inline-flex items-center justify-center rounded-full bg-orange-500 px-8 py-4 text-white transition hover:bg-orange-600"
+                >
+                  ابدأ الآن
+                </a>
+                <a
+                  href="/ar/services"
+                  className="inline-flex items-center justify-center rounded-full border border-orange-200 px-8 py-4 text-orange-600 transition hover:border-orange-400 dark:border-neutral-700 dark:text-orange-300"
+                >
+                  تعرف على خدماتنا
+                </a>
+              </div>
             </div>
           </FadeUp>
         </div>

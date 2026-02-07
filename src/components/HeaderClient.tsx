@@ -105,9 +105,6 @@ export default function HeaderClient() {
             onClick={toggleTheme}
             className="
               w-11 h-11 rounded-full
-              border-0 outline-none focus:outline-none focus-visible:outline-none
-              focus-visible:ring-0 focus-visible:ring-offset-0
-              shadow-none appearance-none
               flex items-center justify-center
               bg-gray-50 dark:bg-neutral-900
             "
@@ -135,9 +132,6 @@ export default function HeaderClient() {
             onClick={toggleTheme}
             className="
               w-11 h-11 rounded-full
-              border-0 outline-none focus:outline-none focus-visible:outline-none
-              focus-visible:ring-0 focus-visible:ring-offset-0
-              shadow-none appearance-none
               flex items-center justify-center
               bg-gray-50 dark:bg-neutral-900
             "
