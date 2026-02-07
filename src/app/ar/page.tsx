@@ -36,6 +36,8 @@ const برامج = [
 ];
 
 export default function ArabicHome() {
+  useCounters();
+
   return (
     <main dir="rtl">
       <Hero
@@ -54,8 +56,203 @@ export default function ArabicHome() {
               نصمم أنظمة ثقافية تشكل طريقة تواصل الناس وتجربتهم وتخيلهم للمستقبل. نعمل مع المدن
               والمؤسسات لإطلاق وجهات تعكس الهوية وتخلق أثرًا اقتصاديًا واجتماعيًا.
             </p>
+
+            <p className="mt-10 text-xl text-gray-600 dark:text-gray-400">
+              نبني تجربة احتفالية فريدة تمزج التقنية بالحجم الضخم وبمفهوم لم يُسبق له مثيل.
+            </p>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ================= NUMBERS ================= */}
+      <section className="relative py-32">
+        <Image src="/culture.jpg" alt="الثقافة" fill className="object-cover" priority />
+
+        <div className="absolute inset-0 bg-black/70" />
+
+        <div className="relative z-10 container mx-auto px-6 text-white">
+          <FadeUp>
+            <div className="text-center mb-20">
+              <span className="tracking-widest opacity-70">نحن بالأرقام</span>
+
+              <h2 className="mt-4 text-4xl md:text-5xl font-bold">
+                <span className="text-orange-500">الأرقام</span>
+              </h2>
+            </div>
+          </FadeUp>
+
+          <div className="grid md:grid-cols-4 gap-16 text-center">
+            <div>
+              <span className="counter text-5xl font-bold text-orange-500" data-target="2000000">
+                0
+              </span>
+              <p className="mt-3 opacity-80">إيرادات</p>
+            </div>
+
+            <div>
+              <span
+                className="counter text-5xl font-bold text-orange-500"
+                data-target="15"
+                data-suffix="+"
+              >
+                0
+              </span>
+              <p className="mt-3 opacity-80">مشروع سنويًا</p>
+            </div>
+
+            <div>
+              <span
+                className="counter text-5xl font-bold text-orange-500"
+                data-target="26"
+                data-suffix="Y+"
+              >
+                0
+              </span>
+              <p className="mt-3 opacity-80">سنوات خبرة</p>
+            </div>
+
+            <div>
+              <span
+                className="counter text-5xl font-bold text-orange-500"
+                data-target="6"
+                data-suffix="+"
+              >
+                0
+              </span>
+              <p className="mt-3 opacity-80">شراكات عالمية</p>
+            </div>
           </div>
-        </FadeUp>
+        </div>
+      </section>
+
+      {/* ================= THE PROCESS & FLAGSHIP EXPERIENCES ================= */}
+      <section className="relative py-32 bg-white dark:bg-neutral-900 overflow-hidden">
+        <FlagshipBackground />
+
+        <div className="relative z-10 container mx-auto px-6">
+          <FadeUp>
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-bold">
+                <span className="text-orange-500">المنهجية</span>
+              </h2>
+              <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                نهج منظم يضمن تنفيذ كل مشروع بدقة وإبداع وتميز منذ الفكرة وحتى التسليم.
+              </p>
+            </div>
+          </FadeUp>
+
+          <div className="grid md:grid-cols-4 gap-8 mb-32">
+            {[
+              {
+                step: "01",
+                title: "الإحاطة والتخطيط",
+                description:
+                  "نلتقط الأهداف ونصمم لوحة الرؤية لضمان خطة متكاملة قبل بدء التنفيذ.",
+                image: "/process-briefing.jpg",
+              },
+              {
+                step: "02",
+                title: "التنفيذ",
+                description:
+                  "نحوّل التصميم إلى واقع مع مرونة في التعديلات وبالتعاون مع العميل.",
+                image: "/process-execution.jpg",
+              },
+              {
+                step: "03",
+                title: "التحسين النهائي",
+                description:
+                  "مراجعات دقيقة وتعديلات أخيرة لضمان أعلى معايير الجودة.",
+                image: "/process-finalization.jpg",
+              },
+              {
+                step: "04",
+                title: "التسليم",
+                description:
+                  "نسلم المشروع قبل الفعالية مع فحص نهائي لضمان رضا كامل.",
+                image: "/process-delivery.jpg",
+              },
+            ].map((item, index) => (
+              <FadeUp key={item.title} delay={index * 0.05}>
+                <div className="relative group h-full">
+                  <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-orange-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+
+                  <div className="relative bg-white dark:bg-neutral-800 rounded-xl p-8 border border-gray-200 dark:border-neutral-700 group-hover:border-orange-500/50 group-hover:shadow-[0_0_30px_rgba(255,115,0,0.15)] transition-all duration-500 h-full flex flex-col">
+                    <div className="absolute -top-4 -right-4 w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,115,0,0.8)] transition-all duration-500">
+                      {item.step}
+                    </div>
+
+                    <div className="w-full h-48 mb-6 rounded-xl overflow-hidden relative group-hover:scale-[1.02] transition-transform duration-500">
+                      <Image src={item.image} alt={item.title} fill className="object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    </div>
+
+                    <h3 className="text-xl font-bold text-center mb-4 text-gray-800 dark:text-white group-hover:text-orange-500 transition-colors duration-500 flex-shrink-0">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-center flex-grow">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+
+          <FadeUp>
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-bold">
+                تجارب <span className="text-orange-500">ريادية</span>
+              </h2>
+
+              <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+                تجارب ضخمة تصنع الثقافة وتعيد تعريف الترفيه على نطاق عالمي.
+              </p>
+            </div>
+          </FadeUp>
+
+          <div className="grid md:grid-cols-3 gap-10 mb-16">
+            {[
+              { img: "/experience-1.jpg", title: "مهرجانات غامرة", sub: "فعاليات ثقافية كبرى" },
+              { img: "/experience-2.jpg", title: "تقنيات تفاعلية", sub: "تجارب مستقبلية" },
+              { img: "/experience-3.jpg", title: "منصات ثقافية", sub: "مساحات إبداع عالمية" },
+            ].map((card) => (
+              <FadeUp key={card.title}>
+                <div className="group relative h-[450px] overflow-hidden rounded-2xl border-2 border-transparent hover:border-orange-500/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,115,0,0.3)]">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <Image src={card.img} alt={card.title} fill className="object-cover group-hover:scale-110 transition duration-700" />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+                  <div className="absolute bottom-8 right-8 text-white text-right">
+                    <h3 className="text-2xl font-bold">{card.title}</h3>
+                    <p className="mt-2 opacity-80">{card.sub}</p>
+                  </div>
+
+                  <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-orange-500/0 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)] transition-all duration-500 rounded-tl-2xl" />
+                  <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-orange-500/0 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)] transition-all duration-500 rounded-tr-2xl" />
+                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-orange-500/0 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)] transition-all duration-500 rounded-bl-2xl" />
+                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-orange-500/0 group-hover:border-orange-500 group-hover:shadow-[0_0_10px_rgba(255,115,0,0.8)] transition-all duration-500 rounded-br-2xl" />
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+
+          <FadeUp>
+            <div className="text-center">
+              <Link
+                href="/ar/portfolio"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium text-lg hover:from-orange-600 hover:to-orange-700 hover:shadow-[0_0_30px_rgba(255,115,0,0.5)] transform hover:-translate-y-1 transition-all duration-300"
+              >
+                استكشف أعمالنا
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">
+                اكتشف مجموعة متكاملة من التجارب الثقافية الضخمة
+              </p>
+            </div>
+          </FadeUp>
+        </div>
       </section>
 
       <section>

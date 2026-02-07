@@ -43,6 +43,30 @@ nav a {
 
 section {
   padding: 140px 0;
+  position: relative;
+}
+
+section::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 48px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.85)
+  );
+  pointer-events: none;
+}
+
+.dark section::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0),
+    rgba(10, 10, 10, 0.85)
+  );
 }
 
 .hero {

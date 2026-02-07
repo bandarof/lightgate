@@ -1,3 +1,5 @@
+"use client";
+
 import { FadeUp } from "@/components/Motion";
 import Image from "next/image";
 
@@ -51,7 +53,7 @@ export default function AboutAr() {
               المتعددة الثقافات.
             </p>
           </div>
-        </FadeUp>
+        </div>
       </section>
 
       <section>
