@@ -10,7 +10,7 @@ export default function ThemeToggle() {
       onClick={() =>
         setTheme(theme === "dark" ? "light" : "dark")
       }
-      className="p-2 rounded-md border text-sm"
+      className="p-2 rounded-md text-sm hover:opacity-80 transition-opacity"
     >
       {theme === "dark" ? "☀️" : "🌙"}
     </button>
